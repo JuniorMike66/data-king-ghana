@@ -18,6 +18,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as SSlugRouteImport } from './routes/s.$slug'
 import { Route as AdminWithdrawalsRouteImport } from './routes/admin.withdrawals'
+import { Route as AdminTransactionsRouteImport } from './routes/admin.transactions'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminPackagesRouteImport } from './routes/admin.packages'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
@@ -33,6 +34,7 @@ import { Route as AuthenticatedDashboardProfileRouteImport } from './routes/_aut
 import { Route as AuthenticatedDashboardDeveloperRouteImport } from './routes/_authenticated/dashboard/developer'
 import { Route as AuthenticatedDashboardCheckersRouteImport } from './routes/_authenticated/dashboard/checkers'
 import { Route as AuthenticatedDashboardStoreIndexRouteImport } from './routes/_authenticated/dashboard/store.index'
+import { Route as ApiPublicV1PaystackWebhookRouteImport } from './routes/api/public/v1/paystack-webhook'
 import { Route as ApiPublicV1BalanceRouteImport } from './routes/api/public/v1/balance'
 import { Route as AuthenticatedDashboardStoreWithdrawalsRouteImport } from './routes/_authenticated/dashboard/store.withdrawals'
 import { Route as AuthenticatedDashboardStoreTransactionsRouteImport } from './routes/_authenticated/dashboard/store.transactions'
@@ -87,6 +89,11 @@ const SSlugRoute = SSlugRouteImport.update({
 const AdminWithdrawalsRoute = AdminWithdrawalsRouteImport.update({
   id: '/withdrawals',
   path: '/withdrawals',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminTransactionsRoute = AdminTransactionsRouteImport.update({
+  id: '/transactions',
+  path: '/transactions',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
@@ -173,6 +180,12 @@ const AuthenticatedDashboardStoreIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedDashboardStoreRoute,
   } as any)
+const ApiPublicV1PaystackWebhookRoute =
+  ApiPublicV1PaystackWebhookRouteImport.update({
+    id: '/api/public/v1/paystack-webhook',
+    path: '/api/public/v1/paystack-webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicV1BalanceRoute = ApiPublicV1BalanceRouteImport.update({
   id: '/api/public/v1/balance',
   path: '/api/public/v1/balance',
@@ -249,6 +262,7 @@ export interface FileRoutesByFullPath {
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/packages': typeof AdminPackagesRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/withdrawals': typeof AdminWithdrawalsRoute
   '/s/$slug': typeof SSlugRouteWithChildren
   '/admin/': typeof AdminIndexRoute
@@ -268,6 +282,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/store/transactions': typeof AuthenticatedDashboardStoreTransactionsRoute
   '/dashboard/store/withdrawals': typeof AuthenticatedDashboardStoreWithdrawalsRoute
   '/api/public/v1/balance': typeof ApiPublicV1BalanceRoute
+  '/api/public/v1/paystack-webhook': typeof ApiPublicV1PaystackWebhookRoute
   '/dashboard/store/': typeof AuthenticatedDashboardStoreIndexRoute
   '/api/public/v1/data/purchase': typeof ApiPublicV1DataPurchaseRoute
   '/api/public/v1/store-order/init': typeof ApiPublicV1StoreOrderInitRoute
@@ -284,6 +299,7 @@ export interface FileRoutesByTo {
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/packages': typeof AdminPackagesRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/withdrawals': typeof AdminWithdrawalsRoute
   '/s/$slug': typeof SSlugRouteWithChildren
   '/admin': typeof AdminIndexRoute
@@ -302,6 +318,7 @@ export interface FileRoutesByTo {
   '/dashboard/store/transactions': typeof AuthenticatedDashboardStoreTransactionsRoute
   '/dashboard/store/withdrawals': typeof AuthenticatedDashboardStoreWithdrawalsRoute
   '/api/public/v1/balance': typeof ApiPublicV1BalanceRoute
+  '/api/public/v1/paystack-webhook': typeof ApiPublicV1PaystackWebhookRoute
   '/dashboard/store': typeof AuthenticatedDashboardStoreIndexRoute
   '/api/public/v1/data/purchase': typeof ApiPublicV1DataPurchaseRoute
   '/api/public/v1/store-order/init': typeof ApiPublicV1StoreOrderInitRoute
@@ -321,6 +338,7 @@ export interface FileRoutesById {
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/packages': typeof AdminPackagesRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/withdrawals': typeof AdminWithdrawalsRoute
   '/s/$slug': typeof SSlugRouteWithChildren
   '/admin/': typeof AdminIndexRoute
@@ -340,6 +358,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/store/transactions': typeof AuthenticatedDashboardStoreTransactionsRoute
   '/_authenticated/dashboard/store/withdrawals': typeof AuthenticatedDashboardStoreWithdrawalsRoute
   '/api/public/v1/balance': typeof ApiPublicV1BalanceRoute
+  '/api/public/v1/paystack-webhook': typeof ApiPublicV1PaystackWebhookRoute
   '/_authenticated/dashboard/store/': typeof AuthenticatedDashboardStoreIndexRoute
   '/api/public/v1/data/purchase': typeof ApiPublicV1DataPurchaseRoute
   '/api/public/v1/store-order/init': typeof ApiPublicV1StoreOrderInitRoute
@@ -359,6 +378,7 @@ export interface FileRouteTypes {
     | '/admin/orders'
     | '/admin/packages'
     | '/admin/settings'
+    | '/admin/transactions'
     | '/admin/withdrawals'
     | '/s/$slug'
     | '/admin/'
@@ -378,6 +398,7 @@ export interface FileRouteTypes {
     | '/dashboard/store/transactions'
     | '/dashboard/store/withdrawals'
     | '/api/public/v1/balance'
+    | '/api/public/v1/paystack-webhook'
     | '/dashboard/store/'
     | '/api/public/v1/data/purchase'
     | '/api/public/v1/store-order/init'
@@ -394,6 +415,7 @@ export interface FileRouteTypes {
     | '/admin/orders'
     | '/admin/packages'
     | '/admin/settings'
+    | '/admin/transactions'
     | '/admin/withdrawals'
     | '/s/$slug'
     | '/admin'
@@ -412,6 +434,7 @@ export interface FileRouteTypes {
     | '/dashboard/store/transactions'
     | '/dashboard/store/withdrawals'
     | '/api/public/v1/balance'
+    | '/api/public/v1/paystack-webhook'
     | '/dashboard/store'
     | '/api/public/v1/data/purchase'
     | '/api/public/v1/store-order/init'
@@ -430,6 +453,7 @@ export interface FileRouteTypes {
     | '/admin/orders'
     | '/admin/packages'
     | '/admin/settings'
+    | '/admin/transactions'
     | '/admin/withdrawals'
     | '/s/$slug'
     | '/admin/'
@@ -449,6 +473,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/store/transactions'
     | '/_authenticated/dashboard/store/withdrawals'
     | '/api/public/v1/balance'
+    | '/api/public/v1/paystack-webhook'
     | '/_authenticated/dashboard/store/'
     | '/api/public/v1/data/purchase'
     | '/api/public/v1/store-order/init'
@@ -465,6 +490,7 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   SSlugRoute: typeof SSlugRouteWithChildren
   ApiPublicV1BalanceRoute: typeof ApiPublicV1BalanceRoute
+  ApiPublicV1PaystackWebhookRoute: typeof ApiPublicV1PaystackWebhookRoute
   ApiPublicV1DataPurchaseRoute: typeof ApiPublicV1DataPurchaseRoute
   ApiPublicV1StoreOrderInitRoute: typeof ApiPublicV1StoreOrderInitRoute
   ApiPublicV1StoreOrderVerifyRoute: typeof ApiPublicV1StoreOrderVerifyRoute
@@ -534,6 +560,13 @@ declare module '@tanstack/react-router' {
       path: '/withdrawals'
       fullPath: '/admin/withdrawals'
       preLoaderRoute: typeof AdminWithdrawalsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/transactions': {
+      id: '/admin/transactions'
+      path: '/transactions'
+      fullPath: '/admin/transactions'
+      preLoaderRoute: typeof AdminTransactionsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/settings': {
@@ -640,6 +673,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard/store/'
       preLoaderRoute: typeof AuthenticatedDashboardStoreIndexRouteImport
       parentRoute: typeof AuthenticatedDashboardStoreRoute
+    }
+    '/api/public/v1/paystack-webhook': {
+      id: '/api/public/v1/paystack-webhook'
+      path: '/api/public/v1/paystack-webhook'
+      fullPath: '/api/public/v1/paystack-webhook'
+      preLoaderRoute: typeof ApiPublicV1PaystackWebhookRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/public/v1/balance': {
       id: '/api/public/v1/balance'
@@ -788,6 +828,7 @@ interface AdminRouteChildren {
   AdminOrdersRoute: typeof AdminOrdersRoute
   AdminPackagesRoute: typeof AdminPackagesRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminTransactionsRoute: typeof AdminTransactionsRoute
   AdminWithdrawalsRoute: typeof AdminWithdrawalsRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
@@ -798,6 +839,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminOrdersRoute: AdminOrdersRoute,
   AdminPackagesRoute: AdminPackagesRoute,
   AdminSettingsRoute: AdminSettingsRoute,
+  AdminTransactionsRoute: AdminTransactionsRoute,
   AdminWithdrawalsRoute: AdminWithdrawalsRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
@@ -823,6 +865,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   SSlugRoute: SSlugRouteWithChildren,
   ApiPublicV1BalanceRoute: ApiPublicV1BalanceRoute,
+  ApiPublicV1PaystackWebhookRoute: ApiPublicV1PaystackWebhookRoute,
   ApiPublicV1DataPurchaseRoute: ApiPublicV1DataPurchaseRoute,
   ApiPublicV1StoreOrderInitRoute: ApiPublicV1StoreOrderInitRoute,
   ApiPublicV1StoreOrderVerifyRoute: ApiPublicV1StoreOrderVerifyRoute,
