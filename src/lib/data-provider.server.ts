@@ -1,7 +1,6 @@
-// Server-only helper that dispatches a data purchase to an upstream provider.
-// If DATA_PROVIDER_URL is not configured, the transaction stays "pending" for
-// admins to fulfill manually. When configured, the provider's JSON response
-// determines whether the tx is marked completed or failed (and refunded).
+// Server-only helper that dispatches a data purchase to the Spendless Data API.
+// Only called after Paystack payment has been verified (wallet or store order).
+// Marks the transaction completed on success, refunds the wallet on failure.
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 type DispatchInput = {
@@ -13,53 +12,90 @@ type DispatchInput = {
   amount: number;
 };
 
+const NETWORK_KEY: Record<string, string> = {
+  mtn: "YELLO",
+  airteltigo_ishare: "AT_PREMIUM",
+  airteltigo_bigtime: "AT_BIGTIME",
+  telecel: "TELECEL",
+};
+
+async function refund(userId: string, amount: number) {
+  const { data: w } = await supabaseAdmin
+    .from("wallets").select("balance").eq("user_id", userId).maybeSingle();
+  if (w) {
+    await supabaseAdmin
+      .from("wallets")
+      .update({ balance: Number(w.balance) + Number(amount) })
+      .eq("user_id", userId);
+  }
+}
+
 export async function dispatchDataPurchase(input: DispatchInput) {
-  const url = process.env.DATA_PROVIDER_URL;
-  const apiKey = process.env.DATA_PROVIDER_API_KEY;
-  if (!url) return; // leave pending for manual fulfillment
+  const apiKey = process.env.SPENDLESS_API_KEY;
+  if (!apiKey) {
+    await supabaseAdmin
+      .from("transactions")
+      .update({ metadata: { provider_error: "SPENDLESS_API_KEY not configured" } })
+      .eq("id", input.transactionId);
+    return;
+  }
+
+  const networkKey = NETWORK_KEY[input.network];
+  if (!networkKey) {
+    await supabaseAdmin
+      .from("transactions")
+      .update({ status: "failed", metadata: { provider_error: `Unknown network: ${input.network}` } })
+      .eq("id", input.transactionId);
+    await refund(input.userId, input.amount);
+    return;
+  }
+
+  const capacityGb = Math.round((input.sizeMb / 1024) * 100) / 100;
 
   try {
-    const res = await fetch(url, {
+    const res = await fetch("https://spendless.top/api/purchase", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        ...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}),
+        "X-API-KEY": apiKey,
       },
       body: JSON.stringify({
-        reference: input.transactionId,
-        network: input.network,
-        phone: input.phone,
-        size_mb: input.sizeMb,
-        amount: input.amount,
+        networkKey,
+        recipient: input.phone,
+        capacity: capacityGb,
       }),
     });
-    const ok = res.ok;
-    const body = await res.json().catch(() => ({}));
 
-    if (ok && body?.status !== "failed") {
+    const body: any = await res.json().catch(() => ({}));
+    const providerStatus = String(body?.data?.status ?? body?.status ?? "").toLowerCase();
+    const success = res.ok && providerStatus !== "failed" && body?.status !== "error";
+
+    if (success) {
       await supabaseAdmin
         .from("transactions")
-        .update({ status: "completed", metadata: { provider: body } })
+        .update({
+          status: providerStatus === "completed" ? "completed" : "pending",
+          metadata: {
+            provider: "spendless",
+            provider_reference: body?.data?.reference ?? body?.data?.orderId ?? null,
+            provider_response: body,
+          },
+        })
         .eq("id", input.transactionId);
     } else {
-      // refund wallet
-      const { data: w } = await supabaseAdmin
-        .from("wallets").select("balance").eq("user_id", input.userId).maybeSingle();
-      if (w) {
-        await supabaseAdmin
-          .from("wallets")
-          .update({ balance: Number(w.balance) + Number(input.amount) })
-          .eq("user_id", input.userId);
-      }
       await supabaseAdmin
         .from("transactions")
-        .update({ status: "failed", metadata: { provider: body, http: res.status } })
+        .update({
+          status: "failed",
+          metadata: { provider: "spendless", http: res.status, provider_response: body },
+        })
         .eq("id", input.transactionId);
+      await refund(input.userId, input.amount);
     }
   } catch (e: any) {
     await supabaseAdmin
       .from("transactions")
-      .update({ metadata: { provider_error: String(e?.message ?? e) } })
+      .update({ metadata: { provider: "spendless", provider_error: String(e?.message ?? e) } })
       .eq("id", input.transactionId);
   }
 }
