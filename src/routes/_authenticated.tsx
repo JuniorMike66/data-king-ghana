@@ -88,6 +88,19 @@ function Sidebar({ onNav }: { onNav?: () => void }) {
             ))}
           </CollapsibleContent>
         </Collapsible>
+        <Collapsible defaultOpen={storeOpen}>
+          <CollapsibleTrigger className={cn(linkCls(false), "w-full justify-between")}>
+            <span className="flex items-center gap-3"><Store className="w-5 h-5" /> My Store</span>
+            <ChevronDown className="w-4 h-4" />
+          </CollapsibleTrigger>
+          <CollapsibleContent className="ml-7 mt-1.5 space-y-1.5">
+            {storeNav.map((i) => (
+              <Link key={i.to} to={i.to} onClick={onNav} className={linkCls(isActive(i.to))}>
+                <span className="w-1.5 h-1.5 rounded-full bg-current opacity-60" />{i.label}
+              </Link>
+            ))}
+          </CollapsibleContent>
+        </Collapsible>
         {more.map((i) => (
           <Link key={i.to} to={i.to} onClick={onNav} className={linkCls(isActive(i.to))}>
             <i.icon className="w-5 h-5" /> {i.label}
