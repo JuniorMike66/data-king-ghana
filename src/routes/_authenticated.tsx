@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
+import { NotificationPopup } from "@/components/notification-popup";
 
 export const Route = createFileRoute("/_authenticated")({ component: Layout });
 
@@ -41,12 +42,12 @@ function Sidebar({ onNav }: { onNav?: () => void }) {
 
   const linkCls = (active: boolean) =>
     cn(
-      "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors",
+      "flex items-center gap-3 px-3 py-3 rounded-lg text-base leading-relaxed transition-colors",
       active ? "bg-primary/15 text-primary border-l-2 border-primary" : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-foreground"
     );
 
   return (
-    <div className="h-full flex flex-col bg-sidebar text-sidebar-foreground w-64">
+    <div className="h-full flex flex-col bg-sidebar text-sidebar-foreground w-72">
       <div className="p-4 border-b border-sidebar-border flex items-center gap-3">
         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-amber-700 flex items-center justify-center font-bold text-primary-foreground">DK</div>
         <div>
@@ -60,18 +61,18 @@ function Sidebar({ onNav }: { onNav?: () => void }) {
         <div className="text-sm font-semibold truncate">{user?.email}</div>
       </div>
 
-      <nav className="flex-1 px-3 pb-3 space-y-1 overflow-y-auto">
+      <nav className="flex-1 px-3 pb-3 space-y-1.5 overflow-y-auto">
         {nav.map((i) => (
           <Link key={i.to} to={i.to} onClick={onNav} className={linkCls(isActive(i.to))}>
-            <i.icon className="w-4 h-4" /> {i.label}
+            <i.icon className="w-5 h-5" /> {i.label}
           </Link>
         ))}
         <Collapsible defaultOpen={buyOpen}>
           <CollapsibleTrigger className={cn(linkCls(false), "w-full justify-between")}>
-            <span className="flex items-center gap-3"><ShoppingCart className="w-4 h-4" /> Buy Data</span>
+            <span className="flex items-center gap-3"><ShoppingCart className="w-5 h-5" /> Buy Data</span>
             <ChevronDown className="w-4 h-4" />
           </CollapsibleTrigger>
-          <CollapsibleContent className="ml-7 mt-1 space-y-1">
+          <CollapsibleContent className="ml-7 mt-1.5 space-y-1.5">
             {buyData.map((i) => (
               <Link key={i.to} to={i.to} onClick={onNav} className={linkCls(isActive(i.to))}>
                 <span className="w-1.5 h-1.5 rounded-full bg-current opacity-60" />{i.label}
@@ -81,12 +82,12 @@ function Sidebar({ onNav }: { onNav?: () => void }) {
         </Collapsible>
         {more.map((i) => (
           <Link key={i.to} to={i.to} onClick={onNav} className={linkCls(isActive(i.to))}>
-            <i.icon className="w-4 h-4" /> {i.label}
+            <i.icon className="w-5 h-5" /> {i.label}
           </Link>
         ))}
         {isAdmin && (
           <Link to="/admin" onClick={onNav} className={cn(linkCls(path.startsWith("/admin")), "mt-3 border border-primary/30")}>
-            <Shield className="w-4 h-4" /> Admin Panel
+            <Shield className="w-5 h-5" /> Admin Panel
           </Link>
         )}
       </nav>
@@ -128,10 +129,11 @@ function Layout() {
         <Sidebar />
       </aside>
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent side="left" className="p-0 w-64 bg-sidebar border-sidebar-border">
+        <SheetContent side="left" className="p-0 w-72 bg-sidebar border-sidebar-border">
           <Sidebar onNav={() => setOpen(false)} />
         </SheetContent>
       </Sheet>
+      <NotificationPopup />
       <main className="flex-1 min-w-0 adinkra-bg">
         <header className="sticky top-0 z-30 h-16 bg-background/80 backdrop-blur border-b border-border flex items-center justify-between px-4 md:px-6">
           <div className="flex items-center gap-3">

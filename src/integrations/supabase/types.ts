@@ -83,6 +83,59 @@ export type Database = {
         }
         Relationships: []
       }
+      notification_dismissals: {
+        Row: {
+          dismissed_at: string
+          notification_id: string
+          user_id: string
+        }
+        Insert: {
+          dismissed_at?: string
+          notification_id: string
+          user_id: string
+        }
+        Update: {
+          dismissed_at?: string
+          notification_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_dismissals_notification_id_fkey"
+            columns: ["notification_id"]
+            isOneToOne: false
+            referencedRelation: "notifications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          active: boolean
+          body: string
+          created_at: string
+          id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          body: string
+          created_at?: string
+          id?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          body?: string
+          created_at?: string
+          id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -140,6 +193,30 @@ export type Database = {
           id?: string
           name?: string
           price?: number
+        }
+        Relationships: []
+      }
+      site_settings: {
+        Row: {
+          id: number
+          maintenance_mode: boolean
+          updated_at: string
+          whatsapp_enabled: boolean
+          whatsapp_url: string | null
+        }
+        Insert: {
+          id?: number
+          maintenance_mode?: boolean
+          updated_at?: string
+          whatsapp_enabled?: boolean
+          whatsapp_url?: string | null
+        }
+        Update: {
+          id?: number
+          maintenance_mode?: boolean
+          updated_at?: string
+          whatsapp_enabled?: boolean
+          whatsapp_url?: string | null
         }
         Relationships: []
       }
