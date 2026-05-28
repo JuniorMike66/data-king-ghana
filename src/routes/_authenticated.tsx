@@ -8,7 +8,7 @@ import {
 import { useAuth } from "@/lib/auth-context";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 
@@ -135,11 +135,9 @@ function Layout() {
       <main className="flex-1 min-w-0 adinkra-bg">
         <header className="sticky top-0 z-30 h-16 bg-background/80 backdrop-blur border-b border-border flex items-center justify-between px-4 md:px-6">
           <div className="flex items-center gap-3">
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setOpen(true)}>
-                <Menu className="w-5 h-5" />
-              </Button>
-            </SheetTrigger>
+            <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setOpen(true)}>
+              <Menu className="w-5 h-5" />
+            </Button>
             <h1 className="font-bold text-lg">DataKing Ghana</h1>
           </div>
           <Link to="/dashboard/wallet" className="hidden sm:flex items-center gap-2 rounded-full border border-primary/40 px-3 py-1.5 text-sm hover:bg-primary/10">
