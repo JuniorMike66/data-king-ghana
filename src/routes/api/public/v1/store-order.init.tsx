@@ -32,15 +32,19 @@ export const Route = createFileRoute("/api/public/v1/store-order/init")({
           .from("data_packages").select("*").eq("id", package_id).eq("active", true).maybeSingle();
         if (!pkg) return json({ error: "Package not available" }, 404);
 
-        const { data: override } = await supabaseAdmin
-          .from("store_package_prices").select("price").eq("store_id", store.id).eq("package_id", package_id).maybeSingle();
-        let basePrice = Number(pkg.price);
+        // cost basis = sponsor's subagent price (if this store has a sponsor),
+        // otherwise the admin agent_price, otherwise the base price.
+        let cost = Number(pkg.agent_price ?? pkg.price);
         if (store.sponsor_id) {
           const { data: sp } = await supabaseAdmin
             .from("subagent_prices").select("price").eq("sponsor_id", store.sponsor_id).eq("package_id", package_id).maybeSingle();
-          if (sp) basePrice = Number(sp.price);
+          if (sp) cost = Number(sp.price);
         }
-        const price = Number(override?.price ?? basePrice);
+
+        // selling price = store override > cost
+        const { data: override } = await supabaseAdmin
+          .from("store_package_prices").select("price").eq("store_id", store.id).eq("package_id", package_id).maybeSingle();
+        const price = Number(override?.price ?? cost);
 
 
         const reference = `SO-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
@@ -63,15 +67,18 @@ export const Route = createFileRoute("/api/public/v1/store-order/init")({
               kind: "store_order",
               store_id: store.id,
               store_owner_id: store.user_id,
+              store_sponsor_id: store.sponsor_id ?? null,
               package_id,
               recipient_phone,
               price,
+              cost,
             },
           }),
         });
         const init: any = await res.json();
         if (!res.ok || !init.status) return json({ error: init.message ?? "Paystack init failed" }, 502);
         return json({ authorization_url: init.data.authorization_url, reference });
+
       },
     },
   },
