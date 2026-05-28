@@ -26,9 +26,16 @@ const buyData = [
   { to: "/dashboard/buy-data/at-bigtime", label: "AirtelTigo BigTime" },
   { to: "/dashboard/buy-data/telecel", label: "Telecel" },
 ];
+const storeNav = [
+  { to: "/dashboard/store", label: "Overview" },
+  { to: "/dashboard/store/packages", label: "Store Packages" },
+  { to: "/dashboard/store/settings", label: "Store Settings" },
+  { to: "/dashboard/store/transactions", label: "Store Transactions" },
+  { to: "/dashboard/store/subagents", label: "Subagent Manager" },
+  { to: "/dashboard/store/withdrawals", label: "Withdrawals" },
+];
 const more = [
   { to: "/dashboard/checkers", label: "Result Checkers", icon: FileCheck },
-  { to: "/dashboard/store", label: "My Store", icon: Store },
   { to: "/dashboard/developer", label: "Developer Settings", icon: Code },
   { to: "/dashboard/profile", label: "My Profile", icon: User },
   { to: "/dashboard/report", label: "Report an Issue", icon: AlertCircle },
