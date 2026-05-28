@@ -25,7 +25,7 @@ export const Route = createFileRoute("/api/public/v1/store-order/init")({
         const { store_slug, package_id, recipient_phone, customer_email, origin } = parsed.data;
 
         const { data: store } = await supabaseAdmin
-          .from("stores").select("id,user_id,name,active").eq("slug", store_slug).maybeSingle();
+          .from("stores").select("id,user_id,name,active,sponsor_id").eq("slug", store_slug).maybeSingle();
         if (!store || !store.active) return json({ error: "Store not available" }, 404);
 
         const { data: pkg } = await supabaseAdmin
@@ -34,7 +34,14 @@ export const Route = createFileRoute("/api/public/v1/store-order/init")({
 
         const { data: override } = await supabaseAdmin
           .from("store_package_prices").select("price").eq("store_id", store.id).eq("package_id", package_id).maybeSingle();
-        const price = Number(override?.price ?? pkg.price);
+        let basePrice = Number(pkg.price);
+        if (store.sponsor_id) {
+          const { data: sp } = await supabaseAdmin
+            .from("subagent_prices").select("price").eq("sponsor_id", store.sponsor_id).eq("package_id", package_id).maybeSingle();
+          if (sp) basePrice = Number(sp.price);
+        }
+        const price = Number(override?.price ?? basePrice);
+
 
         const reference = `SO-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
         const callback_url = `${origin}/s/${store_slug}?reference=${encodeURIComponent(reference)}`;
