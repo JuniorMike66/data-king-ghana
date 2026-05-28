@@ -46,6 +46,7 @@ function Sidebar({ onNav }: { onNav?: () => void }) {
   const { isAdmin, signOut, user } = useAuth();
   const isActive = (to: string) => path === to;
   const buyOpen = path.startsWith("/dashboard/buy-data");
+  const storeOpen = path.startsWith("/dashboard/store");
 
   const linkCls = (active: boolean) =>
     cn(
