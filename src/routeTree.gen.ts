@@ -33,6 +33,8 @@ import { Route as AuthenticatedDashboardCheckersRouteImport } from './routes/_au
 import { Route as ApiPublicV1BalanceRouteImport } from './routes/api/public/v1/balance'
 import { Route as AuthenticatedDashboardBuyDataNetworkRouteImport } from './routes/_authenticated/dashboard/buy-data/$network'
 import { Route as ApiPublicV1TransactionsIdRouteImport } from './routes/api/public/v1/transactions.$id'
+import { Route as ApiPublicV1StoreOrderVerifyRouteImport } from './routes/api/public/v1/store-order.verify'
+import { Route as ApiPublicV1StoreOrderInitRouteImport } from './routes/api/public/v1/store-order.init'
 import { Route as ApiPublicV1DataPurchaseRouteImport } from './routes/api/public/v1/data.purchase'
 
 const SignupRoute = SignupRouteImport.update({
@@ -164,6 +166,18 @@ const ApiPublicV1TransactionsIdRoute =
     path: '/api/public/v1/transactions/$id',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicV1StoreOrderVerifyRoute =
+  ApiPublicV1StoreOrderVerifyRouteImport.update({
+    id: '/api/public/v1/store-order/verify',
+    path: '/api/public/v1/store-order/verify',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicV1StoreOrderInitRoute =
+  ApiPublicV1StoreOrderInitRouteImport.update({
+    id: '/api/public/v1/store-order/init',
+    path: '/api/public/v1/store-order/init',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ApiPublicV1DataPurchaseRoute = ApiPublicV1DataPurchaseRouteImport.update({
   id: '/api/public/v1/data/purchase',
   path: '/api/public/v1/data/purchase',
@@ -194,6 +208,8 @@ export interface FileRoutesByFullPath {
   '/dashboard/buy-data/$network': typeof AuthenticatedDashboardBuyDataNetworkRoute
   '/api/public/v1/balance': typeof ApiPublicV1BalanceRoute
   '/api/public/v1/data/purchase': typeof ApiPublicV1DataPurchaseRoute
+  '/api/public/v1/store-order/init': typeof ApiPublicV1StoreOrderInitRoute
+  '/api/public/v1/store-order/verify': typeof ApiPublicV1StoreOrderVerifyRoute
   '/api/public/v1/transactions/$id': typeof ApiPublicV1TransactionsIdRoute
 }
 export interface FileRoutesByTo {
@@ -219,6 +235,8 @@ export interface FileRoutesByTo {
   '/dashboard/buy-data/$network': typeof AuthenticatedDashboardBuyDataNetworkRoute
   '/api/public/v1/balance': typeof ApiPublicV1BalanceRoute
   '/api/public/v1/data/purchase': typeof ApiPublicV1DataPurchaseRoute
+  '/api/public/v1/store-order/init': typeof ApiPublicV1StoreOrderInitRoute
+  '/api/public/v1/store-order/verify': typeof ApiPublicV1StoreOrderVerifyRoute
   '/api/public/v1/transactions/$id': typeof ApiPublicV1TransactionsIdRoute
 }
 export interface FileRoutesById {
@@ -247,6 +265,8 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/buy-data/$network': typeof AuthenticatedDashboardBuyDataNetworkRoute
   '/api/public/v1/balance': typeof ApiPublicV1BalanceRoute
   '/api/public/v1/data/purchase': typeof ApiPublicV1DataPurchaseRoute
+  '/api/public/v1/store-order/init': typeof ApiPublicV1StoreOrderInitRoute
+  '/api/public/v1/store-order/verify': typeof ApiPublicV1StoreOrderVerifyRoute
   '/api/public/v1/transactions/$id': typeof ApiPublicV1TransactionsIdRoute
 }
 export interface FileRouteTypes {
@@ -275,6 +295,8 @@ export interface FileRouteTypes {
     | '/dashboard/buy-data/$network'
     | '/api/public/v1/balance'
     | '/api/public/v1/data/purchase'
+    | '/api/public/v1/store-order/init'
+    | '/api/public/v1/store-order/verify'
     | '/api/public/v1/transactions/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -300,6 +322,8 @@ export interface FileRouteTypes {
     | '/dashboard/buy-data/$network'
     | '/api/public/v1/balance'
     | '/api/public/v1/data/purchase'
+    | '/api/public/v1/store-order/init'
+    | '/api/public/v1/store-order/verify'
     | '/api/public/v1/transactions/$id'
   id:
     | '__root__'
@@ -327,6 +351,8 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/buy-data/$network'
     | '/api/public/v1/balance'
     | '/api/public/v1/data/purchase'
+    | '/api/public/v1/store-order/init'
+    | '/api/public/v1/store-order/verify'
     | '/api/public/v1/transactions/$id'
   fileRoutesById: FileRoutesById
 }
@@ -340,6 +366,8 @@ export interface RootRouteChildren {
   SSlugRoute: typeof SSlugRoute
   ApiPublicV1BalanceRoute: typeof ApiPublicV1BalanceRoute
   ApiPublicV1DataPurchaseRoute: typeof ApiPublicV1DataPurchaseRoute
+  ApiPublicV1StoreOrderInitRoute: typeof ApiPublicV1StoreOrderInitRoute
+  ApiPublicV1StoreOrderVerifyRoute: typeof ApiPublicV1StoreOrderVerifyRoute
   ApiPublicV1TransactionsIdRoute: typeof ApiPublicV1TransactionsIdRoute
 }
 
@@ -513,6 +541,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicV1TransactionsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/v1/store-order/verify': {
+      id: '/api/public/v1/store-order/verify'
+      path: '/api/public/v1/store-order/verify'
+      fullPath: '/api/public/v1/store-order/verify'
+      preLoaderRoute: typeof ApiPublicV1StoreOrderVerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/v1/store-order/init': {
+      id: '/api/public/v1/store-order/init'
+      path: '/api/public/v1/store-order/init'
+      fullPath: '/api/public/v1/store-order/init'
+      preLoaderRoute: typeof ApiPublicV1StoreOrderInitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/v1/data/purchase': {
       id: '/api/public/v1/data/purchase'
       path: '/api/public/v1/data/purchase'
@@ -583,6 +625,8 @@ const rootRouteChildren: RootRouteChildren = {
   SSlugRoute: SSlugRoute,
   ApiPublicV1BalanceRoute: ApiPublicV1BalanceRoute,
   ApiPublicV1DataPurchaseRoute: ApiPublicV1DataPurchaseRoute,
+  ApiPublicV1StoreOrderInitRoute: ApiPublicV1StoreOrderInitRoute,
+  ApiPublicV1StoreOrderVerifyRoute: ApiPublicV1StoreOrderVerifyRoute,
   ApiPublicV1TransactionsIdRoute: ApiPublicV1TransactionsIdRoute,
 }
 export const routeTree = rootRouteImport
