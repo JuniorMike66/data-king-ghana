@@ -181,3 +181,29 @@ export const adminDeleteChecker = createServerFn({ method: "POST" })
     await supabaseAdmin.from("result_checkers").delete().eq("id", data.id);
     return { ok: true };
   });
+
+export const adminListAllTransactions = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context.userId);
+    const { data: txs } = await supabaseAdmin
+      .from("transactions")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(1000);
+    const list = txs ?? [];
+    const ids = Array.from(new Set(list.map((t) => t.user_id)));
+    const { data: profiles } = ids.length
+      ? await supabaseAdmin.from("profiles").select("id,email,full_name,sponsor_id").in("id", ids)
+      : { data: [] as any[] };
+    const pmap = new Map((profiles ?? []).map((p: any) => [p.id, p]));
+    return list.map((t) => {
+      const p: any = pmap.get(t.user_id);
+      return {
+        ...t,
+        user_email: p?.email ?? null,
+        user_name: p?.full_name ?? null,
+        is_subagent: !!p?.sponsor_id,
+      };
+    });
+  });

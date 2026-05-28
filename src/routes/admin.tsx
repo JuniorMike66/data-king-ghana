@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet, useNavigate, Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Shield, ArrowLeft, Users, ShoppingBag, Package, Banknote, Settings, Bell, FileCheck, LogOut, Menu } from "lucide-react";
+import { Shield, ArrowLeft, Users, ShoppingBag, Package, Banknote, Settings, Bell, FileCheck, LogOut, Menu, Receipt } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -11,6 +11,7 @@ export const Route = createFileRoute("/admin")({ component: AdminLayout });
 const items = [
   { to: "/admin", label: "Users", icon: Users, exact: true },
   { to: "/admin/orders", label: "Orders", icon: ShoppingBag },
+  { to: "/admin/transactions", label: "Transactions", icon: Receipt },
   { to: "/admin/packages", label: "Packages", icon: Package },
   { to: "/admin/checkers", label: "Result Checkers", icon: FileCheck },
   { to: "/admin/withdrawals", label: "Withdrawals", icon: Banknote },
