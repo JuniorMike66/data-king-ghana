@@ -13,7 +13,21 @@ import { MaintenanceGate } from "@/components/maintenance-gate";
 
 import appCss from "../styles.css?url";
 
+/**
+ * Detect the storefront home from the current path. Visitors browsing a
+ * subagent/agent store (/s/<slug>/...) should bounce back to that store's
+ * home — not the main DataKing site — when they hit a 404 or error.
+ */
+function getHomeTarget(): { href: string; label: string } {
+  if (typeof window !== "undefined") {
+    const m = window.location.pathname.match(/^\/s\/([^/]+)/);
+    if (m) return { href: `/s/${m[1]}`, label: "Back to store" };
+  }
+  return { href: "/", label: "Go home" };
+}
+
 function NotFoundComponent() {
+  const home = getHomeTarget();
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
@@ -22,12 +36,12 @@ function NotFoundComponent() {
         <p className="mt-2 text-sm text-muted-foreground">
           The page you're looking for doesn't exist.
         </p>
-        <Link
-          to="/"
+        <a
+          href={home.href}
           className="mt-6 inline-flex rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
         >
-          Go home
-        </Link>
+          {home.label}
+        </a>
       </div>
     </div>
   );
@@ -35,12 +49,13 @@ function NotFoundComponent() {
 
 function ErrorComponent({ error }: { error: Error }) {
   console.error(error);
+  const home = getHomeTarget();
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
         <h1 className="text-xl font-semibold">Something went wrong</h1>
         <p className="mt-2 text-sm text-muted-foreground">{error.message}</p>
-        <a href="/" className="mt-6 inline-flex rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground">Home</a>
+        <a href={home.href} className="mt-6 inline-flex rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground">{home.label}</a>
       </div>
     </div>
   );
