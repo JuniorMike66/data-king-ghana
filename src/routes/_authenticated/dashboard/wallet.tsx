@@ -2,11 +2,10 @@ import { createFileRoute, useSearch } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { Wallet as WalletIcon, Plus, ArrowDownToLine, CheckCircle2, Clock } from "lucide-react";
+import { Wallet as WalletIcon, Plus, SearchCheck, CheckCircle2, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { initPaystackTopup, verifyPaystackTopup } from "@/lib/paystack.functions";
-import { requestWithdrawal } from "@/lib/purchase.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,10 +26,10 @@ function WalletPage() {
   const search = useSearch({ from: "/_authenticated/dashboard/wallet" });
   const init = useServerFn(initPaystackTopup);
   const verify = useServerFn(verifyPaystackTopup);
-  const withdraw = useServerFn(requestWithdrawal);
 
   const [amount, setAmount] = useState("50");
-  const [withdrawOpen, setWithdrawOpen] = useState(false);
+  const [recoverRef, setRecoverRef] = useState("");
+  const [recoverOpen, setRecoverOpen] = useState(false);
 
   const { data: wallet } = useQuery({
     queryKey: ["wallet", user?.id],
@@ -55,6 +54,24 @@ function WalletPage() {
   const topupMut = useMutation({
     mutationFn: async () => init({ data: { amount: Number(amount) } }),
     onSuccess: (res) => { window.location.href = res.authorization_url; },
+    onError: (e: any) => toast.error(e.message),
+  });
+
+  const recoverMut = useMutation({
+    mutationFn: async () => verify({ data: { reference: recoverRef.trim() } }),
+    onSuccess: (r) => {
+      if (r.credited) {
+        toast.success(`Wallet credited with GH₵${r.amount?.toFixed(2)}`);
+      } else if (r.status === "success") {
+        toast.info("Payment was already credited to your wallet.");
+      } else {
+        toast.info(`Payment not completed (status: ${r.status}). No top-up applied.`);
+      }
+      setRecoverRef(""); setRecoverOpen(false);
+      qc.invalidateQueries({ queryKey: ["wallet"] });
+      qc.invalidateQueries({ queryKey: ["wallet-history"] });
+      qc.invalidateQueries({ queryKey: ["overview"] });
+    },
     onError: (e: any) => toast.error(e.message),
   });
 
@@ -101,17 +118,37 @@ function WalletPage() {
               </div>
             </DialogContent>
           </Dialog>
-          <Dialog open={withdrawOpen} onOpenChange={setWithdrawOpen}>
+
+          <Dialog open={recoverOpen} onOpenChange={setRecoverOpen}>
             <DialogTrigger asChild>
-              <Button size="lg" variant="outline" className="gap-2"><ArrowDownToLine className="w-4 h-4" /> Request withdrawal</Button>
+              <Button size="lg" variant="outline" className="gap-2"><SearchCheck className="w-4 h-4" /> Top-up not reflected?</Button>
             </DialogTrigger>
             <DialogContent>
-              <DialogHeader><DialogTitle>Withdraw funds</DialogTitle></DialogHeader>
-              <WithdrawForm onDone={() => {
-                setWithdrawOpen(false);
-                qc.invalidateQueries({ queryKey: ["wallet"] });
-                qc.invalidateQueries({ queryKey: ["wallet-history"] });
-              }} withdraw={withdraw} />
+              <DialogHeader><DialogTitle>Recover a Paystack top-up</DialogTitle></DialogHeader>
+              <div className="space-y-3">
+                <p className="text-sm text-muted-foreground">
+                  Paid but your wallet didn't update? Paste your Paystack reference below.
+                  We'll verify the payment with Paystack — if it was successful and not already
+                  credited, we'll top up your wallet with the exact amount you paid.
+                </p>
+                <Label>Paystack reference</Label>
+                <Input
+                  placeholder="e.g. DK-1716901234-AB12CD"
+                  value={recoverRef}
+                  onChange={(e) => setRecoverRef(e.target.value)}
+                />
+                <Button
+                  className="w-full"
+                  disabled={recoverMut.isPending || recoverRef.trim().length < 4}
+                  onClick={() => recoverMut.mutate()}
+                >
+                  {recoverMut.isPending ? "Checking with Paystack..." : "Verify & credit wallet"}
+                </Button>
+                <p className="text-xs text-muted-foreground">
+                  You can find the reference in the Paystack receipt SMS / email, or in the URL
+                  after you completed payment.
+                </p>
+              </div>
             </DialogContent>
           </Dialog>
         </div>
@@ -139,28 +176,6 @@ function WalletPage() {
           ))}
         </div>
       </div>
-    </div>
-  );
-}
-
-function WithdrawForm({ withdraw, onDone }: { withdraw: any; onDone: () => void }) {
-  const [form, setForm] = useState({ amount: "50", bank: "", account: "", name: "" });
-  const mut = useMutation({
-    mutationFn: () => withdraw({ data: { amount: Number(form.amount), bank: form.bank, account: form.account, name: form.name } }),
-    onSuccess: () => { toast.success("Withdrawal request submitted."); onDone(); },
-    onError: (e: any) => toast.error(e.message),
-  });
-  return (
-    <div className="space-y-3">
-      <div className="grid grid-cols-2 gap-3">
-        <div><Label>Amount</Label><Input type="number" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} /></div>
-        <div><Label>Bank / Wallet</Label><Input placeholder="MTN MoMo" value={form.bank} onChange={(e) => setForm({ ...form, bank: e.target.value })} /></div>
-      </div>
-      <div><Label>Account / Phone number</Label><Input value={form.account} onChange={(e) => setForm({ ...form, account: e.target.value })} /></div>
-      <div><Label>Account name</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div>
-      <Button className="w-full" disabled={mut.isPending} onClick={() => mut.mutate()}>
-        {mut.isPending ? "Submitting..." : "Submit request"}
-      </Button>
     </div>
   );
 }
