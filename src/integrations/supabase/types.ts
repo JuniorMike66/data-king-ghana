@@ -266,6 +266,7 @@ export type Database = {
           id: string
           name: string
           slug: string
+          sponsor_id: string | null
           support_phone: string
           support_whatsapp: string | null
           user_id: string
@@ -276,6 +277,7 @@ export type Database = {
           id?: string
           name: string
           slug: string
+          sponsor_id?: string | null
           support_phone: string
           support_whatsapp?: string | null
           user_id: string
@@ -286,6 +288,7 @@ export type Database = {
           id?: string
           name?: string
           slug?: string
+          sponsor_id?: string | null
           support_phone?: string
           support_whatsapp?: string | null
           user_id?: string
