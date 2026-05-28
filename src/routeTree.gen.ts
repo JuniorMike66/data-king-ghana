@@ -9,38 +9,253 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedDashboardWalletRouteImport } from './routes/_authenticated/dashboard/wallet'
+import { Route as AuthenticatedDashboardTransactionsRouteImport } from './routes/_authenticated/dashboard/transactions'
+import { Route as AuthenticatedDashboardStoreRouteImport } from './routes/_authenticated/dashboard/store'
+import { Route as AuthenticatedDashboardReportRouteImport } from './routes/_authenticated/dashboard/report'
+import { Route as AuthenticatedDashboardProfileRouteImport } from './routes/_authenticated/dashboard/profile'
+import { Route as AuthenticatedDashboardDeveloperRouteImport } from './routes/_authenticated/dashboard/developer'
+import { Route as AuthenticatedDashboardCheckersRouteImport } from './routes/_authenticated/dashboard/checkers'
+import { Route as AuthenticatedDashboardBuyDataNetworkRouteImport } from './routes/_authenticated/dashboard/buy-data/$network'
 
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedDashboardWalletRoute =
+  AuthenticatedDashboardWalletRouteImport.update({
+    id: '/wallet',
+    path: '/wallet',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardTransactionsRoute =
+  AuthenticatedDashboardTransactionsRouteImport.update({
+    id: '/transactions',
+    path: '/transactions',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardStoreRoute =
+  AuthenticatedDashboardStoreRouteImport.update({
+    id: '/store',
+    path: '/store',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardReportRoute =
+  AuthenticatedDashboardReportRouteImport.update({
+    id: '/report',
+    path: '/report',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardProfileRoute =
+  AuthenticatedDashboardProfileRouteImport.update({
+    id: '/profile',
+    path: '/profile',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardDeveloperRoute =
+  AuthenticatedDashboardDeveloperRouteImport.update({
+    id: '/developer',
+    path: '/developer',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardCheckersRoute =
+  AuthenticatedDashboardCheckersRouteImport.update({
+    id: '/checkers',
+    path: '/checkers',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
+const AuthenticatedDashboardBuyDataNetworkRoute =
+  AuthenticatedDashboardBuyDataNetworkRouteImport.update({
+    id: '/buy-data/$network',
+    path: '/buy-data/$network',
+    getParentRoute: () => AuthenticatedDashboardRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
+  '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
+  '/dashboard/checkers': typeof AuthenticatedDashboardCheckersRoute
+  '/dashboard/developer': typeof AuthenticatedDashboardDeveloperRoute
+  '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
+  '/dashboard/report': typeof AuthenticatedDashboardReportRoute
+  '/dashboard/store': typeof AuthenticatedDashboardStoreRoute
+  '/dashboard/transactions': typeof AuthenticatedDashboardTransactionsRoute
+  '/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
+  '/dashboard/buy-data/$network': typeof AuthenticatedDashboardBuyDataNetworkRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
+  '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
+  '/dashboard/checkers': typeof AuthenticatedDashboardCheckersRoute
+  '/dashboard/developer': typeof AuthenticatedDashboardDeveloperRoute
+  '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
+  '/dashboard/report': typeof AuthenticatedDashboardReportRoute
+  '/dashboard/store': typeof AuthenticatedDashboardStoreRoute
+  '/dashboard/transactions': typeof AuthenticatedDashboardTransactionsRoute
+  '/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
+  '/dashboard/buy-data/$network': typeof AuthenticatedDashboardBuyDataNetworkRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/admin': typeof AdminRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/login': typeof LoginRoute
+  '/signup': typeof SignupRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
+  '/_authenticated/dashboard/checkers': typeof AuthenticatedDashboardCheckersRoute
+  '/_authenticated/dashboard/developer': typeof AuthenticatedDashboardDeveloperRoute
+  '/_authenticated/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
+  '/_authenticated/dashboard/report': typeof AuthenticatedDashboardReportRoute
+  '/_authenticated/dashboard/store': typeof AuthenticatedDashboardStoreRoute
+  '/_authenticated/dashboard/transactions': typeof AuthenticatedDashboardTransactionsRoute
+  '/_authenticated/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
+  '/_authenticated/dashboard/buy-data/$network': typeof AuthenticatedDashboardBuyDataNetworkRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/forgot-password'
+    | '/login'
+    | '/signup'
+    | '/dashboard'
+    | '/dashboard/checkers'
+    | '/dashboard/developer'
+    | '/dashboard/profile'
+    | '/dashboard/report'
+    | '/dashboard/store'
+    | '/dashboard/transactions'
+    | '/dashboard/wallet'
+    | '/dashboard/buy-data/$network'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/admin'
+    | '/forgot-password'
+    | '/login'
+    | '/signup'
+    | '/dashboard'
+    | '/dashboard/checkers'
+    | '/dashboard/developer'
+    | '/dashboard/profile'
+    | '/dashboard/report'
+    | '/dashboard/store'
+    | '/dashboard/transactions'
+    | '/dashboard/wallet'
+    | '/dashboard/buy-data/$network'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/admin'
+    | '/forgot-password'
+    | '/login'
+    | '/signup'
+    | '/_authenticated/dashboard'
+    | '/_authenticated/dashboard/checkers'
+    | '/_authenticated/dashboard/developer'
+    | '/_authenticated/dashboard/profile'
+    | '/_authenticated/dashboard/report'
+    | '/_authenticated/dashboard/store'
+    | '/_authenticated/dashboard/transactions'
+    | '/_authenticated/dashboard/wallet'
+    | '/_authenticated/dashboard/buy-data/$network'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  AdminRoute: typeof AdminRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
+  LoginRoute: typeof LoginRoute
+  SignupRoute: typeof SignupRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +263,122 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/dashboard/wallet': {
+      id: '/_authenticated/dashboard/wallet'
+      path: '/wallet'
+      fullPath: '/dashboard/wallet'
+      preLoaderRoute: typeof AuthenticatedDashboardWalletRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/transactions': {
+      id: '/_authenticated/dashboard/transactions'
+      path: '/transactions'
+      fullPath: '/dashboard/transactions'
+      preLoaderRoute: typeof AuthenticatedDashboardTransactionsRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/store': {
+      id: '/_authenticated/dashboard/store'
+      path: '/store'
+      fullPath: '/dashboard/store'
+      preLoaderRoute: typeof AuthenticatedDashboardStoreRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/report': {
+      id: '/_authenticated/dashboard/report'
+      path: '/report'
+      fullPath: '/dashboard/report'
+      preLoaderRoute: typeof AuthenticatedDashboardReportRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/profile': {
+      id: '/_authenticated/dashboard/profile'
+      path: '/profile'
+      fullPath: '/dashboard/profile'
+      preLoaderRoute: typeof AuthenticatedDashboardProfileRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/developer': {
+      id: '/_authenticated/dashboard/developer'
+      path: '/developer'
+      fullPath: '/dashboard/developer'
+      preLoaderRoute: typeof AuthenticatedDashboardDeveloperRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/checkers': {
+      id: '/_authenticated/dashboard/checkers'
+      path: '/checkers'
+      fullPath: '/dashboard/checkers'
+      preLoaderRoute: typeof AuthenticatedDashboardCheckersRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/_authenticated/dashboard/buy-data/$network': {
+      id: '/_authenticated/dashboard/buy-data/$network'
+      path: '/buy-data/$network'
+      fullPath: '/dashboard/buy-data/$network'
+      preLoaderRoute: typeof AuthenticatedDashboardBuyDataNetworkRouteImport
+      parentRoute: typeof AuthenticatedDashboardRoute
+    }
   }
 }
 
+interface AuthenticatedDashboardRouteChildren {
+  AuthenticatedDashboardCheckersRoute: typeof AuthenticatedDashboardCheckersRoute
+  AuthenticatedDashboardDeveloperRoute: typeof AuthenticatedDashboardDeveloperRoute
+  AuthenticatedDashboardProfileRoute: typeof AuthenticatedDashboardProfileRoute
+  AuthenticatedDashboardReportRoute: typeof AuthenticatedDashboardReportRoute
+  AuthenticatedDashboardStoreRoute: typeof AuthenticatedDashboardStoreRoute
+  AuthenticatedDashboardTransactionsRoute: typeof AuthenticatedDashboardTransactionsRoute
+  AuthenticatedDashboardWalletRoute: typeof AuthenticatedDashboardWalletRoute
+  AuthenticatedDashboardBuyDataNetworkRoute: typeof AuthenticatedDashboardBuyDataNetworkRoute
+}
+
+const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
+  {
+    AuthenticatedDashboardCheckersRoute: AuthenticatedDashboardCheckersRoute,
+    AuthenticatedDashboardDeveloperRoute: AuthenticatedDashboardDeveloperRoute,
+    AuthenticatedDashboardProfileRoute: AuthenticatedDashboardProfileRoute,
+    AuthenticatedDashboardReportRoute: AuthenticatedDashboardReportRoute,
+    AuthenticatedDashboardStoreRoute: AuthenticatedDashboardStoreRoute,
+    AuthenticatedDashboardTransactionsRoute:
+      AuthenticatedDashboardTransactionsRoute,
+    AuthenticatedDashboardWalletRoute: AuthenticatedDashboardWalletRoute,
+    AuthenticatedDashboardBuyDataNetworkRoute:
+      AuthenticatedDashboardBuyDataNetworkRoute,
+  }
+
+const AuthenticatedDashboardRouteWithChildren =
+  AuthenticatedDashboardRoute._addFileChildren(
+    AuthenticatedDashboardRouteChildren,
+  )
+
+interface AuthenticatedRouteChildren {
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRouteWithChildren
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRouteWithChildren,
+}
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  AdminRoute: AdminRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
+  LoginRoute: LoginRoute,
+  SignupRoute: SignupRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
