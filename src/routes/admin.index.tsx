@@ -42,7 +42,7 @@ function UsersPage() {
           <tbody className="divide-y divide-border">
             {filtered.map((u: any) => (
               <tr key={u.id}>
-                <td className="p-3"><div className="font-semibold">{u.full_name ?? "—"}</div><div className="text-xs text-muted-foreground">{u.email}</div></td>
+                <td className="p-3"><Link to="/admin/users/$userId" params={{ userId: u.id }} className="hover:underline"><div className="font-semibold text-primary">{u.full_name ?? "—"}</div><div className="text-xs text-muted-foreground">{u.email}</div></Link></td>
                 <td className="p-3">{u.phone ?? "—"}</td>
                 <td className="p-3 font-bold">GH₵{u.balance.toFixed(2)}</td>
                 <td className="p-3"><span className={`px-2 py-0.5 rounded text-xs font-bold ${u.role === "admin" ? "bg-primary/20 text-primary" : "bg-muted"}`}>{u.role}</span></td>
