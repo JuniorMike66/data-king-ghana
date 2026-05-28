@@ -14,16 +14,332 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      api_keys: {
+        Row: {
+          created_at: string
+          id: string
+          key_hash: string
+          key_prefix: string
+          last_used_at: string | null
+          name: string
+          revoked: boolean
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          key_hash: string
+          key_prefix: string
+          last_used_at?: string | null
+          name?: string
+          revoked?: boolean
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          key_hash?: string
+          key_prefix?: string
+          last_used_at?: string | null
+          name?: string
+          revoked?: boolean
+          user_id?: string
+        }
+        Relationships: []
+      }
+      data_packages: {
+        Row: {
+          active: boolean
+          agent_price: number
+          created_at: string
+          id: string
+          network: Database["public"]["Enums"]["network_type"]
+          price: number
+          size_label: string
+          size_mb: number
+          sort_order: number
+        }
+        Insert: {
+          active?: boolean
+          agent_price: number
+          created_at?: string
+          id?: string
+          network: Database["public"]["Enums"]["network_type"]
+          price: number
+          size_label: string
+          size_mb: number
+          sort_order?: number
+        }
+        Update: {
+          active?: boolean
+          agent_price?: number
+          created_at?: string
+          id?: string
+          network?: Database["public"]["Enums"]["network_type"]
+          price?: number
+          size_label?: string
+          size_mb?: number
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      result_checkers: {
+        Row: {
+          active: boolean
+          agent_price: number
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          price: number
+        }
+        Insert: {
+          active?: boolean
+          agent_price: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          price: number
+        }
+        Update: {
+          active?: boolean
+          agent_price?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          price?: number
+        }
+        Relationships: []
+      }
+      store_package_prices: {
+        Row: {
+          id: string
+          package_id: string
+          price: number
+          store_id: string
+        }
+        Insert: {
+          id?: string
+          package_id: string
+          price: number
+          store_id: string
+        }
+        Update: {
+          id?: string
+          package_id?: string
+          price?: number
+          store_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "store_package_prices_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "data_packages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "store_package_prices_store_id_fkey"
+            columns: ["store_id"]
+            isOneToOne: false
+            referencedRelation: "stores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stores: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          name: string
+          slug: string
+          support_phone: string
+          support_whatsapp: string | null
+          user_id: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          name: string
+          slug: string
+          support_phone: string
+          support_whatsapp?: string | null
+          user_id: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          name?: string
+          slug?: string
+          support_phone?: string
+          support_whatsapp?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string | null
+          id: string
+          metadata: Json | null
+          network: Database["public"]["Enums"]["network_type"] | null
+          package_id: string | null
+          recipient_phone: string | null
+          reference: string | null
+          status: Database["public"]["Enums"]["transaction_status"]
+          type: Database["public"]["Enums"]["transaction_type"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          network?: Database["public"]["Enums"]["network_type"] | null
+          package_id?: string | null
+          recipient_phone?: string | null
+          reference?: string | null
+          status?: Database["public"]["Enums"]["transaction_status"]
+          type: Database["public"]["Enums"]["transaction_type"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json | null
+          network?: Database["public"]["Enums"]["network_type"] | null
+          package_id?: string | null
+          recipient_phone?: string | null
+          reference?: string | null
+          status?: Database["public"]["Enums"]["transaction_status"]
+          type?: Database["public"]["Enums"]["transaction_type"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transactions_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "data_packages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wallets: {
+        Row: {
+          balance: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
+      network_type:
+        | "mtn"
+        | "airteltigo_ishare"
+        | "airteltigo_bigtime"
+        | "telecel"
+      transaction_status:
+        | "pending"
+        | "processing"
+        | "completed"
+        | "failed"
+        | "refunded"
+      transaction_type:
+        | "wallet_topup"
+        | "data_purchase"
+        | "checker_purchase"
+        | "store_sale"
+        | "withdrawal"
+        | "refund"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +466,29 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+      network_type: [
+        "mtn",
+        "airteltigo_ishare",
+        "airteltigo_bigtime",
+        "telecel",
+      ],
+      transaction_status: [
+        "pending",
+        "processing",
+        "completed",
+        "failed",
+        "refunded",
+      ],
+      transaction_type: [
+        "wallet_topup",
+        "data_purchase",
+        "checker_purchase",
+        "store_sale",
+        "withdrawal",
+        "refund",
+      ],
+    },
   },
 } as const
