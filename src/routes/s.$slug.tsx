@@ -12,8 +12,16 @@ function PublicStore() {
     queryFn: async () => (await supabase.from("stores").select("*").eq("slug", slug).eq("active", true).maybeSingle()).data,
   });
   const { data: packages } = useQuery({
-    queryKey: ["public-store-packages"],
-    queryFn: async () => (await supabase.from("data_packages").select("*").eq("active", true).order("network").order("sort_order")).data ?? [],
+    queryKey: ["public-store-packages", store?.id],
+    enabled: !!store,
+    queryFn: async () => {
+      const [{ data: pkgs }, { data: overrides }] = await Promise.all([
+        supabase.from("data_packages").select("*").eq("active", true).order("network").order("sort_order"),
+        supabase.from("store_package_prices").select("package_id,price").eq("store_id", store!.id),
+      ]);
+      const map = new Map((overrides ?? []).map((o: any) => [o.package_id, Number(o.price)]));
+      return (pkgs ?? []).map((p: any) => ({ ...p, price: map.get(p.id) ?? Number(p.price) }));
+    },
   });
 
   if (isLoading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;

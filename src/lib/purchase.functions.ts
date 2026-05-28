@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { dispatchDataPurchase } from "@/lib/data-provider.server";
 
 export const buyData = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -18,6 +19,20 @@ export const buyData = createServerFn({ method: "POST" })
       _phone: data.phone,
     });
     if (error) throw new Error(error.message);
+
+    // Fire-and-await provider dispatch (cheap, but waits so the user sees result)
+    const { data: pkg } = await supabaseAdmin
+      .from("data_packages").select("network,size_mb,price").eq("id", data.packageId).single();
+    if (pkg) {
+      await dispatchDataPurchase({
+        transactionId: txId as string,
+        userId: context.userId,
+        network: pkg.network as string,
+        phone: data.phone,
+        sizeMb: pkg.size_mb,
+        amount: Number(pkg.price),
+      });
+    }
     return { transactionId: txId };
   });
 
