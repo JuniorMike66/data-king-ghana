@@ -207,3 +207,71 @@ export const adminListAllTransactions = createServerFn({ method: "GET" })
       };
     });
   });
+
+export const adminGetUserDetail = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i) => z.object({ userId: z.string().uuid() }).parse(i))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+    const uid = data.userId;
+
+    const [{ data: profile }, { data: roleRow }, { data: wallet }, { data: stores }, { data: txs }] = await Promise.all([
+      supabaseAdmin.from("profiles").select("*").eq("id", uid).maybeSingle(),
+      supabaseAdmin.from("user_roles").select("role").eq("user_id", uid).maybeSingle(),
+      supabaseAdmin.from("wallets").select("balance").eq("user_id", uid).maybeSingle(),
+      supabaseAdmin.from("stores").select("id,name,slug,active,created_at").eq("user_id", uid),
+      supabaseAdmin.from("transactions").select("*").eq("user_id", uid).order("created_at", { ascending: false }).limit(200),
+    ]);
+
+    if (!profile) throw new Error("User not found");
+
+    // Subagents = profiles whose sponsor_id is this user
+    const { data: subagents } = await supabaseAdmin
+      .from("profiles").select("id,email,full_name,phone,created_at").eq("sponsor_id", uid);
+
+    // For each subagent, balance + counts
+    const subIds = (subagents ?? []).map((s) => s.id);
+    const { data: subWallets } = subIds.length
+      ? await supabaseAdmin.from("wallets").select("user_id,balance").in("user_id", subIds)
+      : { data: [] as any[] };
+    const { data: subTxs } = subIds.length
+      ? await supabaseAdmin.from("transactions").select("user_id,type,amount,status").in("user_id", subIds)
+      : { data: [] as any[] };
+    const wMap = new Map((subWallets ?? []).map((w: any) => [w.user_id, Number(w.balance)]));
+    const ordersCount = new Map<string, number>();
+    const spentMap = new Map<string, number>();
+    (subTxs ?? []).forEach((t: any) => {
+      if (t.type === "data_purchase" || t.type === "checker_purchase") {
+        ordersCount.set(t.user_id, (ordersCount.get(t.user_id) ?? 0) + 1);
+        if (t.status === "completed") spentMap.set(t.user_id, (spentMap.get(t.user_id) ?? 0) + Number(t.amount));
+      }
+    });
+
+    const subagentRows = (subagents ?? []).map((s: any) => ({
+      ...s,
+      balance: wMap.get(s.id) ?? 0,
+      orders: ordersCount.get(s.id) ?? 0,
+      total_spent: spentMap.get(s.id) ?? 0,
+    }));
+
+    // Overview totals for this user
+    const list = txs ?? [];
+    const overview = {
+      total_orders: list.filter((t: any) => t.type === "data_purchase" || t.type === "checker_purchase").length,
+      total_spent: list
+        .filter((t: any) => (t.type === "data_purchase" || t.type === "checker_purchase") && t.status === "completed")
+        .reduce((s: number, t: any) => s + Number(t.amount), 0),
+      total_topups: list
+        .filter((t: any) => t.type === "wallet_topup" && t.status === "completed")
+        .reduce((s: number, t: any) => s + Number(t.amount), 0),
+      failed_orders: list.filter((t: any) => (t.type === "data_purchase" || t.type === "checker_purchase") && t.status === "failed").length,
+    };
+
+    return {
+      profile: { ...profile, role: roleRow?.role ?? "user", balance: Number(wallet?.balance ?? 0) },
+      stores: stores ?? [],
+      transactions: list,
+      subagents: subagentRows,
+      overview,
+    };
+  });

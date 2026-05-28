@@ -45,7 +45,7 @@ function BecomeAgent() {
     const parsed = schema.safeParse(form);
     if (!parsed.success) return toast.error(parsed.error.issues[0]?.message ?? "Invalid input");
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
+    const { data: signUpData, error } = await supabase.auth.signUp({
       email: parsed.data.email,
       password: parsed.data.password,
       options: {
@@ -57,8 +57,25 @@ function BecomeAgent() {
         },
       },
     });
+    if (error) {
+      setLoading(false);
+      return toast.error(error.message);
+    }
+    // If email confirmation is disabled we already have a session; otherwise
+    // try signing in so the user lands in the dashboard immediately.
+    if (!signUpData.session) {
+      const { error: signInErr } = await supabase.auth.signInWithPassword({
+        email: parsed.data.email,
+        password: parsed.data.password,
+      });
+      if (signInErr) {
+        setLoading(false);
+        toast.success("Account created. Please check your email to verify, then sign in.");
+        setMode("login");
+        return;
+      }
+    }
     setLoading(false);
-    if (error) return toast.error(error.message);
     toast.success("Welcome aboard! You're now an agent.");
     navigate({ to: "/dashboard" });
   };

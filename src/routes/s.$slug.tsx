@@ -98,7 +98,12 @@ function PublicStore() {
       <div className="min-h-screen flex flex-col items-center justify-center gap-3 text-center p-6">
         <h1 className="text-2xl font-bold">Store not found</h1>
         <p className="text-muted-foreground">This storefront is unavailable or inactive.</p>
-        <Link to="/" className="text-primary underline">Back home</Link>
+        <button
+          onClick={() => window.location.reload()}
+          className="text-primary underline"
+        >
+          Reload
+        </button>
       </div>
     );
   }
@@ -142,7 +147,7 @@ function PublicStore() {
             </div>
             <div>
               <div className="font-bold leading-tight">{store.name}</div>
-              <div className="text-[10px] text-muted-foreground">Powered by DataKing GH</div>
+              <div className="text-[10px] text-muted-foreground">Instant data bundles</div>
             </div>
           </div>
           <div className="flex items-center gap-2 text-sm">
@@ -195,7 +200,7 @@ function PublicStore() {
       </main>
 
       <footer className="text-center text-xs text-muted-foreground py-6 border-t border-border mt-6">
-        © {new Date().getFullYear()} {store.name} · Powered by <Link to="/" className="text-primary">DataKing Ghana</Link>
+        © {new Date().getFullYear()} {store.name}
       </footer>
 
       {/* Floating WhatsApp */}
