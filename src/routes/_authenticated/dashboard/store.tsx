@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,15 +8,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
-import {
-  Store as StoreIcon, ExternalLink, Tag, Copy, Check, Settings, Receipt,
-  Users, Wallet, Trash2, Plus,
-} from "lucide-react";
+import { Store as StoreIcon, ExternalLink, Copy, Check, Trash2, Plus } from "lucide-react";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/_authenticated/dashboard/store")({ component: StorePage });
+export const Route = createFileRoute("/_authenticated/dashboard/store")({ component: StoreLayout });
 
 const NETWORK_LABELS: Record<string, string> = {
   mtn: "MTN",
@@ -27,10 +23,9 @@ const NETWORK_LABELS: Record<string, string> = {
 
 const cedis = (n: number | string) => `₵${Number(n).toFixed(2)}`;
 
-function StorePage() {
+export function useMyStore() {
   const { user } = useAuth();
-
-  const { data: store, isLoading } = useQuery({
+  return useQuery({
     queryKey: ["my-store", user?.id],
     enabled: !!user,
     queryFn: async () => {
@@ -38,6 +33,10 @@ function StorePage() {
       return data;
     },
   });
+}
+
+function StoreLayout() {
+  const { data: store, isLoading } = useMyStore();
 
   return (
     <div className="space-y-6 max-w-4xl">
@@ -50,50 +49,8 @@ function StorePage() {
       </div>
 
       {!store && !isLoading && <CreateStoreCard />}
-
-      {store && (
-        <>
-          <StoreShareCard slug={store.slug} />
-          <StoreOverview storeId={store.id} />
-
-          <Accordion type="multiple" className="space-y-3">
-            <SectionItem value="packages" icon={<Tag className="w-4 h-4" />} title="Store packages">
-              <CustomPricing storeId={store.id} />
-            </SectionItem>
-
-            <SectionItem value="settings" icon={<Settings className="w-4 h-4" />} title="Store settings">
-              <StoreSettings store={store} />
-            </SectionItem>
-
-            <SectionItem value="transactions" icon={<Receipt className="w-4 h-4" />} title="Store transactions">
-              <StoreTransactions storeId={store.id} />
-            </SectionItem>
-
-            <SectionItem value="subagents" icon={<Users className="w-4 h-4" />} title="Subagent manager">
-              <SubagentManager storeId={store.id} />
-            </SectionItem>
-
-            <SectionItem value="withdrawals" icon={<Wallet className="w-4 h-4" />} title="Withdrawals">
-              <Withdrawals />
-            </SectionItem>
-          </Accordion>
-        </>
-      )}
+      {store && <Outlet />}
     </div>
-  );
-}
-
-function SectionItem({ value, icon, title, children }: { value: string; icon: React.ReactNode; title: string; children: React.ReactNode }) {
-  return (
-    <AccordionItem value={value} className="rounded-xl border border-border bg-card px-4">
-      <AccordionTrigger className="hover:no-underline">
-        <div className="flex items-center gap-2 text-left">
-          <span className="text-primary">{icon}</span>
-          <span className="font-semibold">{title}</span>
-        </div>
-      </AccordionTrigger>
-      <AccordionContent className="pt-2">{children}</AccordionContent>
-    </AccordionItem>
   );
 }
 
@@ -130,7 +87,7 @@ function CreateStoreCard() {
 }
 
 /* ─── Share card ─── */
-function StoreShareCard({ slug }: { slug: string }) {
+export function StoreShareCard({ slug }: { slug: string }) {
   const [copied, setCopied] = useState(false);
   const url = typeof window !== "undefined" ? `${window.location.origin}/s/${slug}` : `/s/${slug}`;
   const copy = async () => {
@@ -158,7 +115,7 @@ function StoreShareCard({ slug }: { slug: string }) {
 }
 
 /* ─── Overview stats ─── */
-function StoreOverview({ storeId }: { storeId: string }) {
+export function StoreOverview({ storeId }: { storeId: string }) {
   const { data } = useQuery({
     queryKey: ["store-overview", storeId],
     queryFn: async () => {
@@ -190,7 +147,7 @@ function Stat({ label, value }: { label: string; value: any }) {
 }
 
 /* ─── Settings ─── */
-function StoreSettings({ store }: { store: any }) {
+export function StoreSettings({ store }: { store: any }) {
   const qc = useQueryClient();
   const [form, setForm] = useState({
     name: store.name, slug: store.slug, support_phone: store.support_phone,
@@ -240,7 +197,7 @@ function StoreSettings({ store }: { store: any }) {
 }
 
 /* ─── Transactions ─── */
-function StoreTransactions({ storeId }: { storeId: string }) {
+export function StoreTransactions({ storeId }: { storeId: string }) {
   const { data, isLoading } = useQuery({
     queryKey: ["store-transactions", storeId],
     queryFn: async () => {
@@ -278,7 +235,7 @@ function StoreTransactions({ storeId }: { storeId: string }) {
 }
 
 /* ─── Subagent manager ─── */
-function SubagentManager({ storeId }: { storeId: string }) {
+export function SubagentManager({ storeId }: { storeId: string }) {
   const qc = useQueryClient();
   const [form, setForm] = useState({ name: "", phone: "", notes: "" });
   const { data: list } = useQuery({
@@ -347,7 +304,7 @@ function SubagentManager({ storeId }: { storeId: string }) {
 }
 
 /* ─── Withdrawals ─── */
-function Withdrawals() {
+export function Withdrawals() {
   const { user } = useAuth();
   const qc = useQueryClient();
   const [form, setForm] = useState({ amount: "", bank: "", account: "", name: "", note: "" });
@@ -426,7 +383,7 @@ function Withdrawals() {
 }
 
 /* ─── Custom pricing (packages) ─── */
-function CustomPricing({ storeId }: { storeId: string }) {
+export function CustomPricing({ storeId }: { storeId: string }) {
   const qc = useQueryClient();
   const { data: packages } = useQuery({
     queryKey: ["all-packages"],
