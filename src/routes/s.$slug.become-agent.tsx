@@ -1,5 +1,5 @@
 import { createFileRoute, useParams, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Crown, Check, Loader2, ArrowLeft } from "lucide-react";
@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { z } from "zod";
+import { useAuth } from "@/lib/auth-context";
 
 export const Route = createFileRoute("/s/$slug/become-agent")({ component: BecomeAgent });
 
@@ -29,6 +30,7 @@ const schema = z.object({
 function BecomeAgent() {
   const { slug } = useParams({ from: "/s/$slug/become-agent" });
   const navigate = useNavigate();
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
   const [mode, setMode] = useState<"signup" | "login">("signup");
   const [form, setForm] = useState({ full_name: "", phone: "", email: "", password: "" });
   const [loading, setLoading] = useState(false);
@@ -39,45 +41,55 @@ function BecomeAgent() {
       (await supabase.from("stores").select("id,name,user_id,slug").eq("slug", slug).eq("active", true).maybeSingle()).data,
   });
 
+  // If already signed in, send straight to the dashboard — signUp would fail
+  // for an existing session.
+  useEffect(() => {
+    if (!authLoading && isAuthenticated) navigate({ to: "/dashboard" });
+  }, [authLoading, isAuthenticated, navigate]);
+
   const onSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!store) return toast.error("Store not found");
     const parsed = schema.safeParse(form);
     if (!parsed.success) return toast.error(parsed.error.issues[0]?.message ?? "Invalid input");
     setLoading(true);
-    const { data: signUpData, error } = await supabase.auth.signUp({
-      email: parsed.data.email,
-      password: parsed.data.password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/dashboard`,
-        data: {
-          full_name: parsed.data.full_name,
-          phone: parsed.data.phone,
-          sponsor_id: store.user_id,
-        },
-      },
-    });
-    if (error) {
-      setLoading(false);
-      return toast.error(error.message);
-    }
-    // If email confirmation is disabled we already have a session; otherwise
-    // try signing in so the user lands in the dashboard immediately.
-    if (!signUpData.session) {
-      const { error: signInErr } = await supabase.auth.signInWithPassword({
+    try {
+      // Make sure no stale session is attached to the supabase client.
+      await supabase.auth.signOut().catch(() => {});
+
+      const { data: signUpData, error } = await supabase.auth.signUp({
         email: parsed.data.email,
         password: parsed.data.password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/dashboard`,
+          data: {
+            full_name: parsed.data.full_name,
+            phone: parsed.data.phone,
+            sponsor_id: store.user_id,
+          },
+        },
       });
-      if (signInErr) {
-        setLoading(false);
-        toast.success("Account created. Please check your email to verify, then sign in.");
-        setMode("login");
-        return;
+      if (error) throw error;
+
+      // If no session yet (email confirmation), try to sign in anyway.
+      if (!signUpData.session) {
+        const { error: signInErr } = await supabase.auth.signInWithPassword({
+          email: parsed.data.email,
+          password: parsed.data.password,
+        });
+        if (signInErr) {
+          toast.success("Account created. Please check your email to verify, then sign in.");
+          setMode("login");
+          return;
+        }
       }
+      toast.success("Welcome aboard! You're now an agent.");
+      navigate({ to: "/dashboard" });
+    } catch (err: any) {
+      toast.error(err?.message ?? "Could not create account");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-    toast.success("Welcome aboard! You're now an agent.");
-    navigate({ to: "/dashboard" });
   };
 
   const onLogin = async (e: React.FormEvent) => {
