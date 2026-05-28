@@ -22,6 +22,7 @@ import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
 import { Route as AdminPackagesRouteImport } from './routes/admin.packages'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
 import { Route as AdminNotificationsRouteImport } from './routes/admin.notifications'
+import { Route as AdminCheckersRouteImport } from './routes/admin.checkers'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard.index'
 import { Route as AuthenticatedDashboardWalletRouteImport } from './routes/_authenticated/dashboard/wallet'
 import { Route as AuthenticatedDashboardTransactionsRouteImport } from './routes/_authenticated/dashboard/transactions'
@@ -105,6 +106,11 @@ const AdminOrdersRoute = AdminOrdersRouteImport.update({
 const AdminNotificationsRoute = AdminNotificationsRouteImport.update({
   id: '/notifications',
   path: '/notifications',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCheckersRoute = AdminCheckersRouteImport.update({
+  id: '/checkers',
+  path: '/checkers',
   getParentRoute: () => AdminRoute,
 } as any)
 const AuthenticatedDashboardIndexRoute =
@@ -232,6 +238,7 @@ export interface FileRoutesByFullPath {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/admin/checkers': typeof AdminCheckersRoute
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/packages': typeof AdminPackagesRoute
@@ -265,6 +272,7 @@ export interface FileRoutesByTo {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/admin/checkers': typeof AdminCheckersRoute
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/packages': typeof AdminPackagesRoute
@@ -300,6 +308,7 @@ export interface FileRoutesById {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/admin/checkers': typeof AdminCheckersRoute
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/orders': typeof AdminOrdersRoute
   '/admin/packages': typeof AdminPackagesRoute
@@ -336,6 +345,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/signup'
+    | '/admin/checkers'
     | '/admin/notifications'
     | '/admin/orders'
     | '/admin/packages'
@@ -369,6 +379,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/signup'
+    | '/admin/checkers'
     | '/admin/notifications'
     | '/admin/orders'
     | '/admin/packages'
@@ -403,6 +414,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/signup'
+    | '/admin/checkers'
     | '/admin/notifications'
     | '/admin/orders'
     | '/admin/packages'
@@ -538,6 +550,13 @@ declare module '@tanstack/react-router' {
       path: '/notifications'
       fullPath: '/admin/notifications'
       preLoaderRoute: typeof AdminNotificationsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/checkers': {
+      id: '/admin/checkers'
+      path: '/checkers'
+      fullPath: '/admin/checkers'
+      preLoaderRoute: typeof AdminCheckersRouteImport
       parentRoute: typeof AdminRoute
     }
     '/_authenticated/dashboard/': {
@@ -745,6 +764,7 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 )
 
 interface AdminRouteChildren {
+  AdminCheckersRoute: typeof AdminCheckersRoute
   AdminNotificationsRoute: typeof AdminNotificationsRoute
   AdminOrdersRoute: typeof AdminOrdersRoute
   AdminPackagesRoute: typeof AdminPackagesRoute
@@ -754,6 +774,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminCheckersRoute: AdminCheckersRoute,
   AdminNotificationsRoute: AdminNotificationsRoute,
   AdminOrdersRoute: AdminOrdersRoute,
   AdminPackagesRoute: AdminPackagesRoute,
