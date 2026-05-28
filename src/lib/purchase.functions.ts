@@ -38,11 +38,17 @@ export const buyData = createServerFn({ method: "POST" })
 
 export const buyChecker = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input) => z.object({ checkerId: z.string().uuid() }).parse(input))
+  .inputValidator((input) =>
+    z.object({
+      checkerId: z.string().uuid(),
+      phone: z.string().regex(/^0\d{9}$/, "Phone must be 10 digits starting with 0"),
+    }).parse(input)
+  )
   .handler(async ({ data, context }) => {
     const { data: txId, error } = await supabaseAdmin.rpc("purchase_checker", {
       _user_id: context.userId,
       _checker_id: data.checkerId,
+      _phone: data.phone,
     });
     if (error) throw new Error(error.message);
     return { transactionId: txId };
