@@ -24,6 +24,7 @@ import { Route as AdminPackagesRouteImport } from './routes/admin.packages'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
 import { Route as AdminNotificationsRouteImport } from './routes/admin.notifications'
 import { Route as AdminCheckersRouteImport } from './routes/admin.checkers'
+import { Route as SSlugIndexRouteImport } from './routes/s.$slug.index'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard.index'
 import { Route as SSlugBecomeAgentRouteImport } from './routes/s.$slug.become-agent'
 import { Route as AdminUsersUserIdRouteImport } from './routes/admin.users.$userId'
@@ -122,6 +123,11 @@ const AdminCheckersRoute = AdminCheckersRouteImport.update({
   id: '/checkers',
   path: '/checkers',
   getParentRoute: () => AdminRoute,
+} as any)
+const SSlugIndexRoute = SSlugIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SSlugRoute,
 } as any)
 const AuthenticatedDashboardIndexRoute =
   AuthenticatedDashboardIndexRouteImport.update({
@@ -289,6 +295,7 @@ export interface FileRoutesByFullPath {
   '/admin/users/$userId': typeof AdminUsersUserIdRoute
   '/s/$slug/become-agent': typeof SSlugBecomeAgentRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
+  '/s/$slug/': typeof SSlugIndexRoute
   '/dashboard/buy-data/$network': typeof AuthenticatedDashboardBuyDataNetworkRoute
   '/dashboard/store/packages': typeof AuthenticatedDashboardStorePackagesRoute
   '/dashboard/store/settings': typeof AuthenticatedDashboardStoreSettingsRoute
@@ -316,7 +323,6 @@ export interface FileRoutesByTo {
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/transactions': typeof AdminTransactionsRoute
   '/admin/withdrawals': typeof AdminWithdrawalsRoute
-  '/s/$slug': typeof SSlugRouteWithChildren
   '/admin': typeof AdminIndexRoute
   '/dashboard/checkers': typeof AuthenticatedDashboardCheckersRoute
   '/dashboard/developer': typeof AuthenticatedDashboardDeveloperRoute
@@ -327,6 +333,7 @@ export interface FileRoutesByTo {
   '/admin/users/$userId': typeof AdminUsersUserIdRoute
   '/s/$slug/become-agent': typeof SSlugBecomeAgentRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
+  '/s/$slug': typeof SSlugIndexRoute
   '/dashboard/buy-data/$network': typeof AuthenticatedDashboardBuyDataNetworkRoute
   '/dashboard/store/packages': typeof AuthenticatedDashboardStorePackagesRoute
   '/dashboard/store/settings': typeof AuthenticatedDashboardStoreSettingsRoute
@@ -369,6 +376,7 @@ export interface FileRoutesById {
   '/admin/users/$userId': typeof AdminUsersUserIdRoute
   '/s/$slug/become-agent': typeof SSlugBecomeAgentRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
+  '/s/$slug/': typeof SSlugIndexRoute
   '/_authenticated/dashboard/buy-data/$network': typeof AuthenticatedDashboardBuyDataNetworkRoute
   '/_authenticated/dashboard/store/packages': typeof AuthenticatedDashboardStorePackagesRoute
   '/_authenticated/dashboard/store/settings': typeof AuthenticatedDashboardStoreSettingsRoute
@@ -411,6 +419,7 @@ export interface FileRouteTypes {
     | '/admin/users/$userId'
     | '/s/$slug/become-agent'
     | '/dashboard/'
+    | '/s/$slug/'
     | '/dashboard/buy-data/$network'
     | '/dashboard/store/packages'
     | '/dashboard/store/settings'
@@ -438,7 +447,6 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/transactions'
     | '/admin/withdrawals'
-    | '/s/$slug'
     | '/admin'
     | '/dashboard/checkers'
     | '/dashboard/developer'
@@ -449,6 +457,7 @@ export interface FileRouteTypes {
     | '/admin/users/$userId'
     | '/s/$slug/become-agent'
     | '/dashboard'
+    | '/s/$slug'
     | '/dashboard/buy-data/$network'
     | '/dashboard/store/packages'
     | '/dashboard/store/settings'
@@ -490,6 +499,7 @@ export interface FileRouteTypes {
     | '/admin/users/$userId'
     | '/s/$slug/become-agent'
     | '/_authenticated/dashboard/'
+    | '/s/$slug/'
     | '/_authenticated/dashboard/buy-data/$network'
     | '/_authenticated/dashboard/store/packages'
     | '/_authenticated/dashboard/store/settings'
@@ -629,6 +639,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/checkers'
       preLoaderRoute: typeof AdminCheckersRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/s/$slug/': {
+      id: '/s/$slug/'
+      path: '/'
+      fullPath: '/s/$slug/'
+      preLoaderRoute: typeof SSlugIndexRouteImport
+      parentRoute: typeof SSlugRoute
     }
     '/_authenticated/dashboard/': {
       id: '/_authenticated/dashboard/'
@@ -890,10 +907,12 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface SSlugRouteChildren {
   SSlugBecomeAgentRoute: typeof SSlugBecomeAgentRoute
+  SSlugIndexRoute: typeof SSlugIndexRoute
 }
 
 const SSlugRouteChildren: SSlugRouteChildren = {
   SSlugBecomeAgentRoute: SSlugBecomeAgentRoute,
+  SSlugIndexRoute: SSlugIndexRoute,
 }
 
 const SSlugRouteWithChildren = SSlugRoute._addFileChildren(SSlugRouteChildren)
