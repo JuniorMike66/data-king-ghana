@@ -26,9 +26,16 @@ const buyData = [
   { to: "/dashboard/buy-data/at-bigtime", label: "AirtelTigo BigTime" },
   { to: "/dashboard/buy-data/telecel", label: "Telecel" },
 ];
+const storeNav = [
+  { to: "/dashboard/store", label: "Overview" },
+  { to: "/dashboard/store/packages", label: "Store Packages" },
+  { to: "/dashboard/store/settings", label: "Store Settings" },
+  { to: "/dashboard/store/transactions", label: "Store Transactions" },
+  { to: "/dashboard/store/subagents", label: "Subagent Manager" },
+  { to: "/dashboard/store/withdrawals", label: "Withdrawals" },
+];
 const more = [
   { to: "/dashboard/checkers", label: "Result Checkers", icon: FileCheck },
-  { to: "/dashboard/store", label: "My Store", icon: Store },
   { to: "/dashboard/developer", label: "Developer Settings", icon: Code },
   { to: "/dashboard/profile", label: "My Profile", icon: User },
   { to: "/dashboard/report", label: "Report an Issue", icon: AlertCircle },
@@ -39,6 +46,7 @@ function Sidebar({ onNav }: { onNav?: () => void }) {
   const { isAdmin, signOut, user } = useAuth();
   const isActive = (to: string) => path === to;
   const buyOpen = path.startsWith("/dashboard/buy-data");
+  const storeOpen = path.startsWith("/dashboard/store");
 
   const linkCls = (active: boolean) =>
     cn(
@@ -74,6 +82,19 @@ function Sidebar({ onNav }: { onNav?: () => void }) {
           </CollapsibleTrigger>
           <CollapsibleContent className="ml-7 mt-1.5 space-y-1.5">
             {buyData.map((i) => (
+              <Link key={i.to} to={i.to} onClick={onNav} className={linkCls(isActive(i.to))}>
+                <span className="w-1.5 h-1.5 rounded-full bg-current opacity-60" />{i.label}
+              </Link>
+            ))}
+          </CollapsibleContent>
+        </Collapsible>
+        <Collapsible defaultOpen={storeOpen}>
+          <CollapsibleTrigger className={cn(linkCls(false), "w-full justify-between")}>
+            <span className="flex items-center gap-3"><Store className="w-5 h-5" /> My Store</span>
+            <ChevronDown className="w-4 h-4" />
+          </CollapsibleTrigger>
+          <CollapsibleContent className="ml-7 mt-1.5 space-y-1.5">
+            {storeNav.map((i) => (
               <Link key={i.to} to={i.to} onClick={onNav} className={linkCls(isActive(i.to))}>
                 <span className="w-1.5 h-1.5 rounded-full bg-current opacity-60" />{i.label}
               </Link>

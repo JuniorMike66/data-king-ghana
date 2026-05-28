@@ -30,7 +30,13 @@ import { Route as AuthenticatedDashboardReportRouteImport } from './routes/_auth
 import { Route as AuthenticatedDashboardProfileRouteImport } from './routes/_authenticated/dashboard/profile'
 import { Route as AuthenticatedDashboardDeveloperRouteImport } from './routes/_authenticated/dashboard/developer'
 import { Route as AuthenticatedDashboardCheckersRouteImport } from './routes/_authenticated/dashboard/checkers'
+import { Route as AuthenticatedDashboardStoreIndexRouteImport } from './routes/_authenticated/dashboard/store.index'
 import { Route as ApiPublicV1BalanceRouteImport } from './routes/api/public/v1/balance'
+import { Route as AuthenticatedDashboardStoreWithdrawalsRouteImport } from './routes/_authenticated/dashboard/store.withdrawals'
+import { Route as AuthenticatedDashboardStoreTransactionsRouteImport } from './routes/_authenticated/dashboard/store.transactions'
+import { Route as AuthenticatedDashboardStoreSubagentsRouteImport } from './routes/_authenticated/dashboard/store.subagents'
+import { Route as AuthenticatedDashboardStoreSettingsRouteImport } from './routes/_authenticated/dashboard/store.settings'
+import { Route as AuthenticatedDashboardStorePackagesRouteImport } from './routes/_authenticated/dashboard/store.packages'
 import { Route as AuthenticatedDashboardBuyDataNetworkRouteImport } from './routes/_authenticated/dashboard/buy-data/$network'
 import { Route as ApiPublicV1TransactionsIdRouteImport } from './routes/api/public/v1/transactions.$id'
 import { Route as ApiPublicV1StoreOrderVerifyRouteImport } from './routes/api/public/v1/store-order.verify'
@@ -149,11 +155,47 @@ const AuthenticatedDashboardCheckersRoute =
     path: '/dashboard/checkers',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedDashboardStoreIndexRoute =
+  AuthenticatedDashboardStoreIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedDashboardStoreRoute,
+  } as any)
 const ApiPublicV1BalanceRoute = ApiPublicV1BalanceRouteImport.update({
   id: '/api/public/v1/balance',
   path: '/api/public/v1/balance',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedDashboardStoreWithdrawalsRoute =
+  AuthenticatedDashboardStoreWithdrawalsRouteImport.update({
+    id: '/withdrawals',
+    path: '/withdrawals',
+    getParentRoute: () => AuthenticatedDashboardStoreRoute,
+  } as any)
+const AuthenticatedDashboardStoreTransactionsRoute =
+  AuthenticatedDashboardStoreTransactionsRouteImport.update({
+    id: '/transactions',
+    path: '/transactions',
+    getParentRoute: () => AuthenticatedDashboardStoreRoute,
+  } as any)
+const AuthenticatedDashboardStoreSubagentsRoute =
+  AuthenticatedDashboardStoreSubagentsRouteImport.update({
+    id: '/subagents',
+    path: '/subagents',
+    getParentRoute: () => AuthenticatedDashboardStoreRoute,
+  } as any)
+const AuthenticatedDashboardStoreSettingsRoute =
+  AuthenticatedDashboardStoreSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthenticatedDashboardStoreRoute,
+  } as any)
+const AuthenticatedDashboardStorePackagesRoute =
+  AuthenticatedDashboardStorePackagesRouteImport.update({
+    id: '/packages',
+    path: '/packages',
+    getParentRoute: () => AuthenticatedDashboardStoreRoute,
+  } as any)
 const AuthenticatedDashboardBuyDataNetworkRoute =
   AuthenticatedDashboardBuyDataNetworkRouteImport.update({
     id: '/dashboard/buy-data/$network',
@@ -201,12 +243,18 @@ export interface FileRoutesByFullPath {
   '/dashboard/developer': typeof AuthenticatedDashboardDeveloperRoute
   '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
   '/dashboard/report': typeof AuthenticatedDashboardReportRoute
-  '/dashboard/store': typeof AuthenticatedDashboardStoreRoute
+  '/dashboard/store': typeof AuthenticatedDashboardStoreRouteWithChildren
   '/dashboard/transactions': typeof AuthenticatedDashboardTransactionsRoute
   '/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/dashboard/buy-data/$network': typeof AuthenticatedDashboardBuyDataNetworkRoute
+  '/dashboard/store/packages': typeof AuthenticatedDashboardStorePackagesRoute
+  '/dashboard/store/settings': typeof AuthenticatedDashboardStoreSettingsRoute
+  '/dashboard/store/subagents': typeof AuthenticatedDashboardStoreSubagentsRoute
+  '/dashboard/store/transactions': typeof AuthenticatedDashboardStoreTransactionsRoute
+  '/dashboard/store/withdrawals': typeof AuthenticatedDashboardStoreWithdrawalsRoute
   '/api/public/v1/balance': typeof ApiPublicV1BalanceRoute
+  '/dashboard/store/': typeof AuthenticatedDashboardStoreIndexRoute
   '/api/public/v1/data/purchase': typeof ApiPublicV1DataPurchaseRoute
   '/api/public/v1/store-order/init': typeof ApiPublicV1StoreOrderInitRoute
   '/api/public/v1/store-order/verify': typeof ApiPublicV1StoreOrderVerifyRoute
@@ -228,12 +276,17 @@ export interface FileRoutesByTo {
   '/dashboard/developer': typeof AuthenticatedDashboardDeveloperRoute
   '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
   '/dashboard/report': typeof AuthenticatedDashboardReportRoute
-  '/dashboard/store': typeof AuthenticatedDashboardStoreRoute
   '/dashboard/transactions': typeof AuthenticatedDashboardTransactionsRoute
   '/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/dashboard/buy-data/$network': typeof AuthenticatedDashboardBuyDataNetworkRoute
+  '/dashboard/store/packages': typeof AuthenticatedDashboardStorePackagesRoute
+  '/dashboard/store/settings': typeof AuthenticatedDashboardStoreSettingsRoute
+  '/dashboard/store/subagents': typeof AuthenticatedDashboardStoreSubagentsRoute
+  '/dashboard/store/transactions': typeof AuthenticatedDashboardStoreTransactionsRoute
+  '/dashboard/store/withdrawals': typeof AuthenticatedDashboardStoreWithdrawalsRoute
   '/api/public/v1/balance': typeof ApiPublicV1BalanceRoute
+  '/dashboard/store': typeof AuthenticatedDashboardStoreIndexRoute
   '/api/public/v1/data/purchase': typeof ApiPublicV1DataPurchaseRoute
   '/api/public/v1/store-order/init': typeof ApiPublicV1StoreOrderInitRoute
   '/api/public/v1/store-order/verify': typeof ApiPublicV1StoreOrderVerifyRoute
@@ -258,12 +311,18 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/developer': typeof AuthenticatedDashboardDeveloperRoute
   '/_authenticated/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
   '/_authenticated/dashboard/report': typeof AuthenticatedDashboardReportRoute
-  '/_authenticated/dashboard/store': typeof AuthenticatedDashboardStoreRoute
+  '/_authenticated/dashboard/store': typeof AuthenticatedDashboardStoreRouteWithChildren
   '/_authenticated/dashboard/transactions': typeof AuthenticatedDashboardTransactionsRoute
   '/_authenticated/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/_authenticated/dashboard/buy-data/$network': typeof AuthenticatedDashboardBuyDataNetworkRoute
+  '/_authenticated/dashboard/store/packages': typeof AuthenticatedDashboardStorePackagesRoute
+  '/_authenticated/dashboard/store/settings': typeof AuthenticatedDashboardStoreSettingsRoute
+  '/_authenticated/dashboard/store/subagents': typeof AuthenticatedDashboardStoreSubagentsRoute
+  '/_authenticated/dashboard/store/transactions': typeof AuthenticatedDashboardStoreTransactionsRoute
+  '/_authenticated/dashboard/store/withdrawals': typeof AuthenticatedDashboardStoreWithdrawalsRoute
   '/api/public/v1/balance': typeof ApiPublicV1BalanceRoute
+  '/_authenticated/dashboard/store/': typeof AuthenticatedDashboardStoreIndexRoute
   '/api/public/v1/data/purchase': typeof ApiPublicV1DataPurchaseRoute
   '/api/public/v1/store-order/init': typeof ApiPublicV1StoreOrderInitRoute
   '/api/public/v1/store-order/verify': typeof ApiPublicV1StoreOrderVerifyRoute
@@ -293,7 +352,13 @@ export interface FileRouteTypes {
     | '/dashboard/wallet'
     | '/dashboard/'
     | '/dashboard/buy-data/$network'
+    | '/dashboard/store/packages'
+    | '/dashboard/store/settings'
+    | '/dashboard/store/subagents'
+    | '/dashboard/store/transactions'
+    | '/dashboard/store/withdrawals'
     | '/api/public/v1/balance'
+    | '/dashboard/store/'
     | '/api/public/v1/data/purchase'
     | '/api/public/v1/store-order/init'
     | '/api/public/v1/store-order/verify'
@@ -315,12 +380,17 @@ export interface FileRouteTypes {
     | '/dashboard/developer'
     | '/dashboard/profile'
     | '/dashboard/report'
-    | '/dashboard/store'
     | '/dashboard/transactions'
     | '/dashboard/wallet'
     | '/dashboard'
     | '/dashboard/buy-data/$network'
+    | '/dashboard/store/packages'
+    | '/dashboard/store/settings'
+    | '/dashboard/store/subagents'
+    | '/dashboard/store/transactions'
+    | '/dashboard/store/withdrawals'
     | '/api/public/v1/balance'
+    | '/dashboard/store'
     | '/api/public/v1/data/purchase'
     | '/api/public/v1/store-order/init'
     | '/api/public/v1/store-order/verify'
@@ -349,7 +419,13 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/wallet'
     | '/_authenticated/dashboard/'
     | '/_authenticated/dashboard/buy-data/$network'
+    | '/_authenticated/dashboard/store/packages'
+    | '/_authenticated/dashboard/store/settings'
+    | '/_authenticated/dashboard/store/subagents'
+    | '/_authenticated/dashboard/store/transactions'
+    | '/_authenticated/dashboard/store/withdrawals'
     | '/api/public/v1/balance'
+    | '/_authenticated/dashboard/store/'
     | '/api/public/v1/data/purchase'
     | '/api/public/v1/store-order/init'
     | '/api/public/v1/store-order/verify'
@@ -520,12 +596,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardCheckersRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/dashboard/store/': {
+      id: '/_authenticated/dashboard/store/'
+      path: '/'
+      fullPath: '/dashboard/store/'
+      preLoaderRoute: typeof AuthenticatedDashboardStoreIndexRouteImport
+      parentRoute: typeof AuthenticatedDashboardStoreRoute
+    }
     '/api/public/v1/balance': {
       id: '/api/public/v1/balance'
       path: '/api/public/v1/balance'
       fullPath: '/api/public/v1/balance'
       preLoaderRoute: typeof ApiPublicV1BalanceRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/dashboard/store/withdrawals': {
+      id: '/_authenticated/dashboard/store/withdrawals'
+      path: '/withdrawals'
+      fullPath: '/dashboard/store/withdrawals'
+      preLoaderRoute: typeof AuthenticatedDashboardStoreWithdrawalsRouteImport
+      parentRoute: typeof AuthenticatedDashboardStoreRoute
+    }
+    '/_authenticated/dashboard/store/transactions': {
+      id: '/_authenticated/dashboard/store/transactions'
+      path: '/transactions'
+      fullPath: '/dashboard/store/transactions'
+      preLoaderRoute: typeof AuthenticatedDashboardStoreTransactionsRouteImport
+      parentRoute: typeof AuthenticatedDashboardStoreRoute
+    }
+    '/_authenticated/dashboard/store/subagents': {
+      id: '/_authenticated/dashboard/store/subagents'
+      path: '/subagents'
+      fullPath: '/dashboard/store/subagents'
+      preLoaderRoute: typeof AuthenticatedDashboardStoreSubagentsRouteImport
+      parentRoute: typeof AuthenticatedDashboardStoreRoute
+    }
+    '/_authenticated/dashboard/store/settings': {
+      id: '/_authenticated/dashboard/store/settings'
+      path: '/settings'
+      fullPath: '/dashboard/store/settings'
+      preLoaderRoute: typeof AuthenticatedDashboardStoreSettingsRouteImport
+      parentRoute: typeof AuthenticatedDashboardStoreRoute
+    }
+    '/_authenticated/dashboard/store/packages': {
+      id: '/_authenticated/dashboard/store/packages'
+      path: '/packages'
+      fullPath: '/dashboard/store/packages'
+      preLoaderRoute: typeof AuthenticatedDashboardStorePackagesRouteImport
+      parentRoute: typeof AuthenticatedDashboardStoreRoute
     }
     '/_authenticated/dashboard/buy-data/$network': {
       id: '/_authenticated/dashboard/buy-data/$network'
@@ -565,12 +683,42 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedDashboardStoreRouteChildren {
+  AuthenticatedDashboardStorePackagesRoute: typeof AuthenticatedDashboardStorePackagesRoute
+  AuthenticatedDashboardStoreSettingsRoute: typeof AuthenticatedDashboardStoreSettingsRoute
+  AuthenticatedDashboardStoreSubagentsRoute: typeof AuthenticatedDashboardStoreSubagentsRoute
+  AuthenticatedDashboardStoreTransactionsRoute: typeof AuthenticatedDashboardStoreTransactionsRoute
+  AuthenticatedDashboardStoreWithdrawalsRoute: typeof AuthenticatedDashboardStoreWithdrawalsRoute
+  AuthenticatedDashboardStoreIndexRoute: typeof AuthenticatedDashboardStoreIndexRoute
+}
+
+const AuthenticatedDashboardStoreRouteChildren: AuthenticatedDashboardStoreRouteChildren =
+  {
+    AuthenticatedDashboardStorePackagesRoute:
+      AuthenticatedDashboardStorePackagesRoute,
+    AuthenticatedDashboardStoreSettingsRoute:
+      AuthenticatedDashboardStoreSettingsRoute,
+    AuthenticatedDashboardStoreSubagentsRoute:
+      AuthenticatedDashboardStoreSubagentsRoute,
+    AuthenticatedDashboardStoreTransactionsRoute:
+      AuthenticatedDashboardStoreTransactionsRoute,
+    AuthenticatedDashboardStoreWithdrawalsRoute:
+      AuthenticatedDashboardStoreWithdrawalsRoute,
+    AuthenticatedDashboardStoreIndexRoute:
+      AuthenticatedDashboardStoreIndexRoute,
+  }
+
+const AuthenticatedDashboardStoreRouteWithChildren =
+  AuthenticatedDashboardStoreRoute._addFileChildren(
+    AuthenticatedDashboardStoreRouteChildren,
+  )
+
 interface AuthenticatedRouteChildren {
   AuthenticatedDashboardCheckersRoute: typeof AuthenticatedDashboardCheckersRoute
   AuthenticatedDashboardDeveloperRoute: typeof AuthenticatedDashboardDeveloperRoute
   AuthenticatedDashboardProfileRoute: typeof AuthenticatedDashboardProfileRoute
   AuthenticatedDashboardReportRoute: typeof AuthenticatedDashboardReportRoute
-  AuthenticatedDashboardStoreRoute: typeof AuthenticatedDashboardStoreRoute
+  AuthenticatedDashboardStoreRoute: typeof AuthenticatedDashboardStoreRouteWithChildren
   AuthenticatedDashboardTransactionsRoute: typeof AuthenticatedDashboardTransactionsRoute
   AuthenticatedDashboardWalletRoute: typeof AuthenticatedDashboardWalletRoute
   AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
@@ -582,7 +730,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDashboardDeveloperRoute: AuthenticatedDashboardDeveloperRoute,
   AuthenticatedDashboardProfileRoute: AuthenticatedDashboardProfileRoute,
   AuthenticatedDashboardReportRoute: AuthenticatedDashboardReportRoute,
-  AuthenticatedDashboardStoreRoute: AuthenticatedDashboardStoreRoute,
+  AuthenticatedDashboardStoreRoute:
+    AuthenticatedDashboardStoreRouteWithChildren,
   AuthenticatedDashboardTransactionsRoute:
     AuthenticatedDashboardTransactionsRoute,
   AuthenticatedDashboardWalletRoute: AuthenticatedDashboardWalletRoute,
