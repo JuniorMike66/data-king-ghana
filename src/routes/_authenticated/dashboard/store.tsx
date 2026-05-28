@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Store as StoreIcon, ExternalLink, Tag } from "lucide-react";
+import { Store as StoreIcon, ExternalLink, Tag, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/dashboard/store")({ component: StorePage });
@@ -69,8 +69,16 @@ function StorePage() {
             <Label>URL slug</Label>
             <Input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value.replace(/[^a-z0-9-]/gi, "").toLowerCase() })} placeholder="kingsdata" />
           </div>
-          <div><Label>Support phone</Label><Input value={form.support_phone} onChange={(e) => setForm({ ...form, support_phone: e.target.value })} /></div>
-          <div><Label>WhatsApp number</Label><Input value={form.support_whatsapp} onChange={(e) => setForm({ ...form, support_whatsapp: e.target.value })} /></div>
+          <div><Label>Support phone</Label><Input value={form.support_phone} onChange={(e) => setForm({ ...form, support_phone: e.target.value })} placeholder="0241234567" /></div>
+          <div>
+            <Label>WhatsApp channel / group link <span className="text-muted-foreground font-normal">(optional)</span></Label>
+            <Input
+              value={form.support_whatsapp}
+              onChange={(e) => setForm({ ...form, support_whatsapp: e.target.value })}
+              placeholder="https://whatsapp.com/channel/..."
+            />
+            <p className="text-[11px] text-muted-foreground mt-1">Shown as a floating WhatsApp button on your store.</p>
+          </div>
         </div>
         <div className="flex items-center justify-between border-t border-border pt-4">
           <div><div className="font-semibold">Storefront active</div><div className="text-xs text-muted-foreground">Customers can find and order from your store.</div></div>
@@ -79,15 +87,39 @@ function StorePage() {
         <Button onClick={() => save.mutate()} disabled={save.isPending || !form.name || !form.slug || !form.support_phone}>
           {save.isPending ? "Saving..." : store ? "Save changes" : "Create store"}
         </Button>
-        {store && (
-          <div className="rounded-lg bg-muted p-3 text-sm flex items-center justify-between">
-            <span className="truncate">Your store URL: <span className="font-mono">/s/{store.slug}</span></span>
-            <Link to="/s/$slug" params={{ slug: store.slug }} className="text-primary inline-flex items-center gap-1 text-xs"><ExternalLink className="w-3 h-3" />Open</Link>
-          </div>
-        )}
+        {store && <StoreShareCard slug={store.slug} />}
       </div>
 
       {store && <CustomPricing storeId={store.id} />}
+    </div>
+  );
+}
+
+function StoreShareCard({ slug }: { slug: string }) {
+  const [copied, setCopied] = useState(false);
+  const url = typeof window !== "undefined" ? `${window.location.origin}/s/${slug}` : `/s/${slug}`;
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      toast.success("Store link copied");
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      toast.error("Could not copy");
+    }
+  };
+  return (
+    <div className="rounded-lg bg-muted p-3 space-y-2">
+      <div className="text-xs font-semibold text-muted-foreground">YOUR STORE LINK · share with customers</div>
+      <div className="flex items-center gap-2">
+        <Input readOnly value={url} className="font-mono text-xs bg-background" onFocus={(e) => e.currentTarget.select()} />
+        <Button type="button" size="sm" variant="outline" onClick={copy} className="shrink-0">
+          {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+        </Button>
+        <a href={url} target="_blank" rel="noopener noreferrer" className="shrink-0">
+          <Button type="button" size="sm" variant="outline"><ExternalLink className="w-4 h-4" /></Button>
+        </a>
+      </div>
     </div>
   );
 }

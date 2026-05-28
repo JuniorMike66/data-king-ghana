@@ -1,16 +1,46 @@
-import { createFileRoute, useParams } from "@tanstack/react-router";
+import { createFileRoute, useParams, useNavigate, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { MessageCircle, Phone } from "lucide-react";
+import { MessageCircle, Phone, Crown, Loader2 } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 
-export const Route = createFileRoute("/s/$slug")({ component: PublicStore });
+type SearchParams = { reference?: string };
+
+export const Route = createFileRoute("/s/$slug")({
+  validateSearch: (s: Record<string, unknown>): SearchParams => ({
+    reference: typeof s.reference === "string" ? s.reference : undefined,
+  }),
+  component: PublicStore,
+});
+
+const networks: Record<string, { label: string; color: string }> = {
+  mtn: { label: "MTN", color: "bg-mtn text-mtn-foreground" },
+  airteltigo_ishare: { label: "AT iShare", color: "bg-airteltigo text-airteltigo-foreground" },
+  airteltigo_bigtime: { label: "AT BigTime", color: "bg-airteltigo text-airteltigo-foreground" },
+  telecel: { label: "Telecel", color: "bg-telecel text-telecel-foreground" },
+};
 
 function PublicStore() {
   const { slug } = useParams({ from: "/s/$slug" });
+  const search = Route.useSearch();
+  const navigate = useNavigate();
+  const [selected, setSelected] = useState<any>(null);
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [paying, setPaying] = useState(false);
+  const [verifying, setVerifying] = useState(false);
+
   const { data: store, isLoading } = useQuery({
     queryKey: ["public-store", slug],
-    queryFn: async () => (await supabase.from("stores").select("*").eq("slug", slug).eq("active", true).maybeSingle()).data,
+    queryFn: async () =>
+      (await supabase.from("stores").select("*").eq("slug", slug).eq("active", true).maybeSingle()).data,
   });
+
   const { data: packages } = useQuery({
     queryKey: ["public-store-packages", store?.id],
     enabled: !!store,
@@ -24,33 +54,108 @@ function PublicStore() {
     },
   });
 
-  if (isLoading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
-  if (!store) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Store not found</div>;
+  // Handle Paystack callback
+  useEffect(() => {
+    const reference = search.reference;
+    if (!reference || verifying) return;
+    setVerifying(true);
+    (async () => {
+      try {
+        const res = await fetch("/api/public/v1/store-order/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ reference }),
+        });
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.error ?? "Verification failed");
+        if (json.status === "completed") toast.success("Payment confirmed — your data is on the way!");
+        else if (json.status === "pending") toast.success("Payment received. Your order is being processed.");
+        else if (json.status === "failed") toast.error("Order failed. Please contact support — your payment will be refunded.");
+        else toast.message(`Payment status: ${json.status}`);
+      } catch (e: any) {
+        toast.error(e.message ?? "Could not verify payment");
+      } finally {
+        navigate({ to: "/s/$slug", params: { slug }, search: {}, replace: true });
+        setVerifying(false);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search.reference]);
 
-  const wa = store.support_whatsapp?.replace(/[^0-9]/g, "");
-  const order = (p: any) => {
-    const msg = `Hi ${store.name}, I want to buy ${p.size_label} ${p.network.toUpperCase()} data for GH₵${Number(p.price).toFixed(2)}`;
-    if (wa) window.open(`https://wa.me/${wa}?text=${encodeURIComponent(msg)}`, "_blank");
-    else window.location.href = `tel:${store.support_phone}`;
+  if (isLoading) {
+    return <div className="min-h-screen flex items-center justify-center"><Loader2 className="animate-spin" /></div>;
+  }
+  if (!store) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-3 text-center p-6">
+        <h1 className="text-2xl font-bold">Store not found</h1>
+        <p className="text-muted-foreground">This storefront is unavailable or inactive.</p>
+        <Link to="/" className="text-primary underline">Back home</Link>
+      </div>
+    );
+  }
+
+  const waLink = (store.support_whatsapp ?? "").trim();
+
+  const startPurchase = async () => {
+    if (!selected) return;
+    if (!/^0\d{9}$/.test(phone)) return toast.error("Enter a valid 10-digit phone");
+    if (!/^\S+@\S+\.\S+$/.test(email)) return toast.error("Enter a valid email for receipt");
+    setPaying(true);
+    try {
+      const res = await fetch("/api/public/v1/store-order/init", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          store_slug: slug,
+          package_id: selected.id,
+          recipient_phone: phone,
+          customer_email: email,
+          origin: window.location.origin,
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error ?? "Could not start payment");
+      window.location.href = json.authorization_url;
+    } catch (e: any) {
+      toast.error(e.message);
+      setPaying(false);
+    }
   };
 
-  const networks: any = { mtn: { label: "MTN", color: "bg-mtn text-mtn-foreground" },
-    airteltigo_ishare: { label: "AT iShare", color: "bg-airteltigo text-airteltigo-foreground" },
-    airteltigo_bigtime: { label: "AT BigTime", color: "bg-airteltigo text-airteltigo-foreground" },
-    telecel: { label: "Telecel", color: "bg-telecel text-telecel-foreground" }};
-
   return (
-    <div className="min-h-screen bg-background adinkra-bg">
-      <header className="bg-gradient-to-br from-primary/30 to-amber-700/20 border-b border-border p-8 text-center">
-        <h1 className="text-4xl font-extrabold">{store.name}</h1>
-        <p className="text-muted-foreground mt-2">Trusted data reseller · Powered by DataKing GH</p>
-        <div className="flex justify-center gap-3 mt-4">
-          {wa && <a href={`https://wa.me/${wa}`} target="_blank" className="inline-flex items-center gap-2 bg-[#25D366] text-white px-4 py-2 rounded-lg"><MessageCircle className="w-4 h-4" />WhatsApp</a>}
-          <a href={`tel:${store.support_phone}`} className="inline-flex items-center gap-2 bg-card border border-border px-4 py-2 rounded-lg"><Phone className="w-4 h-4" />{store.support_phone}</a>
+    <div className="min-h-screen bg-background adinkra-bg flex flex-col">
+      {/* Header */}
+      <header className="border-b border-border bg-card/60 backdrop-blur sticky top-0 z-30">
+        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-amber-600 flex items-center justify-center">
+              <Crown className="w-5 h-5 text-primary-foreground" />
+            </div>
+            <div>
+              <div className="font-bold leading-tight">{store.name}</div>
+              <div className="text-[10px] text-muted-foreground">Powered by DataKing GH</div>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 text-sm">
+            <a href={`tel:${store.support_phone}`} className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-border">
+              <Phone className="w-4 h-4" />{store.support_phone}
+            </a>
+          </div>
         </div>
       </header>
-      <main className="max-w-6xl mx-auto p-6 space-y-8">
-        {Object.entries(networks).map(([key, cfg]: any) => {
+
+      {/* Hero */}
+      <section className="bg-gradient-to-br from-primary/20 to-amber-700/10 border-b border-border">
+        <div className="max-w-6xl mx-auto px-4 py-10 text-center">
+          <h1 className="text-3xl sm:text-4xl font-extrabold">Buy Data, Instantly</h1>
+          <p className="text-muted-foreground mt-2">Affordable MTN, AirtelTigo & Telecel bundles with no expiry. Pay securely via mobile money or card.</p>
+        </div>
+      </section>
+
+      {/* Bundles */}
+      <main className="max-w-6xl mx-auto p-4 sm:p-6 space-y-8 flex-1 w-full">
+        {Object.entries(networks).map(([key, cfg]) => {
           const items = (packages ?? []).filter((p: any) => p.network === key);
           if (!items.length) return null;
           return (
@@ -58,18 +163,74 @@ function PublicStore() {
               <h2 className="text-xl font-bold mb-3">{cfg.label} Bundles</h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {items.map((p: any) => (
-                  <button key={p.id} onClick={() => order(p)} className={`${cfg.color} rounded-xl p-4 text-left shadow hover:scale-[1.02] transition`}>
+                  <button
+                    key={p.id}
+                    onClick={() => { setSelected(p); setPhone(""); setEmail(""); }}
+                    className={`${cfg.color} rounded-xl p-4 text-left shadow hover:scale-[1.02] transition`}
+                  >
                     <div className="text-2xl font-extrabold">{p.size_label}</div>
                     <div className="text-xl font-bold mt-2">₵{Number(p.price).toFixed(2)}</div>
-                    <div className="text-[10px] opacity-80 mt-1">NO EXPIRY · Tap to order</div>
+                    <div className="text-[10px] opacity-80 mt-1">NO EXPIRY · Tap to buy</div>
                   </button>
                 ))}
               </div>
             </section>
           );
         })}
+        {(packages?.length ?? 0) === 0 && (
+          <div className="text-center text-muted-foreground py-12">No bundles available yet.</div>
+        )}
       </main>
-      <footer className="text-center text-xs text-muted-foreground py-6">© {new Date().getFullYear()} {store.name} · Powered by DataKing Ghana</footer>
+
+      <footer className="text-center text-xs text-muted-foreground py-6 border-t border-border mt-6">
+        © {new Date().getFullYear()} {store.name} · Powered by <Link to="/" className="text-primary">DataKing Ghana</Link>
+      </footer>
+
+      {/* Floating WhatsApp */}
+      {waLink && (
+        <a
+          href={waLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Join our WhatsApp"
+          className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-[#25D366] text-white shadow-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-transform"
+        >
+          <MessageCircle className="w-7 h-7" fill="white" />
+        </a>
+      )}
+
+      {/* Order modal */}
+      <Dialog open={!!selected} onOpenChange={(o) => { if (!o && !paying) setSelected(null); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Buy {selected?.size_label} {selected ? networks[selected.network]?.label : ""}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div className="rounded-lg p-3 bg-muted text-sm flex justify-between">
+              <span>Total to pay</span>
+              <span className="font-bold">GH₵{Number(selected?.price ?? 0).toFixed(2)}</span>
+            </div>
+            <div>
+              <Label>Recipient phone number</Label>
+              <Input placeholder="0241234567" value={phone} onChange={(e) => setPhone(e.target.value)} maxLength={10} />
+            </div>
+            <div>
+              <Label>Your email (for payment receipt)</Label>
+              <Input type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+            </div>
+            <Button className="w-full" disabled={paying} onClick={startPurchase}>
+              {paying ? "Redirecting to payment..." : "Pay & Order"}
+            </Button>
+            <p className="text-[11px] text-muted-foreground">You'll be redirected to a secure Paystack page (Mobile Money or Card). Data is sent automatically after payment.</p>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {verifying && (
+        <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur flex items-center justify-center">
+          <div className="text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto" /><p className="mt-2 text-sm">Verifying your payment...</p></div>
+        </div>
+      )}
     </div>
   );
 }
