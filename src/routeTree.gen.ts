@@ -16,7 +16,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SSlugRouteImport } from './routes/s.$slug'
-import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard.index'
 import { Route as AuthenticatedDashboardWalletRouteImport } from './routes/_authenticated/dashboard/wallet'
 import { Route as AuthenticatedDashboardTransactionsRouteImport } from './routes/_authenticated/dashboard/transactions'
 import { Route as AuthenticatedDashboardStoreRouteImport } from './routes/_authenticated/dashboard/store'
@@ -63,52 +63,53 @@ const SSlugRoute = SSlugRouteImport.update({
   path: '/s/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
+const AuthenticatedDashboardIndexRoute =
+  AuthenticatedDashboardIndexRouteImport.update({
+    id: '/dashboard/',
+    path: '/dashboard/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedDashboardWalletRoute =
   AuthenticatedDashboardWalletRouteImport.update({
-    id: '/wallet',
-    path: '/wallet',
-    getParentRoute: () => AuthenticatedDashboardRoute,
+    id: '/dashboard/wallet',
+    path: '/dashboard/wallet',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedDashboardTransactionsRoute =
   AuthenticatedDashboardTransactionsRouteImport.update({
-    id: '/transactions',
-    path: '/transactions',
-    getParentRoute: () => AuthenticatedDashboardRoute,
+    id: '/dashboard/transactions',
+    path: '/dashboard/transactions',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedDashboardStoreRoute =
   AuthenticatedDashboardStoreRouteImport.update({
-    id: '/store',
-    path: '/store',
-    getParentRoute: () => AuthenticatedDashboardRoute,
+    id: '/dashboard/store',
+    path: '/dashboard/store',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedDashboardReportRoute =
   AuthenticatedDashboardReportRouteImport.update({
-    id: '/report',
-    path: '/report',
-    getParentRoute: () => AuthenticatedDashboardRoute,
+    id: '/dashboard/report',
+    path: '/dashboard/report',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedDashboardProfileRoute =
   AuthenticatedDashboardProfileRouteImport.update({
-    id: '/profile',
-    path: '/profile',
-    getParentRoute: () => AuthenticatedDashboardRoute,
+    id: '/dashboard/profile',
+    path: '/dashboard/profile',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedDashboardDeveloperRoute =
   AuthenticatedDashboardDeveloperRouteImport.update({
-    id: '/developer',
-    path: '/developer',
-    getParentRoute: () => AuthenticatedDashboardRoute,
+    id: '/dashboard/developer',
+    path: '/dashboard/developer',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedDashboardCheckersRoute =
   AuthenticatedDashboardCheckersRouteImport.update({
-    id: '/checkers',
-    path: '/checkers',
-    getParentRoute: () => AuthenticatedDashboardRoute,
+    id: '/dashboard/checkers',
+    path: '/dashboard/checkers',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const ApiPublicV1BalanceRoute = ApiPublicV1BalanceRouteImport.update({
   id: '/api/public/v1/balance',
@@ -117,9 +118,9 @@ const ApiPublicV1BalanceRoute = ApiPublicV1BalanceRouteImport.update({
 } as any)
 const AuthenticatedDashboardBuyDataNetworkRoute =
   AuthenticatedDashboardBuyDataNetworkRouteImport.update({
-    id: '/buy-data/$network',
-    path: '/buy-data/$network',
-    getParentRoute: () => AuthenticatedDashboardRoute,
+    id: '/dashboard/buy-data/$network',
+    path: '/dashboard/buy-data/$network',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const ApiPublicV1TransactionsIdRoute =
   ApiPublicV1TransactionsIdRouteImport.update({
@@ -139,7 +140,6 @@ export interface FileRoutesByFullPath {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
-  '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/s/$slug': typeof SSlugRoute
   '/dashboard/checkers': typeof AuthenticatedDashboardCheckersRoute
   '/dashboard/developer': typeof AuthenticatedDashboardDeveloperRoute
@@ -148,6 +148,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/store': typeof AuthenticatedDashboardStoreRoute
   '/dashboard/transactions': typeof AuthenticatedDashboardTransactionsRoute
   '/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
+  '/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/dashboard/buy-data/$network': typeof AuthenticatedDashboardBuyDataNetworkRoute
   '/api/public/v1/balance': typeof ApiPublicV1BalanceRoute
   '/api/public/v1/data/purchase': typeof ApiPublicV1DataPurchaseRoute
@@ -159,7 +160,6 @@ export interface FileRoutesByTo {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
-  '/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/s/$slug': typeof SSlugRoute
   '/dashboard/checkers': typeof AuthenticatedDashboardCheckersRoute
   '/dashboard/developer': typeof AuthenticatedDashboardDeveloperRoute
@@ -168,6 +168,7 @@ export interface FileRoutesByTo {
   '/dashboard/store': typeof AuthenticatedDashboardStoreRoute
   '/dashboard/transactions': typeof AuthenticatedDashboardTransactionsRoute
   '/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
+  '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/dashboard/buy-data/$network': typeof AuthenticatedDashboardBuyDataNetworkRoute
   '/api/public/v1/balance': typeof ApiPublicV1BalanceRoute
   '/api/public/v1/data/purchase': typeof ApiPublicV1DataPurchaseRoute
@@ -181,7 +182,6 @@ export interface FileRoutesById {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
-  '/_authenticated/dashboard': typeof AuthenticatedDashboardRouteWithChildren
   '/s/$slug': typeof SSlugRoute
   '/_authenticated/dashboard/checkers': typeof AuthenticatedDashboardCheckersRoute
   '/_authenticated/dashboard/developer': typeof AuthenticatedDashboardDeveloperRoute
@@ -190,6 +190,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/store': typeof AuthenticatedDashboardStoreRoute
   '/_authenticated/dashboard/transactions': typeof AuthenticatedDashboardTransactionsRoute
   '/_authenticated/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
+  '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/_authenticated/dashboard/buy-data/$network': typeof AuthenticatedDashboardBuyDataNetworkRoute
   '/api/public/v1/balance': typeof ApiPublicV1BalanceRoute
   '/api/public/v1/data/purchase': typeof ApiPublicV1DataPurchaseRoute
@@ -203,7 +204,6 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/signup'
-    | '/dashboard'
     | '/s/$slug'
     | '/dashboard/checkers'
     | '/dashboard/developer'
@@ -212,6 +212,7 @@ export interface FileRouteTypes {
     | '/dashboard/store'
     | '/dashboard/transactions'
     | '/dashboard/wallet'
+    | '/dashboard/'
     | '/dashboard/buy-data/$network'
     | '/api/public/v1/balance'
     | '/api/public/v1/data/purchase'
@@ -223,7 +224,6 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/signup'
-    | '/dashboard'
     | '/s/$slug'
     | '/dashboard/checkers'
     | '/dashboard/developer'
@@ -232,6 +232,7 @@ export interface FileRouteTypes {
     | '/dashboard/store'
     | '/dashboard/transactions'
     | '/dashboard/wallet'
+    | '/dashboard'
     | '/dashboard/buy-data/$network'
     | '/api/public/v1/balance'
     | '/api/public/v1/data/purchase'
@@ -244,7 +245,6 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/signup'
-    | '/_authenticated/dashboard'
     | '/s/$slug'
     | '/_authenticated/dashboard/checkers'
     | '/_authenticated/dashboard/developer'
@@ -253,6 +253,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/store'
     | '/_authenticated/dashboard/transactions'
     | '/_authenticated/dashboard/wallet'
+    | '/_authenticated/dashboard/'
     | '/_authenticated/dashboard/buy-data/$network'
     | '/api/public/v1/balance'
     | '/api/public/v1/data/purchase'
@@ -323,61 +324,61 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/dashboard': {
-      id: '/_authenticated/dashboard'
+    '/_authenticated/dashboard/': {
+      id: '/_authenticated/dashboard/'
       path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof AuthenticatedDashboardIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/dashboard/wallet': {
       id: '/_authenticated/dashboard/wallet'
-      path: '/wallet'
+      path: '/dashboard/wallet'
       fullPath: '/dashboard/wallet'
       preLoaderRoute: typeof AuthenticatedDashboardWalletRouteImport
-      parentRoute: typeof AuthenticatedDashboardRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/dashboard/transactions': {
       id: '/_authenticated/dashboard/transactions'
-      path: '/transactions'
+      path: '/dashboard/transactions'
       fullPath: '/dashboard/transactions'
       preLoaderRoute: typeof AuthenticatedDashboardTransactionsRouteImport
-      parentRoute: typeof AuthenticatedDashboardRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/dashboard/store': {
       id: '/_authenticated/dashboard/store'
-      path: '/store'
+      path: '/dashboard/store'
       fullPath: '/dashboard/store'
       preLoaderRoute: typeof AuthenticatedDashboardStoreRouteImport
-      parentRoute: typeof AuthenticatedDashboardRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/dashboard/report': {
       id: '/_authenticated/dashboard/report'
-      path: '/report'
+      path: '/dashboard/report'
       fullPath: '/dashboard/report'
       preLoaderRoute: typeof AuthenticatedDashboardReportRouteImport
-      parentRoute: typeof AuthenticatedDashboardRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/dashboard/profile': {
       id: '/_authenticated/dashboard/profile'
-      path: '/profile'
+      path: '/dashboard/profile'
       fullPath: '/dashboard/profile'
       preLoaderRoute: typeof AuthenticatedDashboardProfileRouteImport
-      parentRoute: typeof AuthenticatedDashboardRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/dashboard/developer': {
       id: '/_authenticated/dashboard/developer'
-      path: '/developer'
+      path: '/dashboard/developer'
       fullPath: '/dashboard/developer'
       preLoaderRoute: typeof AuthenticatedDashboardDeveloperRouteImport
-      parentRoute: typeof AuthenticatedDashboardRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/dashboard/checkers': {
       id: '/_authenticated/dashboard/checkers'
-      path: '/checkers'
+      path: '/dashboard/checkers'
       fullPath: '/dashboard/checkers'
       preLoaderRoute: typeof AuthenticatedDashboardCheckersRouteImport
-      parentRoute: typeof AuthenticatedDashboardRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/api/public/v1/balance': {
       id: '/api/public/v1/balance'
@@ -388,10 +389,10 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/dashboard/buy-data/$network': {
       id: '/_authenticated/dashboard/buy-data/$network'
-      path: '/buy-data/$network'
+      path: '/dashboard/buy-data/$network'
       fullPath: '/dashboard/buy-data/$network'
       preLoaderRoute: typeof AuthenticatedDashboardBuyDataNetworkRouteImport
-      parentRoute: typeof AuthenticatedDashboardRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/api/public/v1/transactions/$id': {
       id: '/api/public/v1/transactions/$id'
@@ -410,7 +411,7 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface AuthenticatedDashboardRouteChildren {
+interface AuthenticatedRouteChildren {
   AuthenticatedDashboardCheckersRoute: typeof AuthenticatedDashboardCheckersRoute
   AuthenticatedDashboardDeveloperRoute: typeof AuthenticatedDashboardDeveloperRoute
   AuthenticatedDashboardProfileRoute: typeof AuthenticatedDashboardProfileRoute
@@ -418,34 +419,22 @@ interface AuthenticatedDashboardRouteChildren {
   AuthenticatedDashboardStoreRoute: typeof AuthenticatedDashboardStoreRoute
   AuthenticatedDashboardTransactionsRoute: typeof AuthenticatedDashboardTransactionsRoute
   AuthenticatedDashboardWalletRoute: typeof AuthenticatedDashboardWalletRoute
+  AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
   AuthenticatedDashboardBuyDataNetworkRoute: typeof AuthenticatedDashboardBuyDataNetworkRoute
 }
 
-const AuthenticatedDashboardRouteChildren: AuthenticatedDashboardRouteChildren =
-  {
-    AuthenticatedDashboardCheckersRoute: AuthenticatedDashboardCheckersRoute,
-    AuthenticatedDashboardDeveloperRoute: AuthenticatedDashboardDeveloperRoute,
-    AuthenticatedDashboardProfileRoute: AuthenticatedDashboardProfileRoute,
-    AuthenticatedDashboardReportRoute: AuthenticatedDashboardReportRoute,
-    AuthenticatedDashboardStoreRoute: AuthenticatedDashboardStoreRoute,
-    AuthenticatedDashboardTransactionsRoute:
-      AuthenticatedDashboardTransactionsRoute,
-    AuthenticatedDashboardWalletRoute: AuthenticatedDashboardWalletRoute,
-    AuthenticatedDashboardBuyDataNetworkRoute:
-      AuthenticatedDashboardBuyDataNetworkRoute,
-  }
-
-const AuthenticatedDashboardRouteWithChildren =
-  AuthenticatedDashboardRoute._addFileChildren(
-    AuthenticatedDashboardRouteChildren,
-  )
-
-interface AuthenticatedRouteChildren {
-  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRouteWithChildren
-}
-
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
-  AuthenticatedDashboardRoute: AuthenticatedDashboardRouteWithChildren,
+  AuthenticatedDashboardCheckersRoute: AuthenticatedDashboardCheckersRoute,
+  AuthenticatedDashboardDeveloperRoute: AuthenticatedDashboardDeveloperRoute,
+  AuthenticatedDashboardProfileRoute: AuthenticatedDashboardProfileRoute,
+  AuthenticatedDashboardReportRoute: AuthenticatedDashboardReportRoute,
+  AuthenticatedDashboardStoreRoute: AuthenticatedDashboardStoreRoute,
+  AuthenticatedDashboardTransactionsRoute:
+    AuthenticatedDashboardTransactionsRoute,
+  AuthenticatedDashboardWalletRoute: AuthenticatedDashboardWalletRoute,
+  AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
+  AuthenticatedDashboardBuyDataNetworkRoute:
+    AuthenticatedDashboardBuyDataNetworkRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
