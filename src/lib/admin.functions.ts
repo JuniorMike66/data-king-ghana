@@ -149,3 +149,35 @@ export const adminDeletePackage = createServerFn({ method: "POST" })
     await supabaseAdmin.from("data_packages").delete().eq("id", data.id);
     return { ok: true };
   });
+
+export const adminUpsertChecker = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i) =>
+    z.object({
+      id: z.string().uuid().optional(),
+      name: z.string().min(1).max(80),
+      description: z.string().max(500).optional().nullable(),
+      price: z.number().min(0),
+      agent_price: z.number().min(0),
+      active: z.boolean().default(true),
+    }).parse(i)
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+    if (data.id) {
+      const { id, ...rest } = data;
+      await supabaseAdmin.from("result_checkers").update(rest).eq("id", id);
+    } else {
+      await supabaseAdmin.from("result_checkers").insert(data);
+    }
+    return { ok: true };
+  });
+
+export const adminDeleteChecker = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i) => z.object({ id: z.string().uuid() }).parse(i))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+    await supabaseAdmin.from("result_checkers").delete().eq("id", data.id);
+    return { ok: true };
+  });
