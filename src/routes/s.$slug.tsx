@@ -98,7 +98,12 @@ function PublicStore() {
       <div className="min-h-screen flex flex-col items-center justify-center gap-3 text-center p-6">
         <h1 className="text-2xl font-bold">Store not found</h1>
         <p className="text-muted-foreground">This storefront is unavailable or inactive.</p>
-        <Link to="/" className="text-primary underline">Back home</Link>
+        <button
+          onClick={() => window.location.reload()}
+          className="text-primary underline"
+        >
+          Reload
+        </button>
       </div>
     );
   }
