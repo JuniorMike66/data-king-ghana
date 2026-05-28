@@ -477,10 +477,12 @@ export type Database = {
         }
         Returns: boolean
       }
-      purchase_checker: {
-        Args: { _checker_id: string; _user_id: string }
-        Returns: string
-      }
+      purchase_checker:
+        | { Args: { _checker_id: string; _user_id: string }; Returns: string }
+        | {
+            Args: { _checker_id: string; _phone?: string; _user_id: string }
+            Returns: string
+          }
       purchase_data: {
         Args: { _package_id: string; _phone: string; _user_id: string }
         Returns: string
