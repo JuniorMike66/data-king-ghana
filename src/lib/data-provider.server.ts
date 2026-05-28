@@ -40,11 +40,30 @@ export async function dispatchDataPurchase(input: DispatchInput) {
     return;
   }
 
+  // Idempotency: never dispatch the same transaction twice. If the row is
+  // already completed/failed, or it already has a provider reference attached,
+  // bail out — Paystack webhook + client verify can both fire for the same tx.
+  const { data: current } = await supabaseAdmin
+    .from("transactions")
+    .select("status,metadata")
+    .eq("id", input.transactionId)
+    .maybeSingle();
+  if (!current) return;
+  if (current.status === "completed" || current.status === "failed" || current.status === "refunded") return;
+  const meta: any = current.metadata ?? {};
+  if (meta.provider === "spendless" && (meta.provider_reference || meta.dispatched_at)) return;
+
+  // Mark as dispatched immediately so a concurrent call sees the lock.
+  await supabaseAdmin
+    .from("transactions")
+    .update({ metadata: { ...meta, provider: "spendless", dispatched_at: new Date().toISOString() } })
+    .eq("id", input.transactionId);
+
   const networkKey = NETWORK_KEY[input.network];
   if (!networkKey) {
     await supabaseAdmin
       .from("transactions")
-      .update({ status: "failed", metadata: { provider_error: `Unknown network: ${input.network}` } })
+      .update({ status: "failed", metadata: { ...meta, provider_error: `Unknown network: ${input.network}` } })
       .eq("id", input.transactionId);
     await refund(input.userId, input.amount);
     return;
