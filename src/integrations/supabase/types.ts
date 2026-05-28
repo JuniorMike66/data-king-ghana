@@ -464,9 +464,12 @@ export type Database = {
           account_number: string
           admin_note: string | null
           amount: number
+          available_at: string
           bank_name: string
           created_at: string
           id: string
+          momo_network: string | null
+          source: string
           status: Database["public"]["Enums"]["withdrawal_status"]
           updated_at: string
           user_id: string
@@ -476,9 +479,12 @@ export type Database = {
           account_number: string
           admin_note?: string | null
           amount: number
+          available_at?: string
           bank_name: string
           created_at?: string
           id?: string
+          momo_network?: string | null
+          source?: string
           status?: Database["public"]["Enums"]["withdrawal_status"]
           updated_at?: string
           user_id: string
@@ -488,9 +494,12 @@ export type Database = {
           account_number?: string
           admin_note?: string | null
           amount?: number
+          available_at?: string
           bank_name?: string
           created_at?: string
           id?: string
+          momo_network?: string | null
+          source?: string
           status?: Database["public"]["Enums"]["withdrawal_status"]
           updated_at?: string
           user_id?: string
@@ -528,6 +537,16 @@ export type Database = {
         Args: { _package_id: string; _phone: string; _user_id: string }
         Returns: string
       }
+      request_store_withdrawal: {
+        Args: {
+          _amount: number
+          _momo_name: string
+          _momo_network: string
+          _momo_number: string
+          _user_id: string
+        }
+        Returns: string
+      }
       request_withdrawal: {
         Args: {
           _account: string
@@ -538,6 +557,9 @@ export type Database = {
         }
         Returns: string
       }
+      store_profit_available: { Args: { _user_id: string }; Returns: number }
+      store_profit_total: { Args: { _user_id: string }; Returns: number }
+      store_tx_cost: { Args: { _tx_id: string }; Returns: number }
     }
     Enums: {
       app_role: "admin" | "user"

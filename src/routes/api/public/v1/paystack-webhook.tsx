@@ -69,10 +69,13 @@ export const Route = createFileRoute("/api/public/v1/paystack-webhook")({
             metadata: {
               source: "store_order",
               store_id: meta.store_id,
+              store_sponsor_id: meta.store_sponsor_id ?? null,
+              cost: meta.cost ?? null,
               customer_email: tx.customer?.email ?? null,
               paystack: { channel: tx.channel, paid_at: tx.paid_at },
             },
           }).select("id").single();
+
           if (txErr) return json({ error: txErr.message }, 500);
 
           await dispatchDataPurchase({

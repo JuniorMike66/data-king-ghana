@@ -51,10 +51,13 @@ export const Route = createFileRoute("/api/public/v1/store-order/verify")({
           metadata: {
             source: "store_order",
             store_id: meta.store_id,
+            store_sponsor_id: meta.store_sponsor_id ?? null,
+            cost: meta.cost ?? null,
             customer_email: v.data.customer?.email ?? null,
             paystack: { channel: v.data.channel, paid_at: v.data.paid_at },
           },
         }).select("id").single();
+
         if (txErr) return json({ error: txErr.message }, 500);
 
         await dispatchDataPurchase({

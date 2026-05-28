@@ -6,7 +6,7 @@ import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Store as StoreIcon, ExternalLink, Copy, Check, Trash2, Plus } from "lucide-react";
@@ -116,24 +116,39 @@ export function StoreShareCard({ slug }: { slug: string }) {
 
 /* ─── Overview stats ─── */
 export function StoreOverview({ storeId }: { storeId: string }) {
+  const { user } = useAuth();
   const { data } = useQuery({
-    queryKey: ["store-overview", storeId],
+    queryKey: ["store-overview", storeId, user?.id],
+    enabled: !!user,
+    refetchInterval: 15000,
     queryFn: async () => {
-      const { data: txs } = await supabase
-        .from("transactions")
-        .select("amount,status,created_at,metadata")
-        .filter("metadata->>store_id", "eq", storeId);
+      const [{ data: txs }, { data: profitTotal }, { data: profitAvail }] = await Promise.all([
+        supabase
+          .from("transactions")
+          .select("amount,status,metadata,package_id")
+          .filter("metadata->>store_id", "eq", storeId),
+        supabase.rpc("store_profit_total", { _user_id: user!.id }),
+        supabase.rpc("store_profit_available", { _user_id: user!.id }),
+      ]);
       const list = txs ?? [];
       const completed = list.filter((t: any) => t.status === "completed");
       const revenue = completed.reduce((s: number, t: any) => s + Number(t.amount), 0);
-      return { count: list.length, completed: completed.length, revenue };
+      return {
+        count: list.length,
+        completed: completed.length,
+        revenue,
+        profit: Number(profitTotal ?? 0),
+        available: Number(profitAvail ?? 0),
+      };
     },
   });
   return (
-    <div className="grid grid-cols-3 gap-3">
+    <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
       <Stat label="Orders" value={data?.count ?? 0} />
       <Stat label="Completed" value={data?.completed ?? 0} />
       <Stat label="Revenue" value={cedis(data?.revenue ?? 0)} />
+      <Stat label="Profit (lifetime)" value={cedis(data?.profit ?? 0)} />
+      <Stat label="Available to withdraw" value={cedis(data?.available ?? 0)} />
     </div>
   );
 }
@@ -145,6 +160,7 @@ function Stat({ label, value }: { label: string; value: any }) {
     </div>
   );
 }
+
 
 /* ─── Settings ─── */
 export function StoreSettings({ store }: { store: any }) {
@@ -303,62 +319,121 @@ export function SubagentManager({ storeId }: { storeId: string }) {
   );
 }
 
-/* ─── Withdrawals ─── */
+/* ─── Withdrawals (profit-based) ─── */
+const MOMO_NETWORKS = [
+  { value: "MTN MoMo", label: "MTN MoMo" },
+  { value: "AirtelTigo Money", label: "AirtelTigo Money" },
+  { value: "Telecel Cash", label: "Telecel Cash" },
+];
+
 export function Withdrawals() {
   const { user } = useAuth();
   const qc = useQueryClient();
-  const [form, setForm] = useState({ amount: "", bank: "", account: "", name: "", note: "" });
+  const [form, setForm] = useState({ amount: "", momo_network: "MTN MoMo", momo_number: "", momo_name: "" });
 
-  const { data: wallet } = useQuery({
-    queryKey: ["wallet", user?.id],
+  const { data: profit } = useQuery({
+    queryKey: ["profit-available", user?.id],
     enabled: !!user,
-    queryFn: async () => (await supabase.from("wallets").select("balance").eq("user_id", user!.id).maybeSingle()).data,
+    refetchInterval: 15000,
+    queryFn: async () => {
+      const [{ data: total }, { data: avail }] = await Promise.all([
+        supabase.rpc("store_profit_total", { _user_id: user!.id }),
+        supabase.rpc("store_profit_available", { _user_id: user!.id }),
+      ]);
+      return { total: Number(total ?? 0), available: Number(avail ?? 0) };
+    },
   });
+
   const { data: list } = useQuery({
     queryKey: ["my-withdrawals", user?.id],
     enabled: !!user,
+    refetchInterval: 30000,
     queryFn: async () => (await supabase.from("withdrawals").select("*").eq("user_id", user!.id).order("created_at", { ascending: false }).limit(50)).data ?? [],
   });
+
+  const available = profit?.available ?? 0;
+  const canRequest = available >= 50;
 
   const submit = useMutation({
     mutationFn: async () => {
       const amount = parseFloat(form.amount);
-      if (!amount || amount <= 0) throw new Error("Enter a valid amount");
-      const { error } = await supabase.rpc("request_withdrawal", {
+      if (!amount || amount < 50) throw new Error("Minimum withdrawal is GH₵50");
+      if (!/^0\d{9}$/.test(form.momo_number)) throw new Error("Enter a valid 10-digit momo number");
+      if (!form.momo_name.trim()) throw new Error("Enter the momo account name");
+      const { error } = await supabase.rpc("request_store_withdrawal", {
         _user_id: user!.id,
         _amount: amount,
-        _bank: form.bank,
-        _account: form.account,
-        _name: form.name,
+        _momo_network: form.momo_network,
+        _momo_number: form.momo_number,
+        _momo_name: form.momo_name.trim(),
       });
       if (error) throw error;
     },
     onSuccess: () => {
-      toast.success("Withdrawal requested");
-      setForm({ amount: "", bank: "", account: "", name: "", note: "" });
+      toast.success("Withdrawal request submitted. Please wait 24 hours for admin review.");
+      setForm({ amount: "", momo_network: "MTN MoMo", momo_number: "", momo_name: "" });
       qc.invalidateQueries({ queryKey: ["my-withdrawals"] });
-      qc.invalidateQueries({ queryKey: ["wallet"] });
+      qc.invalidateQueries({ queryKey: ["profit-available"] });
+      qc.invalidateQueries({ queryKey: ["store-overview"] });
     },
     onError: (e: any) => toast.error(e.message),
   });
 
   return (
     <div className="space-y-4">
-      <div className="rounded-lg bg-muted p-3">
-        <div className="text-xs text-muted-foreground">Wallet balance</div>
-        <div className="text-2xl font-bold">{cedis(wallet?.balance ?? 0)}</div>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="rounded-lg bg-muted p-3">
+          <div className="text-xs text-muted-foreground">Lifetime profit</div>
+          <div className="text-2xl font-bold">{cedis(profit?.total ?? 0)}</div>
+        </div>
+        <div className="rounded-lg bg-primary/10 p-3">
+          <div className="text-xs text-muted-foreground">Available to withdraw</div>
+          <div className="text-2xl font-bold">{cedis(available)}</div>
+        </div>
       </div>
 
+      {!canRequest && (
+        <div className="rounded-lg border border-amber-500/40 bg-amber-500/10 p-3 text-sm">
+          You need at least <b>GH₵50</b> in profit before you can request a withdrawal.
+          You currently have <b>{cedis(available)}</b>.
+        </div>
+      )}
+
       <div className="grid sm:grid-cols-2 gap-3">
-        <div><Label>Amount (₵)</Label><Input type="number" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} /></div>
-        <div><Label>Bank / Momo</Label><Input value={form.bank} onChange={(e) => setForm({ ...form, bank: e.target.value })} placeholder="MTN Mobile Money" /></div>
-        <div><Label>Account / Phone number</Label><Input value={form.account} onChange={(e) => setForm({ ...form, account: e.target.value })} /></div>
-        <div><Label>Account name</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div>
-        <div className="sm:col-span-2"><Label>Note (optional)</Label><Textarea rows={2} value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} /></div>
+        <div>
+          <Label>Amount (GH₵) · min 50</Label>
+          <Input type="number" min={50} step="0.01" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} />
+        </div>
+        <div>
+          <Label>Momo network</Label>
+          <select
+            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+            value={form.momo_network}
+            onChange={(e) => setForm({ ...form, momo_network: e.target.value })}
+          >
+            {MOMO_NETWORKS.map((n) => <option key={n.value} value={n.value}>{n.label}</option>)}
+          </select>
+        </div>
+        <div>
+          <Label>Momo number</Label>
+          <Input value={form.momo_number} maxLength={10} placeholder="0241234567" onChange={(e) => setForm({ ...form, momo_number: e.target.value })} />
+        </div>
+        <div>
+          <Label>Momo account name</Label>
+          <Input value={form.momo_name} onChange={(e) => setForm({ ...form, momo_name: e.target.value })} />
+        </div>
       </div>
-      <Button onClick={() => submit.mutate()} disabled={submit.isPending || !form.amount || !form.bank || !form.account || !form.name}>
-        {submit.isPending ? "Requesting..." : "Request withdrawal"}
+
+      <Button
+        onClick={() => submit.mutate()}
+        disabled={submit.isPending || !canRequest || !form.amount || !form.momo_number || !form.momo_name}
+      >
+        {submit.isPending ? "Submitting..." : "Submit withdrawal request"}
       </Button>
+      <p className="text-[11px] text-muted-foreground">
+        After you submit, please wait 24 hours. Your request then appears on the admin dashboard for approval.
+        Once approved & paid, it is deducted from your available profit.
+      </p>
 
       <div className="border-t border-border pt-3">
         <div className="text-xs font-semibold text-muted-foreground mb-2">RECENT REQUESTS</div>
@@ -366,21 +441,35 @@ export function Withdrawals() {
           <div className="text-sm text-muted-foreground">No withdrawals yet.</div>
         ) : (
           <div className="divide-y divide-border">
-            {list.map((w: any) => (
-              <div key={w.id} className="flex items-center justify-between py-2 text-sm">
-                <div>
-                  <div className="font-medium">{cedis(w.amount)} · {w.bank_name}</div>
-                  <div className="text-xs text-muted-foreground">{w.account_name} · {w.account_number} · {new Date(w.created_at).toLocaleDateString()}</div>
+            {list.map((w: any) => {
+              const availAt = w.available_at ? new Date(w.available_at) : null;
+              const inHold = availAt && availAt.getTime() > Date.now() && w.status === "pending";
+              return (
+                <div key={w.id} className="flex items-center justify-between py-2 text-sm">
+                  <div>
+                    <div className="font-medium">{cedis(w.amount)} · {w.momo_network ?? w.bank_name}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {w.account_name} · {w.account_number} · {new Date(w.created_at).toLocaleString()}
+                    </div>
+                    {inHold && (
+                      <div className="text-[11px] text-amber-600 mt-0.5">
+                        In 24h review — visible to admin {availAt!.toLocaleString()}
+                      </div>
+                    )}
+                  </div>
+                  <Badge variant={w.status === "paid" ? "default" : w.status === "rejected" ? "destructive" : "secondary"}>
+                    {inHold ? "in review" : w.status}
+                  </Badge>
                 </div>
-                <Badge variant={w.status === "paid" ? "default" : w.status === "rejected" ? "destructive" : "secondary"}>{w.status}</Badge>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>
     </div>
   );
 }
+
 
 /* ─── Custom pricing (packages) ─── */
 export function CustomPricing({ storeId }: { storeId: string }) {
