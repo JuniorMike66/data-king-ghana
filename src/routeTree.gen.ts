@@ -26,6 +26,7 @@ import { Route as AdminNotificationsRouteImport } from './routes/admin.notificat
 import { Route as AdminCheckersRouteImport } from './routes/admin.checkers'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard.index'
 import { Route as SSlugBecomeAgentRouteImport } from './routes/s.$slug.become-agent'
+import { Route as AdminUsersUserIdRouteImport } from './routes/admin.users.$userId'
 import { Route as AuthenticatedDashboardWalletRouteImport } from './routes/_authenticated/dashboard/wallet'
 import { Route as AuthenticatedDashboardTransactionsRouteImport } from './routes/_authenticated/dashboard/transactions'
 import { Route as AuthenticatedDashboardStoreRouteImport } from './routes/_authenticated/dashboard/store'
@@ -132,6 +133,11 @@ const SSlugBecomeAgentRoute = SSlugBecomeAgentRouteImport.update({
   id: '/become-agent',
   path: '/become-agent',
   getParentRoute: () => SSlugRoute,
+} as any)
+const AdminUsersUserIdRoute = AdminUsersUserIdRouteImport.update({
+  id: '/users/$userId',
+  path: '/users/$userId',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AuthenticatedDashboardWalletRoute =
   AuthenticatedDashboardWalletRouteImport.update({
@@ -280,6 +286,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/store': typeof AuthenticatedDashboardStoreRouteWithChildren
   '/dashboard/transactions': typeof AuthenticatedDashboardTransactionsRoute
   '/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
+  '/admin/users/$userId': typeof AdminUsersUserIdRoute
   '/s/$slug/become-agent': typeof SSlugBecomeAgentRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/dashboard/buy-data/$network': typeof AuthenticatedDashboardBuyDataNetworkRoute
@@ -317,6 +324,7 @@ export interface FileRoutesByTo {
   '/dashboard/report': typeof AuthenticatedDashboardReportRoute
   '/dashboard/transactions': typeof AuthenticatedDashboardTransactionsRoute
   '/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
+  '/admin/users/$userId': typeof AdminUsersUserIdRoute
   '/s/$slug/become-agent': typeof SSlugBecomeAgentRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/dashboard/buy-data/$network': typeof AuthenticatedDashboardBuyDataNetworkRoute
@@ -358,6 +366,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/store': typeof AuthenticatedDashboardStoreRouteWithChildren
   '/_authenticated/dashboard/transactions': typeof AuthenticatedDashboardTransactionsRoute
   '/_authenticated/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
+  '/admin/users/$userId': typeof AdminUsersUserIdRoute
   '/s/$slug/become-agent': typeof SSlugBecomeAgentRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/_authenticated/dashboard/buy-data/$network': typeof AuthenticatedDashboardBuyDataNetworkRoute
@@ -399,6 +408,7 @@ export interface FileRouteTypes {
     | '/dashboard/store'
     | '/dashboard/transactions'
     | '/dashboard/wallet'
+    | '/admin/users/$userId'
     | '/s/$slug/become-agent'
     | '/dashboard/'
     | '/dashboard/buy-data/$network'
@@ -436,6 +446,7 @@ export interface FileRouteTypes {
     | '/dashboard/report'
     | '/dashboard/transactions'
     | '/dashboard/wallet'
+    | '/admin/users/$userId'
     | '/s/$slug/become-agent'
     | '/dashboard'
     | '/dashboard/buy-data/$network'
@@ -476,6 +487,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/store'
     | '/_authenticated/dashboard/transactions'
     | '/_authenticated/dashboard/wallet'
+    | '/admin/users/$userId'
     | '/s/$slug/become-agent'
     | '/_authenticated/dashboard/'
     | '/_authenticated/dashboard/buy-data/$network'
@@ -631,6 +643,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/s/$slug/become-agent'
       preLoaderRoute: typeof SSlugBecomeAgentRouteImport
       parentRoute: typeof SSlugRoute
+    }
+    '/admin/users/$userId': {
+      id: '/admin/users/$userId'
+      path: '/users/$userId'
+      fullPath: '/admin/users/$userId'
+      preLoaderRoute: typeof AdminUsersUserIdRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/_authenticated/dashboard/wallet': {
       id: '/_authenticated/dashboard/wallet'
@@ -852,6 +871,7 @@ interface AdminRouteChildren {
   AdminTransactionsRoute: typeof AdminTransactionsRoute
   AdminWithdrawalsRoute: typeof AdminWithdrawalsRoute
   AdminIndexRoute: typeof AdminIndexRoute
+  AdminUsersUserIdRoute: typeof AdminUsersUserIdRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
@@ -863,6 +883,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminTransactionsRoute: AdminTransactionsRoute,
   AdminWithdrawalsRoute: AdminWithdrawalsRoute,
   AdminIndexRoute: AdminIndexRoute,
+  AdminUsersUserIdRoute: AdminUsersUserIdRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
