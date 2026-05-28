@@ -26,18 +26,20 @@ function WithdrawalsPage() {
       <div className="rounded-xl border border-border bg-card overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="bg-muted text-left text-xs uppercase"><tr>
-            <th className="p-3">Date</th><th className="p-3">User</th><th className="p-3">Bank</th>
-            <th className="p-3">Account</th><th className="p-3">Amount</th><th className="p-3">Status</th><th className="p-3"></th>
+            <th className="p-3">Date</th><th className="p-3">User</th><th className="p-3">Momo network</th>
+            <th className="p-3">Momo account</th><th className="p-3">Amount</th><th className="p-3">Source</th><th className="p-3">Status</th><th className="p-3"></th>
           </tr></thead>
           <tbody className="divide-y divide-border">
             {(data ?? []).map((w: any) => (
               <tr key={w.id}>
                 <td className="p-3 whitespace-nowrap">{new Date(w.created_at).toLocaleString()}</td>
                 <td className="p-3"><div>{w.profiles?.full_name}</div><div className="text-xs text-muted-foreground">{w.profiles?.email}</div></td>
-                <td className="p-3">{w.bank_name}</td>
+                <td className="p-3">{w.momo_network ?? w.bank_name}</td>
                 <td className="p-3"><div>{w.account_number}</div><div className="text-xs text-muted-foreground">{w.account_name}</div></td>
                 <td className="p-3 font-bold">GH₵{Number(w.amount).toFixed(2)}</td>
+                <td className="p-3 text-xs uppercase text-muted-foreground">{w.source ?? "wallet"}</td>
                 <td className="p-3">{w.status}</td>
+
                 <td className="p-3">
                   <Select value={w.status} onValueChange={(v) => mut.mutate({ id: w.id, status: v })}>
                     <SelectTrigger className="h-8 w-32"><SelectValue /></SelectTrigger>
