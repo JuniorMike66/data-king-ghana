@@ -94,8 +94,14 @@ export const adminListWithdrawals = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     await assertAdmin(context.userId);
+    // Only show withdrawals whose 24-hour customer-side hold has elapsed.
+    // Always show non-pending statuses regardless of hold.
+    const nowIso = new Date().toISOString();
     const { data } = await supabaseAdmin
-      .from("withdrawals").select("*, profiles:user_id(email,full_name)").order("created_at", { ascending: false });
+      .from("withdrawals")
+      .select("*, profiles:user_id(email,full_name)")
+      .or(`status.neq.pending,available_at.lte.${nowIso}`)
+      .order("created_at", { ascending: false });
     return data ?? [];
   });
 
@@ -108,13 +114,16 @@ export const adminUpdateWithdrawal = createServerFn({ method: "POST" })
     await assertAdmin(context.userId);
     const { data: w } = await supabaseAdmin.from("withdrawals").select("*").eq("id", data.id).maybeSingle();
     if (!w) throw new Error("Not found");
-    if (data.status === "rejected" && w.status !== "rejected") {
+    // Only refund the wallet for legacy wallet-funded withdrawals; profit withdrawals
+    // are not debited from the wallet, so nothing to refund.
+    if (data.status === "rejected" && w.status !== "rejected" && (w.source ?? "wallet") === "wallet") {
       const { data: wal } = await supabaseAdmin.from("wallets").select("balance").eq("user_id", w.user_id).maybeSingle();
       if (wal) await supabaseAdmin.from("wallets").update({ balance: Number(wal.balance) + Number(w.amount) }).eq("user_id", w.user_id);
     }
     await supabaseAdmin.from("withdrawals").update({ status: data.status, admin_note: data.note ?? w.admin_note }).eq("id", data.id);
     return { ok: true };
   });
+
 
 export const adminUpsertPackage = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
