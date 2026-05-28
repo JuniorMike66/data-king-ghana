@@ -33,9 +33,21 @@ function Page() {
     queryFn: async () => {
       const { data } = await supabase
         .from("data_packages").select("*").eq("network", cfg.network).eq("active", true).order("sort_order");
-      return data ?? [];
+      const list = data ?? [];
+      // Apply sponsor pricing if current user is a subagent
+      const { data: me } = await supabase.auth.getUser();
+      if (me.user) {
+        const { data: prof } = await supabase.from("profiles").select("sponsor_id").eq("id", me.user.id).maybeSingle();
+        if (prof?.sponsor_id) {
+          const { data: sp } = await supabase.from("subagent_prices").select("package_id,price").eq("sponsor_id", prof.sponsor_id);
+          const map = new Map((sp ?? []).map((o: any) => [o.package_id, Number(o.price)]));
+          return list.map((p: any) => ({ ...p, price: map.get(p.id) ?? Number(p.price) }));
+        }
+      }
+      return list;
     },
   });
+
 
   const mut = useMutation({
     mutationFn: () => buy({ data: { packageId: selected.id, phone } }),

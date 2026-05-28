@@ -393,7 +393,17 @@ export function CustomPricing({ storeId }: { storeId: string }) {
     queryKey: ["store-prices", storeId],
     queryFn: async () => (await supabase.from("store_package_prices").select("*").eq("store_id", storeId)).data ?? [],
   });
+  const { data: store } = useQuery({
+    queryKey: ["store-sponsor", storeId],
+    queryFn: async () => (await supabase.from("stores").select("sponsor_id").eq("id", storeId).maybeSingle()).data,
+  });
+  const { data: sponsorPrices } = useQuery({
+    queryKey: ["sponsor-prices", store?.sponsor_id],
+    enabled: !!store?.sponsor_id,
+    queryFn: async () => (await supabase.from("subagent_prices").select("package_id,price").eq("sponsor_id", store!.sponsor_id!)).data ?? [],
+  });
   const overrideMap = new Map((overrides ?? []).map((o: any) => [o.package_id, Number(o.price)]));
+  const sponsorMap = new Map((sponsorPrices ?? []).map((o: any) => [o.package_id, Number(o.price)]));
   const [drafts, setDrafts] = useState<Record<string, string>>({});
 
   const setPrice = useMutation({
@@ -423,7 +433,7 @@ export function CustomPricing({ storeId }: { storeId: string }) {
   return (
     <div className="space-y-4">
       <p className="text-xs text-muted-foreground">
-        Set your selling price per bundle. The difference between agent price and your price is your profit. Leave blank to use the default price.
+        Set your selling price per bundle. The difference between your cost and your price is your profit. Leave blank to use the base price.
       </p>
       {Object.entries(grouped).map(([net, items]: any) => (
         <div key={net} className="space-y-2">
@@ -431,12 +441,15 @@ export function CustomPricing({ storeId }: { storeId: string }) {
           <div className="divide-y divide-border">
             {items.map((p: any) => {
               const current = drafts[p.id] ?? (overrideMap.get(p.id)?.toString() ?? "");
+              const base = sponsorMap.get(p.id) ?? Number(p.price);
+              const cost = sponsorMap.get(p.id) ?? Number(p.agent_price ?? p.price);
               return (
                 <div key={p.id} className="flex items-center gap-3 py-2 text-sm">
                   <div className="flex-1">
                     <div className="font-medium">{p.size_label}</div>
-                    <div className="text-xs text-muted-foreground">Agent: {cedis(p.agent_price)} · Default: {cedis(p.price)}</div>
+                    <div className="text-xs text-muted-foreground">Your cost: {cedis(cost)} · Base: {cedis(base)}</div>
                   </div>
+
                   <Input
                     className="w-28"
                     placeholder={Number(p.price).toFixed(2)}

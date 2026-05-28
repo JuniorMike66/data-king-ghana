@@ -144,6 +144,7 @@ export type Database = {
           full_name: string | null
           id: string
           phone: string | null
+          sponsor_id: string | null
           updated_at: string
         }
         Insert: {
@@ -153,6 +154,7 @@ export type Database = {
           full_name?: string | null
           id: string
           phone?: string | null
+          sponsor_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -162,6 +164,7 @@ export type Database = {
           full_name?: string | null
           id?: string
           phone?: string | null
+          sponsor_id?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -263,6 +266,7 @@ export type Database = {
           id: string
           name: string
           slug: string
+          sponsor_id: string | null
           support_phone: string
           support_whatsapp: string | null
           user_id: string
@@ -273,6 +277,7 @@ export type Database = {
           id?: string
           name: string
           slug: string
+          sponsor_id?: string | null
           support_phone: string
           support_whatsapp?: string | null
           user_id: string
@@ -283,11 +288,47 @@ export type Database = {
           id?: string
           name?: string
           slug?: string
+          sponsor_id?: string | null
           support_phone?: string
           support_whatsapp?: string | null
           user_id?: string
         }
         Relationships: []
+      }
+      subagent_prices: {
+        Row: {
+          created_at: string
+          id: string
+          package_id: string
+          price: number
+          sponsor_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          package_id: string
+          price: number
+          sponsor_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          package_id?: string
+          price?: number
+          sponsor_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subagent_prices_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "data_packages"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       subagents: {
         Row: {
