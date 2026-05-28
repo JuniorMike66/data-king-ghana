@@ -6,6 +6,8 @@ import {
   Store, Code, User, AlertCircle, LogOut, Menu, Shield, ChevronDown,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
+import { useProfile } from "@/lib/use-profile";
+
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -31,9 +33,10 @@ const storeNav = [
   { to: "/dashboard/store/packages", label: "Store Packages" },
   { to: "/dashboard/store/settings", label: "Store Settings" },
   { to: "/dashboard/store/transactions", label: "Store Transactions" },
-  { to: "/dashboard/store/subagents", label: "Subagent Manager" },
+  { to: "/dashboard/store/subagents", label: "Subagent Manager", sponsorOnly: true },
   { to: "/dashboard/store/withdrawals", label: "Withdrawals" },
 ];
+
 const more = [
   { to: "/dashboard/checkers", label: "Result Checkers", icon: FileCheck },
   { to: "/dashboard/developer", label: "Developer Settings", icon: Code },
@@ -44,9 +47,11 @@ const more = [
 function Sidebar({ onNav }: { onNav?: () => void }) {
   const path = useRouterState({ select: (r) => r.location.pathname });
   const { isAdmin, signOut, user } = useAuth();
+  const { isSubagent } = useProfile();
   const isActive = (to: string) => path === to;
   const buyOpen = path.startsWith("/dashboard/buy-data");
   const storeOpen = path.startsWith("/dashboard/store");
+
 
   const linkCls = (active: boolean) =>
     cn(
@@ -94,12 +99,13 @@ function Sidebar({ onNav }: { onNav?: () => void }) {
             <ChevronDown className="w-4 h-4" />
           </CollapsibleTrigger>
           <CollapsibleContent className="ml-7 mt-1.5 space-y-1.5">
-            {storeNav.map((i) => (
+            {storeNav.filter((i) => !i.sponsorOnly || !isSubagent).map((i) => (
               <Link key={i.to} to={i.to} onClick={onNav} className={linkCls(isActive(i.to))}>
                 <span className="w-1.5 h-1.5 rounded-full bg-current opacity-60" />{i.label}
               </Link>
             ))}
           </CollapsibleContent>
+
         </Collapsible>
         {more.map((i) => (
           <Link key={i.to} to={i.to} onClick={onNav} className={linkCls(isActive(i.to))}>
