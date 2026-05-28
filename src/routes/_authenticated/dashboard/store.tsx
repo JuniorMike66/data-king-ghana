@@ -95,6 +95,35 @@ function StorePage() {
   );
 }
 
+function StoreShareCard({ slug }: { slug: string }) {
+  const [copied, setCopied] = useState(false);
+  const url = typeof window !== "undefined" ? `${window.location.origin}/s/${slug}` : `/s/${slug}`;
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      toast.success("Store link copied");
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      toast.error("Could not copy");
+    }
+  };
+  return (
+    <div className="rounded-lg bg-muted p-3 space-y-2">
+      <div className="text-xs font-semibold text-muted-foreground">YOUR STORE LINK · share with customers</div>
+      <div className="flex items-center gap-2">
+        <Input readOnly value={url} className="font-mono text-xs bg-background" onFocus={(e) => e.currentTarget.select()} />
+        <Button type="button" size="sm" variant="outline" onClick={copy} className="shrink-0">
+          {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+        </Button>
+        <a href={url} target="_blank" rel="noopener noreferrer" className="shrink-0">
+          <Button type="button" size="sm" variant="outline"><ExternalLink className="w-4 h-4" /></Button>
+        </a>
+      </div>
+    </div>
+  );
+}
+
 function CustomPricing({ storeId }: { storeId: string }) {
   const qc = useQueryClient();
   const { data: packages } = useQuery({
