@@ -1,4 +1,4 @@
-import { createFileRoute, useParams, useNavigate, Link } from "@tanstack/react-router";
+import { createFileRoute, Outlet, useParams, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,8 +15,12 @@ export const Route = createFileRoute("/s/$slug")({
   validateSearch: (s: Record<string, unknown>): SearchParams => ({
     reference: typeof s.reference === "string" ? s.reference : undefined,
   }),
-  component: PublicStore,
+  component: StoreLayout,
 });
+
+function StoreLayout() {
+  return <Outlet />;
+}
 
 const networks: Record<string, { label: string; color: string }> = {
   mtn: { label: "MTN", color: "bg-mtn text-mtn-foreground" },
@@ -25,7 +29,7 @@ const networks: Record<string, { label: string; color: string }> = {
   telecel: { label: "Telecel", color: "bg-telecel text-telecel-foreground" },
 };
 
-function PublicStore() {
+export function PublicStore() {
   const { slug } = useParams({ from: "/s/$slug" });
   const search = Route.useSearch();
   const navigate = useNavigate();
