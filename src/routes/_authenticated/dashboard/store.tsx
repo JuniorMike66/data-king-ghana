@@ -116,24 +116,39 @@ export function StoreShareCard({ slug }: { slug: string }) {
 
 /* ─── Overview stats ─── */
 export function StoreOverview({ storeId }: { storeId: string }) {
+  const { user } = useAuth();
   const { data } = useQuery({
-    queryKey: ["store-overview", storeId],
+    queryKey: ["store-overview", storeId, user?.id],
+    enabled: !!user,
+    refetchInterval: 15000,
     queryFn: async () => {
-      const { data: txs } = await supabase
-        .from("transactions")
-        .select("amount,status,created_at,metadata")
-        .filter("metadata->>store_id", "eq", storeId);
+      const [{ data: txs }, { data: profitTotal }, { data: profitAvail }] = await Promise.all([
+        supabase
+          .from("transactions")
+          .select("amount,status,metadata,package_id")
+          .filter("metadata->>store_id", "eq", storeId),
+        supabase.rpc("store_profit_total", { _user_id: user!.id }),
+        supabase.rpc("store_profit_available", { _user_id: user!.id }),
+      ]);
       const list = txs ?? [];
       const completed = list.filter((t: any) => t.status === "completed");
       const revenue = completed.reduce((s: number, t: any) => s + Number(t.amount), 0);
-      return { count: list.length, completed: completed.length, revenue };
+      return {
+        count: list.length,
+        completed: completed.length,
+        revenue,
+        profit: Number(profitTotal ?? 0),
+        available: Number(profitAvail ?? 0),
+      };
     },
   });
   return (
-    <div className="grid grid-cols-3 gap-3">
+    <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
       <Stat label="Orders" value={data?.count ?? 0} />
       <Stat label="Completed" value={data?.completed ?? 0} />
       <Stat label="Revenue" value={cedis(data?.revenue ?? 0)} />
+      <Stat label="Profit (lifetime)" value={cedis(data?.profit ?? 0)} />
+      <Stat label="Available to withdraw" value={cedis(data?.available ?? 0)} />
     </div>
   );
 }
@@ -145,6 +160,7 @@ function Stat({ label, value }: { label: string; value: any }) {
     </div>
   );
 }
+
 
 /* ─── Settings ─── */
 export function StoreSettings({ store }: { store: any }) {
