@@ -39,8 +39,8 @@ function SignupPage() {
     });
     setLoading(false);
     if (error) { toast.error(error.message); return; }
-    toast.success("Account created! Check your email to verify.");
-    navigate({ to: "/login" });
+    toast.success("Account created! Welcome to DataKing.");
+    navigate({ to: "/dashboard" });
   };
 
   return (
