@@ -46,6 +46,7 @@ import { Route as ApiPublicV1TransactionsIdRouteImport } from './routes/api/publ
 import { Route as ApiPublicV1StoreOrderVerifyRouteImport } from './routes/api/public/v1/store-order.verify'
 import { Route as ApiPublicV1StoreOrderInitRouteImport } from './routes/api/public/v1/store-order.init'
 import { Route as ApiPublicV1DataPurchaseRouteImport } from './routes/api/public/v1/data.purchase'
+import { Route as ApiPublicV1CheckersPurchaseRouteImport } from './routes/api/public/v1/checkers.purchase'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -250,6 +251,12 @@ const ApiPublicV1DataPurchaseRoute = ApiPublicV1DataPurchaseRouteImport.update({
   path: '/api/public/v1/data/purchase',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicV1CheckersPurchaseRoute =
+  ApiPublicV1CheckersPurchaseRouteImport.update({
+    id: '/api/public/v1/checkers/purchase',
+    path: '/api/public/v1/checkers/purchase',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -284,6 +291,7 @@ export interface FileRoutesByFullPath {
   '/api/public/v1/balance': typeof ApiPublicV1BalanceRoute
   '/api/public/v1/paystack-webhook': typeof ApiPublicV1PaystackWebhookRoute
   '/dashboard/store/': typeof AuthenticatedDashboardStoreIndexRoute
+  '/api/public/v1/checkers/purchase': typeof ApiPublicV1CheckersPurchaseRoute
   '/api/public/v1/data/purchase': typeof ApiPublicV1DataPurchaseRoute
   '/api/public/v1/store-order/init': typeof ApiPublicV1StoreOrderInitRoute
   '/api/public/v1/store-order/verify': typeof ApiPublicV1StoreOrderVerifyRoute
@@ -320,6 +328,7 @@ export interface FileRoutesByTo {
   '/api/public/v1/balance': typeof ApiPublicV1BalanceRoute
   '/api/public/v1/paystack-webhook': typeof ApiPublicV1PaystackWebhookRoute
   '/dashboard/store': typeof AuthenticatedDashboardStoreIndexRoute
+  '/api/public/v1/checkers/purchase': typeof ApiPublicV1CheckersPurchaseRoute
   '/api/public/v1/data/purchase': typeof ApiPublicV1DataPurchaseRoute
   '/api/public/v1/store-order/init': typeof ApiPublicV1StoreOrderInitRoute
   '/api/public/v1/store-order/verify': typeof ApiPublicV1StoreOrderVerifyRoute
@@ -360,6 +369,7 @@ export interface FileRoutesById {
   '/api/public/v1/balance': typeof ApiPublicV1BalanceRoute
   '/api/public/v1/paystack-webhook': typeof ApiPublicV1PaystackWebhookRoute
   '/_authenticated/dashboard/store/': typeof AuthenticatedDashboardStoreIndexRoute
+  '/api/public/v1/checkers/purchase': typeof ApiPublicV1CheckersPurchaseRoute
   '/api/public/v1/data/purchase': typeof ApiPublicV1DataPurchaseRoute
   '/api/public/v1/store-order/init': typeof ApiPublicV1StoreOrderInitRoute
   '/api/public/v1/store-order/verify': typeof ApiPublicV1StoreOrderVerifyRoute
@@ -400,6 +410,7 @@ export interface FileRouteTypes {
     | '/api/public/v1/balance'
     | '/api/public/v1/paystack-webhook'
     | '/dashboard/store/'
+    | '/api/public/v1/checkers/purchase'
     | '/api/public/v1/data/purchase'
     | '/api/public/v1/store-order/init'
     | '/api/public/v1/store-order/verify'
@@ -436,6 +447,7 @@ export interface FileRouteTypes {
     | '/api/public/v1/balance'
     | '/api/public/v1/paystack-webhook'
     | '/dashboard/store'
+    | '/api/public/v1/checkers/purchase'
     | '/api/public/v1/data/purchase'
     | '/api/public/v1/store-order/init'
     | '/api/public/v1/store-order/verify'
@@ -475,6 +487,7 @@ export interface FileRouteTypes {
     | '/api/public/v1/balance'
     | '/api/public/v1/paystack-webhook'
     | '/_authenticated/dashboard/store/'
+    | '/api/public/v1/checkers/purchase'
     | '/api/public/v1/data/purchase'
     | '/api/public/v1/store-order/init'
     | '/api/public/v1/store-order/verify'
@@ -491,6 +504,7 @@ export interface RootRouteChildren {
   SSlugRoute: typeof SSlugRouteWithChildren
   ApiPublicV1BalanceRoute: typeof ApiPublicV1BalanceRoute
   ApiPublicV1PaystackWebhookRoute: typeof ApiPublicV1PaystackWebhookRoute
+  ApiPublicV1CheckersPurchaseRoute: typeof ApiPublicV1CheckersPurchaseRoute
   ApiPublicV1DataPurchaseRoute: typeof ApiPublicV1DataPurchaseRoute
   ApiPublicV1StoreOrderInitRoute: typeof ApiPublicV1StoreOrderInitRoute
   ApiPublicV1StoreOrderVerifyRoute: typeof ApiPublicV1StoreOrderVerifyRoute
@@ -758,6 +772,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicV1DataPurchaseRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/v1/checkers/purchase': {
+      id: '/api/public/v1/checkers/purchase'
+      path: '/api/public/v1/checkers/purchase'
+      fullPath: '/api/public/v1/checkers/purchase'
+      preLoaderRoute: typeof ApiPublicV1CheckersPurchaseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -866,6 +887,7 @@ const rootRouteChildren: RootRouteChildren = {
   SSlugRoute: SSlugRouteWithChildren,
   ApiPublicV1BalanceRoute: ApiPublicV1BalanceRoute,
   ApiPublicV1PaystackWebhookRoute: ApiPublicV1PaystackWebhookRoute,
+  ApiPublicV1CheckersPurchaseRoute: ApiPublicV1CheckersPurchaseRoute,
   ApiPublicV1DataPurchaseRoute: ApiPublicV1DataPurchaseRoute,
   ApiPublicV1StoreOrderInitRoute: ApiPublicV1StoreOrderInitRoute,
   ApiPublicV1StoreOrderVerifyRoute: ApiPublicV1StoreOrderVerifyRoute,
