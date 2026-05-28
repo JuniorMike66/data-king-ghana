@@ -200,7 +200,7 @@ function PublicStore() {
       </main>
 
       <footer className="text-center text-xs text-muted-foreground py-6 border-t border-border mt-6">
-        © {new Date().getFullYear()} {store.name} · Powered by <Link to="/" className="text-primary">DataKing Ghana</Link>
+        © {new Date().getFullYear()} {store.name}
       </footer>
 
       {/* Floating WhatsApp */}
