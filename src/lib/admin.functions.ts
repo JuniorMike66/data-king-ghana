@@ -54,7 +54,7 @@ export const adminAdjustWallet = createServerFn({ method: "POST" })
     }
     await supabaseAdmin.from("transactions").insert({
       user_id: data.userId,
-      type: data.amount >= 0 ? "wallet_topup" : "wallet_debit",
+      type: data.amount >= 0 ? "wallet_topup" : "refund",
       status: "completed",
       amount: Math.abs(data.amount),
       description: `Admin adjustment: ${data.note}`,
