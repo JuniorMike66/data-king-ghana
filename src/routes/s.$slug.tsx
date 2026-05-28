@@ -147,7 +147,7 @@ function PublicStore() {
             </div>
             <div>
               <div className="font-bold leading-tight">{store.name}</div>
-              <div className="text-[10px] text-muted-foreground">Powered by DataKing GH</div>
+              <div className="text-[10px] text-muted-foreground">Instant data bundles</div>
             </div>
           </div>
           <div className="flex items-center gap-2 text-sm">
