@@ -15,7 +15,13 @@ import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as SSlugRouteImport } from './routes/s.$slug'
+import { Route as AdminWithdrawalsRouteImport } from './routes/admin.withdrawals'
+import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
+import { Route as AdminPackagesRouteImport } from './routes/admin.packages'
+import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
+import { Route as AdminNotificationsRouteImport } from './routes/admin.notifications'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard.index'
 import { Route as AuthenticatedDashboardWalletRouteImport } from './routes/_authenticated/dashboard/wallet'
 import { Route as AuthenticatedDashboardTransactionsRouteImport } from './routes/_authenticated/dashboard/transactions'
@@ -58,10 +64,40 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
+} as any)
 const SSlugRoute = SSlugRouteImport.update({
   id: '/s/$slug',
   path: '/s/$slug',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminWithdrawalsRoute = AdminWithdrawalsRouteImport.update({
+  id: '/withdrawals',
+  path: '/withdrawals',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPackagesRoute = AdminPackagesRouteImport.update({
+  id: '/packages',
+  path: '/packages',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminOrdersRoute = AdminOrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminNotificationsRoute = AdminNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => AdminRoute,
 } as any)
 const AuthenticatedDashboardIndexRoute =
   AuthenticatedDashboardIndexRouteImport.update({
@@ -136,11 +172,17 @@ const ApiPublicV1DataPurchaseRoute = ApiPublicV1DataPurchaseRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/admin/notifications': typeof AdminNotificationsRoute
+  '/admin/orders': typeof AdminOrdersRoute
+  '/admin/packages': typeof AdminPackagesRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/withdrawals': typeof AdminWithdrawalsRoute
   '/s/$slug': typeof SSlugRoute
+  '/admin/': typeof AdminIndexRoute
   '/dashboard/checkers': typeof AuthenticatedDashboardCheckersRoute
   '/dashboard/developer': typeof AuthenticatedDashboardDeveloperRoute
   '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
@@ -156,11 +198,16 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/admin/notifications': typeof AdminNotificationsRoute
+  '/admin/orders': typeof AdminOrdersRoute
+  '/admin/packages': typeof AdminPackagesRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/withdrawals': typeof AdminWithdrawalsRoute
   '/s/$slug': typeof SSlugRoute
+  '/admin': typeof AdminIndexRoute
   '/dashboard/checkers': typeof AuthenticatedDashboardCheckersRoute
   '/dashboard/developer': typeof AuthenticatedDashboardDeveloperRoute
   '/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
@@ -178,11 +225,17 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
-  '/admin': typeof AdminRoute
+  '/admin': typeof AdminRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/admin/notifications': typeof AdminNotificationsRoute
+  '/admin/orders': typeof AdminOrdersRoute
+  '/admin/packages': typeof AdminPackagesRoute
+  '/admin/settings': typeof AdminSettingsRoute
+  '/admin/withdrawals': typeof AdminWithdrawalsRoute
   '/s/$slug': typeof SSlugRoute
+  '/admin/': typeof AdminIndexRoute
   '/_authenticated/dashboard/checkers': typeof AuthenticatedDashboardCheckersRoute
   '/_authenticated/dashboard/developer': typeof AuthenticatedDashboardDeveloperRoute
   '/_authenticated/dashboard/profile': typeof AuthenticatedDashboardProfileRoute
@@ -204,7 +257,13 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/signup'
+    | '/admin/notifications'
+    | '/admin/orders'
+    | '/admin/packages'
+    | '/admin/settings'
+    | '/admin/withdrawals'
     | '/s/$slug'
+    | '/admin/'
     | '/dashboard/checkers'
     | '/dashboard/developer'
     | '/dashboard/profile'
@@ -220,11 +279,16 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/admin'
     | '/forgot-password'
     | '/login'
     | '/signup'
+    | '/admin/notifications'
+    | '/admin/orders'
+    | '/admin/packages'
+    | '/admin/settings'
+    | '/admin/withdrawals'
     | '/s/$slug'
+    | '/admin'
     | '/dashboard/checkers'
     | '/dashboard/developer'
     | '/dashboard/profile'
@@ -245,7 +309,13 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/signup'
+    | '/admin/notifications'
+    | '/admin/orders'
+    | '/admin/packages'
+    | '/admin/settings'
+    | '/admin/withdrawals'
     | '/s/$slug'
+    | '/admin/'
     | '/_authenticated/dashboard/checkers'
     | '/_authenticated/dashboard/developer'
     | '/_authenticated/dashboard/profile'
@@ -263,7 +333,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
-  AdminRoute: typeof AdminRoute
+  AdminRoute: typeof AdminRouteWithChildren
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
   SignupRoute: typeof SignupRoute
@@ -317,12 +387,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/s/$slug': {
       id: '/s/$slug'
       path: '/s/$slug'
       fullPath: '/s/$slug'
       preLoaderRoute: typeof SSlugRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/admin/withdrawals': {
+      id: '/admin/withdrawals'
+      path: '/withdrawals'
+      fullPath: '/admin/withdrawals'
+      preLoaderRoute: typeof AdminWithdrawalsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/packages': {
+      id: '/admin/packages'
+      path: '/packages'
+      fullPath: '/admin/packages'
+      preLoaderRoute: typeof AdminPackagesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/orders': {
+      id: '/admin/orders'
+      path: '/orders'
+      fullPath: '/admin/orders'
+      preLoaderRoute: typeof AdminOrdersRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/notifications': {
+      id: '/admin/notifications'
+      path: '/notifications'
+      fullPath: '/admin/notifications'
+      preLoaderRoute: typeof AdminNotificationsRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/_authenticated/dashboard/': {
       id: '/_authenticated/dashboard/'
@@ -441,10 +553,30 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
+interface AdminRouteChildren {
+  AdminNotificationsRoute: typeof AdminNotificationsRoute
+  AdminOrdersRoute: typeof AdminOrdersRoute
+  AdminPackagesRoute: typeof AdminPackagesRoute
+  AdminSettingsRoute: typeof AdminSettingsRoute
+  AdminWithdrawalsRoute: typeof AdminWithdrawalsRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminNotificationsRoute: AdminNotificationsRoute,
+  AdminOrdersRoute: AdminOrdersRoute,
+  AdminPackagesRoute: AdminPackagesRoute,
+  AdminSettingsRoute: AdminSettingsRoute,
+  AdminWithdrawalsRoute: AdminWithdrawalsRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
-  AdminRoute: AdminRoute,
+  AdminRoute: AdminRouteWithChildren,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
