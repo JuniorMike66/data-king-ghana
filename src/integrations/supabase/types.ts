@@ -307,17 +307,83 @@ export type Database = {
         }
         Relationships: []
       }
+      withdrawals: {
+        Row: {
+          account_name: string
+          account_number: string
+          admin_note: string | null
+          amount: number
+          bank_name: string
+          created_at: string
+          id: string
+          status: Database["public"]["Enums"]["withdrawal_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          account_name: string
+          account_number: string
+          admin_note?: string | null
+          amount: number
+          bank_name: string
+          created_at?: string
+          id?: string
+          status?: Database["public"]["Enums"]["withdrawal_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          account_name?: string
+          account_number?: string
+          admin_note?: string | null
+          amount?: number
+          bank_name?: string
+          created_at?: string
+          id?: string
+          status?: Database["public"]["Enums"]["withdrawal_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      credit_wallet: {
+        Args: {
+          _amount: number
+          _description: string
+          _reference: string
+          _user_id: string
+        }
+        Returns: undefined
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
         Returns: boolean
+      }
+      purchase_checker: {
+        Args: { _checker_id: string; _user_id: string }
+        Returns: string
+      }
+      purchase_data: {
+        Args: { _package_id: string; _phone: string; _user_id: string }
+        Returns: string
+      }
+      request_withdrawal: {
+        Args: {
+          _account: string
+          _amount: number
+          _bank: string
+          _name: string
+          _user_id: string
+        }
+        Returns: string
       }
     }
     Enums: {
@@ -340,6 +406,7 @@ export type Database = {
         | "store_sale"
         | "withdrawal"
         | "refund"
+      withdrawal_status: "pending" | "approved" | "paid" | "rejected"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -489,6 +556,7 @@ export const Constants = {
         "withdrawal",
         "refund",
       ],
+      withdrawal_status: ["pending", "approved", "paid", "rejected"],
     },
   },
 } as const
