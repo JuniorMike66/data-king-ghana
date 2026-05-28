@@ -24,7 +24,10 @@ import { Route as AuthenticatedDashboardReportRouteImport } from './routes/_auth
 import { Route as AuthenticatedDashboardProfileRouteImport } from './routes/_authenticated/dashboard/profile'
 import { Route as AuthenticatedDashboardDeveloperRouteImport } from './routes/_authenticated/dashboard/developer'
 import { Route as AuthenticatedDashboardCheckersRouteImport } from './routes/_authenticated/dashboard/checkers'
+import { Route as ApiPublicV1BalanceRouteImport } from './routes/api/public/v1/balance'
 import { Route as AuthenticatedDashboardBuyDataNetworkRouteImport } from './routes/_authenticated/dashboard/buy-data/$network'
+import { Route as ApiPublicV1TransactionsIdRouteImport } from './routes/api/public/v1/transactions.$id'
+import { Route as ApiPublicV1DataPurchaseRouteImport } from './routes/api/public/v1/data.purchase'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -107,12 +110,28 @@ const AuthenticatedDashboardCheckersRoute =
     path: '/checkers',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
+const ApiPublicV1BalanceRoute = ApiPublicV1BalanceRouteImport.update({
+  id: '/api/public/v1/balance',
+  path: '/api/public/v1/balance',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedDashboardBuyDataNetworkRoute =
   AuthenticatedDashboardBuyDataNetworkRouteImport.update({
     id: '/buy-data/$network',
     path: '/buy-data/$network',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
+const ApiPublicV1TransactionsIdRoute =
+  ApiPublicV1TransactionsIdRouteImport.update({
+    id: '/api/public/v1/transactions/$id',
+    path: '/api/public/v1/transactions/$id',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicV1DataPurchaseRoute = ApiPublicV1DataPurchaseRouteImport.update({
+  id: '/api/public/v1/data/purchase',
+  path: '/api/public/v1/data/purchase',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -130,6 +149,9 @@ export interface FileRoutesByFullPath {
   '/dashboard/transactions': typeof AuthenticatedDashboardTransactionsRoute
   '/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
   '/dashboard/buy-data/$network': typeof AuthenticatedDashboardBuyDataNetworkRoute
+  '/api/public/v1/balance': typeof ApiPublicV1BalanceRoute
+  '/api/public/v1/data/purchase': typeof ApiPublicV1DataPurchaseRoute
+  '/api/public/v1/transactions/$id': typeof ApiPublicV1TransactionsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -147,6 +169,9 @@ export interface FileRoutesByTo {
   '/dashboard/transactions': typeof AuthenticatedDashboardTransactionsRoute
   '/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
   '/dashboard/buy-data/$network': typeof AuthenticatedDashboardBuyDataNetworkRoute
+  '/api/public/v1/balance': typeof ApiPublicV1BalanceRoute
+  '/api/public/v1/data/purchase': typeof ApiPublicV1DataPurchaseRoute
+  '/api/public/v1/transactions/$id': typeof ApiPublicV1TransactionsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -166,6 +191,9 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/transactions': typeof AuthenticatedDashboardTransactionsRoute
   '/_authenticated/dashboard/wallet': typeof AuthenticatedDashboardWalletRoute
   '/_authenticated/dashboard/buy-data/$network': typeof AuthenticatedDashboardBuyDataNetworkRoute
+  '/api/public/v1/balance': typeof ApiPublicV1BalanceRoute
+  '/api/public/v1/data/purchase': typeof ApiPublicV1DataPurchaseRoute
+  '/api/public/v1/transactions/$id': typeof ApiPublicV1TransactionsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -185,6 +213,9 @@ export interface FileRouteTypes {
     | '/dashboard/transactions'
     | '/dashboard/wallet'
     | '/dashboard/buy-data/$network'
+    | '/api/public/v1/balance'
+    | '/api/public/v1/data/purchase'
+    | '/api/public/v1/transactions/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -202,6 +233,9 @@ export interface FileRouteTypes {
     | '/dashboard/transactions'
     | '/dashboard/wallet'
     | '/dashboard/buy-data/$network'
+    | '/api/public/v1/balance'
+    | '/api/public/v1/data/purchase'
+    | '/api/public/v1/transactions/$id'
   id:
     | '__root__'
     | '/'
@@ -220,6 +254,9 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/transactions'
     | '/_authenticated/dashboard/wallet'
     | '/_authenticated/dashboard/buy-data/$network'
+    | '/api/public/v1/balance'
+    | '/api/public/v1/data/purchase'
+    | '/api/public/v1/transactions/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -230,6 +267,9 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   SignupRoute: typeof SignupRoute
   SSlugRoute: typeof SSlugRoute
+  ApiPublicV1BalanceRoute: typeof ApiPublicV1BalanceRoute
+  ApiPublicV1DataPurchaseRoute: typeof ApiPublicV1DataPurchaseRoute
+  ApiPublicV1TransactionsIdRoute: typeof ApiPublicV1TransactionsIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -339,12 +379,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardCheckersRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
+    '/api/public/v1/balance': {
+      id: '/api/public/v1/balance'
+      path: '/api/public/v1/balance'
+      fullPath: '/api/public/v1/balance'
+      preLoaderRoute: typeof ApiPublicV1BalanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/dashboard/buy-data/$network': {
       id: '/_authenticated/dashboard/buy-data/$network'
       path: '/buy-data/$network'
       fullPath: '/dashboard/buy-data/$network'
       preLoaderRoute: typeof AuthenticatedDashboardBuyDataNetworkRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
+    }
+    '/api/public/v1/transactions/$id': {
+      id: '/api/public/v1/transactions/$id'
+      path: '/api/public/v1/transactions/$id'
+      fullPath: '/api/public/v1/transactions/$id'
+      preLoaderRoute: typeof ApiPublicV1TransactionsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/v1/data/purchase': {
+      id: '/api/public/v1/data/purchase'
+      path: '/api/public/v1/data/purchase'
+      fullPath: '/api/public/v1/data/purchase'
+      preLoaderRoute: typeof ApiPublicV1DataPurchaseRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -399,6 +460,9 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
   SSlugRoute: SSlugRoute,
+  ApiPublicV1BalanceRoute: ApiPublicV1BalanceRoute,
+  ApiPublicV1DataPurchaseRoute: ApiPublicV1DataPurchaseRoute,
+  ApiPublicV1TransactionsIdRoute: ApiPublicV1TransactionsIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

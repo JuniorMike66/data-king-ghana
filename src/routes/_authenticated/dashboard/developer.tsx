@@ -84,19 +84,34 @@ function Dev() {
         ))}
       </div>
 
-      <div className="rounded-xl border border-border bg-card p-6 space-y-3">
+      <div className="rounded-xl border border-border bg-card p-6 space-y-4">
         <h2 className="font-bold">API Documentation</h2>
-        <p className="text-sm text-muted-foreground">Base URL: <code className="bg-muted px-2 py-1 rounded">https://dataking.gh/api/v1</code></p>
+        <p className="text-sm text-muted-foreground">Base URL: <code className="bg-muted px-2 py-1 rounded">{typeof window !== "undefined" ? window.location.origin : ""}/api/public/v1</code></p>
         <p className="text-sm">Authenticate with <code className="bg-muted px-1.5 py-0.5 rounded">Authorization: Bearer YOUR_KEY</code></p>
-        <pre className="bg-muted p-4 rounded text-xs overflow-x-auto">{`POST /api/v1/data/purchase
+
+        <div className="space-y-1">
+          <div className="text-sm font-semibold">Buy data</div>
+          <pre className="bg-muted p-4 rounded text-xs overflow-x-auto">{`POST /api/public/v1/data/purchase
 {
-  "network": "mtn",
+  "network": "mtn" | "airteltigo_ishare" | "airteltigo_bigtime" | "telecel",
   "phone": "0241234567",
   "size_mb": 1024
 }
 
-→ { "transaction_id": "...", "status": "pending" }`}</pre>
-        <p className="text-xs text-muted-foreground">Full API endpoint coming soon. Contact support to enable production access.</p>
+→ { "transaction_id": "...", "status": "pending|completed|failed", "amount": 5.5 }`}</pre>
+        </div>
+
+        <div className="space-y-1">
+          <div className="text-sm font-semibold">Wallet balance</div>
+          <pre className="bg-muted p-4 rounded text-xs overflow-x-auto">{`GET /api/public/v1/balance
+→ { "balance": 120.5, "currency": "GHS" }`}</pre>
+        </div>
+
+        <div className="space-y-1">
+          <div className="text-sm font-semibold">Transaction status</div>
+          <pre className="bg-muted p-4 rounded text-xs overflow-x-auto">{`GET /api/public/v1/transactions/{id}
+→ { "id": "...", "type": "data_purchase", "status": "completed", ... }`}</pre>
+        </div>
       </div>
     </div>
   );
