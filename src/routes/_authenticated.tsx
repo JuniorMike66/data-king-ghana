@@ -101,13 +101,22 @@ function Sidebar({ onNav }: { onNav?: () => void }) {
 }
 
 function Layout() {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) navigate({ to: "/login" });
   }, [isAuthenticated, isLoading, navigate]);
+
+  const { data: balance } = useQuery({
+    queryKey: ["wallet", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const { data } = await supabase.from("wallets").select("balance").eq("user_id", user!.id).maybeSingle();
+      return Number(data?.balance ?? 0);
+    },
+  });
 
   if (isLoading || !isAuthenticated) {
     return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Loading...</div>;
@@ -133,9 +142,9 @@ function Layout() {
             </SheetTrigger>
             <h1 className="font-bold text-lg">DataKing Ghana</h1>
           </div>
-          <div className="hidden sm:flex items-center gap-2 rounded-full border border-primary/40 px-3 py-1.5 text-sm">
-            <Wallet className="w-4 h-4 text-primary" /> <span className="font-semibold">GH₵ 0.00</span>
-          </div>
+          <Link to="/dashboard/wallet" className="hidden sm:flex items-center gap-2 rounded-full border border-primary/40 px-3 py-1.5 text-sm hover:bg-primary/10">
+            <Wallet className="w-4 h-4 text-primary" /> <span className="font-semibold">GH₵ {(balance ?? 0).toFixed(2)}</span>
+          </Link>
         </header>
         <div className="relative p-4 md:p-6">
           <Outlet />
