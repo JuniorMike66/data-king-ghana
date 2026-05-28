@@ -42,17 +42,25 @@ function PublicStore() {
   });
 
   const { data: packages } = useQuery({
-    queryKey: ["public-store-packages", store?.id],
+    queryKey: ["public-store-packages", store?.id, store?.sponsor_id],
     enabled: !!store,
     queryFn: async () => {
-      const [{ data: pkgs }, { data: overrides }] = await Promise.all([
+      const [{ data: pkgs }, { data: overrides }, { data: sponsorPrices }] = await Promise.all([
         supabase.from("data_packages").select("*").eq("active", true).order("network").order("sort_order"),
         supabase.from("store_package_prices").select("package_id,price").eq("store_id", store!.id),
+        store?.sponsor_id
+          ? supabase.from("subagent_prices").select("package_id,price").eq("sponsor_id", store.sponsor_id)
+          : Promise.resolve({ data: [] as any[] }),
       ]);
-      const map = new Map((overrides ?? []).map((o: any) => [o.package_id, Number(o.price)]));
-      return (pkgs ?? []).map((p: any) => ({ ...p, price: map.get(p.id) ?? Number(p.price) }));
+      const storeMap = new Map((overrides ?? []).map((o: any) => [o.package_id, Number(o.price)]));
+      const sponsorMap = new Map((sponsorPrices ?? []).map((o: any) => [o.package_id, Number(o.price)]));
+      return (pkgs ?? []).map((p: any) => {
+        const base = sponsorMap.get(p.id) ?? Number(p.price);
+        return { ...p, price: storeMap.get(p.id) ?? base };
+      });
     },
   });
+
 
   // Handle Paystack callback
   useEffect(() => {
@@ -138,10 +146,14 @@ function PublicStore() {
             </div>
           </div>
           <div className="flex items-center gap-2 text-sm">
+            <Link to="/s/$slug/become-agent" params={{ slug }} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-primary text-primary-foreground font-semibold hover:opacity-90">
+              <Crown className="w-4 h-4" /> Become an Agent
+            </Link>
             <a href={`tel:${store.support_phone}`} className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-border">
               <Phone className="w-4 h-4" />{store.support_phone}
             </a>
           </div>
+
         </div>
       </header>
 
