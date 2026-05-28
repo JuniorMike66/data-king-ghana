@@ -8,6 +8,8 @@ import {
 } from "@tanstack/react-router";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/lib/auth-context";
+import { FloatingWhatsApp } from "@/components/floating-whatsapp";
+import { MaintenanceGate } from "@/components/maintenance-gate";
 
 import appCss from "../styles.css?url";
 
@@ -87,7 +89,10 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <Outlet />
+        <MaintenanceGate>
+          <Outlet />
+        </MaintenanceGate>
+        <FloatingWhatsApp />
         <Toaster />
       </AuthProvider>
     </QueryClientProvider>
