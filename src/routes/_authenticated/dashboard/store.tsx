@@ -584,6 +584,7 @@ export function Withdrawals() {
 
 /* ─── Custom pricing (packages) ─── */
 export function CustomPricing({ storeId }: { storeId: string }) {
+  const { isSubagent } = useProfile();
   const qc = useQueryClient();
   const { data: packages } = useQuery({
     queryKey: ["all-packages"],
