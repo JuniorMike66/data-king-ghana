@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { addPaystackFee } from "@/lib/paystack-fees";
 
 export const getPaystackPublicKey = createServerFn({ method: "GET" }).handler(async () => {
   return { key: process.env.PAYSTACK_PUBLIC_KEY ?? "" };
