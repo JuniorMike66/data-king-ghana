@@ -19,7 +19,7 @@ const cedis = (n: number | string) => `₵${Number(n).toFixed(2)}`;
 
 function Page() {
   const { user } = useAuth();
-  const { isSubagent, isLoading } = useProfile();
+  const { isSubagent, isLoading } = profileMod.useProfile();
   const navigate = useNavigate();
 
   useEffect(() => {
