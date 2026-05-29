@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { addPaystackFee } from "@/lib/paystack-fees";
 
 const Schema = z.object({
   store_slug: z.string().min(1).max(60),
@@ -50,6 +51,8 @@ export const Route = createFileRoute("/api/public/v1/store-order/init")({
         const reference = `SO-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
         const callback_url = `${origin}/s/${store_slug}?reference=${encodeURIComponent(reference)}`;
 
+        const { gross, fee } = addPaystackFee(price);
+
         const res = await fetch("https://api.paystack.co/transaction/initialize", {
           method: "POST",
           headers: {
@@ -58,7 +61,7 @@ export const Route = createFileRoute("/api/public/v1/store-order/init")({
           },
           body: JSON.stringify({
             email: customer_email,
-            amount: Math.round(price * 100),
+            amount: Math.round(gross * 100),
             currency: "GHS",
             reference,
             callback_url,
@@ -72,12 +75,14 @@ export const Route = createFileRoute("/api/public/v1/store-order/init")({
               recipient_phone,
               price,
               cost,
+              net_amount: price,
+              paystack_fee: fee,
             },
           }),
         });
         const init: any = await res.json();
         if (!res.ok || !init.status) return json({ error: init.message ?? "Paystack init failed" }, 502);
-        return json({ authorization_url: init.data.authorization_url, reference });
+        return json({ authorization_url: init.data.authorization_url, reference, total: gross, fee });
 
       },
     },

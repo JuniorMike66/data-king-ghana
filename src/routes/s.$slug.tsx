@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { addPaystackFee } from "@/lib/paystack-fees";
 
 type SearchParams = { reference?: string };
 
@@ -206,10 +207,17 @@ export function PublicStore() {
             <DialogTitle>Buy {selected?.size_label} {selected ? networks[selected.network]?.label : ""}</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
-            <div className="rounded-lg p-3 bg-muted text-sm flex justify-between">
-              <span>Total to pay</span>
-              <span className="font-bold">GH₵{Number(selected?.price ?? 0).toFixed(2)}</span>
-            </div>
+            {(() => {
+              const price = Number(selected?.price ?? 0);
+              const { gross, fee } = price > 0 ? addPaystackFee(price) : { gross: 0, fee: 0 };
+              return (
+                <div className="rounded-lg p-3 bg-muted text-sm space-y-1">
+                  <div className="flex justify-between"><span>Bundle</span><span>GH₵{price.toFixed(2)}</span></div>
+                  <div className="flex justify-between text-xs text-muted-foreground"><span>Paystack fee</span><span>GH₵{fee.toFixed(2)}</span></div>
+                  <div className="flex justify-between font-bold border-t border-border pt-1"><span>Total to pay</span><span>GH₵{gross.toFixed(2)}</span></div>
+                </div>
+              );
+            })()}
             <div>
               <Label>Recipient phone number</Label>
               <Input placeholder="0241234567" value={phone} onChange={(e) => setPhone(e.target.value)} maxLength={10} />

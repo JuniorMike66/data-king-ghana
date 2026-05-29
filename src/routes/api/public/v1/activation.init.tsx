@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { addPaystackFee } from "@/lib/paystack-fees";
 
 const Schema = z.object({
   user_id: z.string().uuid(),
@@ -57,22 +58,24 @@ export const Route = createFileRoute("/api/public/v1/activation/init")({
         });
         if (insertErr) return json({ error: insertErr.message }, 500);
 
+        const { gross, fee } = addPaystackFee(amount);
+
         const res = await fetch("https://api.paystack.co/transaction/initialize", {
           method: "POST",
           headers: { Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`, "Content-Type": "application/json" },
           body: JSON.stringify({
             email,
-            amount: Math.round(amount * 100),
+            amount: Math.round(gross * 100),
             currency: "GHS",
             reference,
             callback_url,
             channels: ["mobile_money", "card"],
-            metadata: { kind: "activation", activation_kind: kind, user_id, sponsor_id: sponsorId, sponsor_markup: sponsorMarkup },
+            metadata: { kind: "activation", activation_kind: kind, user_id, sponsor_id: sponsorId, sponsor_markup: sponsorMarkup, net_amount: amount, paystack_fee: fee },
           }),
         });
         const init: any = await res.json();
         if (!res.ok || !init.status) return json({ error: init.message ?? "Paystack init failed" }, 502);
-        return json({ authorization_url: init.data.authorization_url, reference });
+        return json({ authorization_url: init.data.authorization_url, reference, total: gross, fee });
       },
     },
   },

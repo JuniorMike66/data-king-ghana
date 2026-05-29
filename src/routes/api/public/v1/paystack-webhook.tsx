@@ -33,7 +33,8 @@ export const Route = createFileRoute("/api/public/v1/paystack-webhook")({
         const tx = event.data ?? {};
         const reference: string = tx.reference;
         const meta = tx.metadata ?? {};
-        const amount = Number(tx.amount) / 100;
+        const grossAmount = Number(tx.amount) / 100;
+        const amount = Number(meta.net_amount ?? grossAmount);
 
         // Activation payments (separate ledger from transactions)
         if (meta.kind === "activation") {
