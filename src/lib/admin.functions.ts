@@ -92,6 +92,51 @@ export const adminUpdateOrderStatus = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const adminRetryOrder = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((i) => z.object({ id: z.string().uuid() }).parse(i))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.userId);
+    const { data: tx } = await supabaseAdmin.from("transactions").select("*").eq("id", data.id).maybeSingle();
+    if (!tx) throw new Error("Order not found");
+    if (tx.type !== "data_purchase") throw new Error("Only data orders can be retried");
+    if (!tx.package_id || !tx.recipient_phone) throw new Error("Order is missing package or phone");
+    const { data: pkg } = await supabaseAdmin.from("data_packages").select("size_mb,network").eq("id", tx.package_id).maybeSingle();
+    if (!pkg) throw new Error("Package no longer exists");
+
+    // If previously failed, the wallet was refunded — re-debit it now so the
+    // user pays for the retried order. Skip re-debit for pending retries.
+    if (tx.status === "failed") {
+      const { data: wal } = await supabaseAdmin.from("wallets").select("balance").eq("user_id", tx.user_id).maybeSingle();
+      const bal = Number(wal?.balance ?? 0);
+      if (bal < Number(tx.amount)) throw new Error("Customer wallet has insufficient balance for re-debit");
+      await supabaseAdmin.from("wallets").update({ balance: bal - Number(tx.amount) }).eq("user_id", tx.user_id);
+    }
+
+    // Reset transaction state & clear provider lock so dispatch will run
+    const meta: any = tx.metadata ?? {};
+    const cleaned = { ...meta };
+    delete cleaned.dispatched_at;
+    delete cleaned.provider_error;
+    delete cleaned.provider_response;
+    delete cleaned.http;
+    delete cleaned.provider_reference;
+    cleaned.retry_count = (Number(meta.retry_count) || 0) + 1;
+    cleaned.last_retry_at = new Date().toISOString();
+    await supabaseAdmin.from("transactions").update({ status: "pending", metadata: cleaned }).eq("id", tx.id);
+
+    await dispatchDataPurchase({
+      transactionId: tx.id,
+      userId: tx.user_id,
+      network: pkg.network,
+      phone: tx.recipient_phone,
+      sizeMb: Number(pkg.size_mb ?? 0),
+      amount: Number(tx.amount),
+    });
+    return { ok: true };
+  });
+
+
 export const adminListWithdrawals = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
