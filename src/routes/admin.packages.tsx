@@ -66,17 +66,15 @@ function PackageDialog({ upsert, pkg, onDone }: any) {
   const [f, setF] = useState({
     network: pkg?.network ?? "mtn",
     size_label: pkg?.size_label ?? "",
-    size_mb: String(pkg?.size_mb ?? 1024),
     price: String(pkg?.price ?? 0),
     agent_price: String(pkg?.agent_price ?? 0),
     active: pkg?.active ?? true,
-    sort_order: String(pkg?.sort_order ?? 0),
   });
   const mut = useMutation({
     mutationFn: () => upsert({
       data: {
-        id: pkg?.id, network: f.network as any, size_label: f.size_label, size_mb: Number(f.size_mb),
-        price: Number(f.price), agent_price: Number(f.agent_price), active: f.active, sort_order: Number(f.sort_order),
+        id: pkg?.id, network: f.network as any, size_label: f.size_label,
+        price: Number(f.price), agent_price: Number(f.agent_price), active: f.active,
       },
     }),
     onSuccess: () => { toast.success("Saved"); setOpen(false); onDone(); },
@@ -100,15 +98,15 @@ function PackageDialog({ upsert, pkg, onDone }: any) {
             </Select>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <div><Label>Size label</Label><Input value={f.size_label} onChange={(e) => setF({ ...f, size_label: e.target.value })} placeholder="1GB" /></div>
-            <div><Label>Size (MB)</Label><Input type="number" value={f.size_mb} onChange={(e) => setF({ ...f, size_mb: e.target.value })} /></div>
+            <div className="col-span-2"><Label>Size label</Label><Input value={f.size_label} onChange={(e) => setF({ ...f, size_label: e.target.value })} placeholder="e.g. 1GB or 500MB" /></div>
             <div><Label>Price</Label><Input type="number" step="0.01" value={f.price} onChange={(e) => setF({ ...f, price: e.target.value })} /></div>
             <div><Label>Agent price</Label><Input type="number" step="0.01" value={f.agent_price} onChange={(e) => setF({ ...f, agent_price: e.target.value })} /></div>
-            <div><Label>Sort</Label><Input type="number" value={f.sort_order} onChange={(e) => setF({ ...f, sort_order: e.target.value })} /></div>
           </div>
+          <p className="text-xs text-muted-foreground">Sorting is automatic based on bundle size.</p>
           <Button onClick={() => mut.mutate()} disabled={mut.isPending}>Save</Button>
         </div>
       </DialogContent>
     </Dialog>
   );
 }
+

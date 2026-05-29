@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
-import { useProfile } from "@/lib/use-profile";
+import * as profileMod from "@/lib/use-profile";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -60,7 +60,7 @@ function StoreLayout() {
 
 function StoreActivationGate() {
   const { user } = useAuth();
-  const { profile, isSubagent, storeActivatedAt, isLoading: pl } = useProfile();
+  const { profile, isSubagent, storeActivatedAt, isLoading: pl } = profileMod.useProfile();
   const { data: settings, isLoading: sl } = useQuery({
     queryKey: ["site-settings-store-act"],
     queryFn: async () => (await supabase.from("site_settings").select("store_activation_enabled,store_activation_fee").eq("id", 1).maybeSingle()).data,
@@ -134,7 +134,7 @@ function StoreActivationGate() {
 /* ─── Create store (no store yet) ─── */
 function CreateStoreCard() {
   const { user } = useAuth();
-  const { isSubagent, sponsorId } = useProfile();
+  const { isSubagent, sponsorId } = profileMod.useProfile();
   const qc = useQueryClient();
 
   const { data: sponsorStore } = useQuery({
@@ -584,7 +584,7 @@ export function Withdrawals() {
 
 /* ─── Custom pricing (packages) ─── */
 export function CustomPricing({ storeId }: { storeId: string }) {
-  const { isSubagent } = useProfile();
+  const { isSubagent } = profileMod.useProfile();
   const qc = useQueryClient();
   const { data: packages } = useQuery({
     queryKey: ["all-packages"],
