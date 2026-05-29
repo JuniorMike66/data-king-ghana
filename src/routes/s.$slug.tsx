@@ -2,7 +2,8 @@ import { createFileRoute, Outlet, useParams, useNavigate, Link } from "@tanstack
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { MessageCircle, Phone, Crown, Loader2 } from "lucide-react";
+import { MessageCircle, Phone, Crown } from "lucide-react";
+import { DataKingLoader, DataKingFullPageLoader } from "@/components/dataking-loader";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
