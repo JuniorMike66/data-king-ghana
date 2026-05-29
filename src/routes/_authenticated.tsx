@@ -6,7 +6,7 @@ import {
   Store, Code, User, AlertCircle, LogOut, Menu, Shield, ChevronDown,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
-import { useProfile } from "@/lib/use-profile";
+import * as profileMod from "@/lib/use-profile";
 
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
