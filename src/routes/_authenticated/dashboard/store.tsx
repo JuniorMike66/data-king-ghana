@@ -56,7 +56,7 @@ function StoreLayout() {
 }
 
 /* ─── Activation gate (store) ─── */
-import { useProfile } from "@/lib/use-profile";
+
 
 function StoreActivationGate() {
   const { user } = useAuth();
