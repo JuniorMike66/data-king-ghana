@@ -91,8 +91,10 @@ function AdminLayout() {
             <Menu className="w-5 h-5" />
           </Button>
           <Shield className="w-5 h-5 text-primary" />
-          <h1 className="font-bold">DataKing Admin Panel</h1>
+          <h1 className="font-bold flex-1">DataKing Admin Panel</h1>
+          <AdminRealtimeNotifier />
         </header>
+
         <div className="p-4 md:p-6">
           <Outlet />
         </div>
