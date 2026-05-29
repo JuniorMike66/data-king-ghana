@@ -10,9 +10,11 @@ export const Route = createFileRoute("/_authenticated/dashboard/transactions")({
 const statusColor: Record<string, string> = {
   pending: "bg-amber-500/15 text-amber-500",
   completed: "bg-emerald-500/15 text-emerald-500",
+  success: "bg-emerald-500/15 text-emerald-500",
   failed: "bg-destructive/15 text-destructive",
   refunded: "bg-sky-500/15 text-sky-500",
 };
+
 
 function Tx() {
   const { user } = useAuth();
