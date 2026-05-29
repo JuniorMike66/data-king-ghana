@@ -237,7 +237,7 @@ export function PublicStore() {
 
       {verifying && (
         <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur flex items-center justify-center">
-          <div className="text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto" /><p className="mt-2 text-sm">Verifying your payment...</p></div>
+          <DataKingLoader label="Verifying your payment..." size={64} />
         </div>
       )}
     </div>
