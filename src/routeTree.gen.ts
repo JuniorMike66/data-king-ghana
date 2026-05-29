@@ -13,6 +13,7 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as ActivateSubagentRouteImport } from './routes/activate-subagent'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
@@ -49,6 +50,8 @@ import { Route as ApiPublicV1StoreOrderVerifyRouteImport } from './routes/api/pu
 import { Route as ApiPublicV1StoreOrderInitRouteImport } from './routes/api/public/v1/store-order.init'
 import { Route as ApiPublicV1DataPurchaseRouteImport } from './routes/api/public/v1/data.purchase'
 import { Route as ApiPublicV1CheckersPurchaseRouteImport } from './routes/api/public/v1/checkers.purchase'
+import { Route as ApiPublicV1ActivationVerifyRouteImport } from './routes/api/public/v1/activation.verify'
+import { Route as ApiPublicV1ActivationInitRouteImport } from './routes/api/public/v1/activation.init'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -68,6 +71,11 @@ const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ActivateSubagentRoute = ActivateSubagentRouteImport.update({
+  id: '/activate-subagent',
+  path: '/activate-subagent',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
@@ -269,9 +277,22 @@ const ApiPublicV1CheckersPurchaseRoute =
     path: '/api/public/v1/checkers/purchase',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicV1ActivationVerifyRoute =
+  ApiPublicV1ActivationVerifyRouteImport.update({
+    id: '/api/public/v1/activation/verify',
+    path: '/api/public/v1/activation/verify',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicV1ActivationInitRoute =
+  ApiPublicV1ActivationInitRouteImport.update({
+    id: '/api/public/v1/activation/init',
+    path: '/api/public/v1/activation/init',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/activate-subagent': typeof ActivateSubagentRoute
   '/admin': typeof AdminRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
@@ -305,6 +326,8 @@ export interface FileRoutesByFullPath {
   '/api/public/v1/balance': typeof ApiPublicV1BalanceRoute
   '/api/public/v1/paystack-webhook': typeof ApiPublicV1PaystackWebhookRoute
   '/dashboard/store/': typeof AuthenticatedDashboardStoreIndexRoute
+  '/api/public/v1/activation/init': typeof ApiPublicV1ActivationInitRoute
+  '/api/public/v1/activation/verify': typeof ApiPublicV1ActivationVerifyRoute
   '/api/public/v1/checkers/purchase': typeof ApiPublicV1CheckersPurchaseRoute
   '/api/public/v1/data/purchase': typeof ApiPublicV1DataPurchaseRoute
   '/api/public/v1/store-order/init': typeof ApiPublicV1StoreOrderInitRoute
@@ -313,6 +336,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/activate-subagent': typeof ActivateSubagentRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
@@ -343,6 +367,8 @@ export interface FileRoutesByTo {
   '/api/public/v1/balance': typeof ApiPublicV1BalanceRoute
   '/api/public/v1/paystack-webhook': typeof ApiPublicV1PaystackWebhookRoute
   '/dashboard/store': typeof AuthenticatedDashboardStoreIndexRoute
+  '/api/public/v1/activation/init': typeof ApiPublicV1ActivationInitRoute
+  '/api/public/v1/activation/verify': typeof ApiPublicV1ActivationVerifyRoute
   '/api/public/v1/checkers/purchase': typeof ApiPublicV1CheckersPurchaseRoute
   '/api/public/v1/data/purchase': typeof ApiPublicV1DataPurchaseRoute
   '/api/public/v1/store-order/init': typeof ApiPublicV1StoreOrderInitRoute
@@ -353,6 +379,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/activate-subagent': typeof ActivateSubagentRoute
   '/admin': typeof AdminRouteWithChildren
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
@@ -386,6 +413,8 @@ export interface FileRoutesById {
   '/api/public/v1/balance': typeof ApiPublicV1BalanceRoute
   '/api/public/v1/paystack-webhook': typeof ApiPublicV1PaystackWebhookRoute
   '/_authenticated/dashboard/store/': typeof AuthenticatedDashboardStoreIndexRoute
+  '/api/public/v1/activation/init': typeof ApiPublicV1ActivationInitRoute
+  '/api/public/v1/activation/verify': typeof ApiPublicV1ActivationVerifyRoute
   '/api/public/v1/checkers/purchase': typeof ApiPublicV1CheckersPurchaseRoute
   '/api/public/v1/data/purchase': typeof ApiPublicV1DataPurchaseRoute
   '/api/public/v1/store-order/init': typeof ApiPublicV1StoreOrderInitRoute
@@ -396,6 +425,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/activate-subagent'
     | '/admin'
     | '/forgot-password'
     | '/login'
@@ -429,6 +459,8 @@ export interface FileRouteTypes {
     | '/api/public/v1/balance'
     | '/api/public/v1/paystack-webhook'
     | '/dashboard/store/'
+    | '/api/public/v1/activation/init'
+    | '/api/public/v1/activation/verify'
     | '/api/public/v1/checkers/purchase'
     | '/api/public/v1/data/purchase'
     | '/api/public/v1/store-order/init'
@@ -437,6 +469,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/activate-subagent'
     | '/forgot-password'
     | '/login'
     | '/signup'
@@ -467,6 +500,8 @@ export interface FileRouteTypes {
     | '/api/public/v1/balance'
     | '/api/public/v1/paystack-webhook'
     | '/dashboard/store'
+    | '/api/public/v1/activation/init'
+    | '/api/public/v1/activation/verify'
     | '/api/public/v1/checkers/purchase'
     | '/api/public/v1/data/purchase'
     | '/api/public/v1/store-order/init'
@@ -476,6 +511,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/activate-subagent'
     | '/admin'
     | '/forgot-password'
     | '/login'
@@ -509,6 +545,8 @@ export interface FileRouteTypes {
     | '/api/public/v1/balance'
     | '/api/public/v1/paystack-webhook'
     | '/_authenticated/dashboard/store/'
+    | '/api/public/v1/activation/init'
+    | '/api/public/v1/activation/verify'
     | '/api/public/v1/checkers/purchase'
     | '/api/public/v1/data/purchase'
     | '/api/public/v1/store-order/init'
@@ -519,6 +557,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  ActivateSubagentRoute: typeof ActivateSubagentRoute
   AdminRoute: typeof AdminRouteWithChildren
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
@@ -526,6 +565,8 @@ export interface RootRouteChildren {
   SSlugRoute: typeof SSlugRouteWithChildren
   ApiPublicV1BalanceRoute: typeof ApiPublicV1BalanceRoute
   ApiPublicV1PaystackWebhookRoute: typeof ApiPublicV1PaystackWebhookRoute
+  ApiPublicV1ActivationInitRoute: typeof ApiPublicV1ActivationInitRoute
+  ApiPublicV1ActivationVerifyRoute: typeof ApiPublicV1ActivationVerifyRoute
   ApiPublicV1CheckersPurchaseRoute: typeof ApiPublicV1CheckersPurchaseRoute
   ApiPublicV1DataPurchaseRoute: typeof ApiPublicV1DataPurchaseRoute
   ApiPublicV1StoreOrderInitRoute: typeof ApiPublicV1StoreOrderInitRoute
@@ -561,6 +602,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/activate-subagent': {
+      id: '/activate-subagent'
+      path: '/activate-subagent'
+      fullPath: '/activate-subagent'
+      preLoaderRoute: typeof ActivateSubagentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -815,6 +863,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicV1CheckersPurchaseRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/v1/activation/verify': {
+      id: '/api/public/v1/activation/verify'
+      path: '/api/public/v1/activation/verify'
+      fullPath: '/api/public/v1/activation/verify'
+      preLoaderRoute: typeof ApiPublicV1ActivationVerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/v1/activation/init': {
+      id: '/api/public/v1/activation/init'
+      path: '/api/public/v1/activation/init'
+      fullPath: '/api/public/v1/activation/init'
+      preLoaderRoute: typeof ApiPublicV1ActivationInitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -920,6 +982,7 @@ const SSlugRouteWithChildren = SSlugRoute._addFileChildren(SSlugRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  ActivateSubagentRoute: ActivateSubagentRoute,
   AdminRoute: AdminRouteWithChildren,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
@@ -927,6 +990,8 @@ const rootRouteChildren: RootRouteChildren = {
   SSlugRoute: SSlugRouteWithChildren,
   ApiPublicV1BalanceRoute: ApiPublicV1BalanceRoute,
   ApiPublicV1PaystackWebhookRoute: ApiPublicV1PaystackWebhookRoute,
+  ApiPublicV1ActivationInitRoute: ApiPublicV1ActivationInitRoute,
+  ApiPublicV1ActivationVerifyRoute: ApiPublicV1ActivationVerifyRoute,
   ApiPublicV1CheckersPurchaseRoute: ApiPublicV1CheckersPurchaseRoute,
   ApiPublicV1DataPurchaseRoute: ApiPublicV1DataPurchaseRoute,
   ApiPublicV1StoreOrderInitRoute: ApiPublicV1StoreOrderInitRoute,
