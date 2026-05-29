@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { addPaystackFee } from "@/lib/paystack-fees";
 
 const Schema = z.object({
   store_slug: z.string().min(1).max(60),
