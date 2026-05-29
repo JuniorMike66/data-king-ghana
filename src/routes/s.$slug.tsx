@@ -175,33 +175,13 @@ export function PublicStore() {
       </section>
 
       {/* Bundles */}
-      <main className="max-w-6xl mx-auto p-4 sm:p-6 space-y-8 flex-1 w-full">
-        {Object.entries(networks).map(([key, cfg]) => {
-          const items = (packages ?? []).filter((p: any) => p.network === key);
-          if (!items.length) return null;
-          return (
-            <section key={key}>
-              <h2 className="text-xl font-bold mb-3">{cfg.label} Bundles</h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {items.map((p: any) => (
-                  <button
-                    key={p.id}
-                    onClick={() => { setSelected(p); setPhone(""); setEmail(""); }}
-                    className={`${cfg.color} rounded-xl p-4 text-left shadow hover:scale-[1.02] transition`}
-                  >
-                    <div className="text-2xl font-extrabold">{p.size_label}</div>
-                    <div className="text-xl font-bold mt-2">₵{Number(p.price).toFixed(2)}</div>
-                    <div className="text-[10px] opacity-80 mt-1">NO EXPIRY · Tap to buy</div>
-                  </button>
-                ))}
-              </div>
-            </section>
-          );
-        })}
+      <main className="max-w-6xl mx-auto p-4 sm:p-6 space-y-6 flex-1 w-full">
+        <NetworkSwitcher packages={packages ?? []} setSelected={setSelected} setPhone={setPhone} setEmail={setEmail} />
         {(packages?.length ?? 0) === 0 && (
           <div className="text-center text-muted-foreground py-12">No bundles available yet.</div>
         )}
       </main>
+
 
       <footer className="text-center text-xs text-muted-foreground py-6 border-t border-border mt-6">
         © {new Date().getFullYear()} {store.name}
