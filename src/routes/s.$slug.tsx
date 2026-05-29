@@ -80,10 +80,9 @@ export function PublicStore() {
         });
         const json = await res.json();
         if (!res.ok) throw new Error(json.error ?? "Verification failed");
-        if (json.status === "completed") toast.success("Payment confirmed — your data is on the way!");
-        else if (json.status === "pending") toast.success("Payment received. Your order is being processed.");
-        else if (json.status === "failed") toast.error("Order failed. Please contact support — your payment will be refunded.");
-        else toast.message(`Payment status: ${json.status}`);
+        // Customers always see success — real status lives on the admin dashboard.
+        toast.success("Payment confirmed — your data is on the way!");
+
       } catch (e: any) {
         toast.error(e.message ?? "Could not verify payment");
       } finally {
