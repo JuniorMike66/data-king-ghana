@@ -48,8 +48,84 @@ function StoreLayout() {
         </div>
       </div>
 
-      {!store && !isLoading && <CreateStoreCard />}
+      {!store && !isLoading && <StoreActivationGate />}
       {store && <Outlet />}
+    </div>
+  );
+}
+
+/* ─── Activation gate (store) ─── */
+import { useProfile } from "@/lib/use-profile";
+
+function StoreActivationGate() {
+  const { user } = useAuth();
+  const { profile, isSubagent, storeActivatedAt, isLoading: pl } = useProfile();
+  const { data: settings, isLoading: sl } = useQuery({
+    queryKey: ["site-settings-store-act"],
+    queryFn: async () => (await supabase.from("site_settings").select("store_activation_enabled,store_activation_fee").eq("id", 1).maybeSingle()).data,
+  });
+  const [paying, setPaying] = useState(false);
+  const [verifying, setVerifying] = useState(false);
+
+  // Handle Paystack callback (act_ref in URL)
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const ref = url.searchParams.get("act_ref");
+    if (!ref) return;
+    setVerifying(true);
+    (async () => {
+      try {
+        const res = await fetch("/api/public/v1/activation/verify", {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ reference: ref }),
+        });
+        const j = await res.json();
+        if (!res.ok) throw new Error(j.error ?? "Verification failed");
+        if (j.status === "completed") toast.success("Store activated! Set up your store below.");
+        else toast.message(`Status: ${j.status}`);
+      } catch (e: any) { toast.error(e.message); }
+      finally {
+        setVerifying(false);
+        url.searchParams.delete("act_ref");
+        window.history.replaceState({}, "", url.pathname + url.search);
+        window.location.reload();
+      }
+    })();
+  }, []);
+
+  if (pl || sl) return <div className="text-sm text-muted-foreground">Loading…</div>;
+
+  // Subagents skip the store activation fee — they only pay subagent activation (handled separately)
+  const required = !!settings?.store_activation_enabled && !isSubagent && !storeActivatedAt;
+  const fee = Number(settings?.store_activation_fee ?? 0);
+
+  if (!required) return <CreateStoreCard />;
+
+  const pay = async () => {
+    if (!user) return;
+    setPaying(true);
+    try {
+      const res = await fetch("/api/public/v1/activation/init", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: user.id, kind: "store",
+          email: profile?.email ?? user.email,
+          origin: window.location.origin, return_path: "/dashboard/store",
+        }),
+      });
+      const j = await res.json();
+      if (!res.ok) throw new Error(j.error ?? "Could not start payment");
+      window.location.href = j.authorization_url;
+    } catch (e: any) { toast.error(e.message); setPaying(false); }
+  };
+
+  return (
+    <div className="rounded-xl border border-border bg-card p-6 space-y-4">
+      <h2 className="font-bold text-lg">Activate your store</h2>
+      <p className="text-sm text-muted-foreground">A one-time activation fee of <strong>{cedis(fee)}</strong> is required before you can create your store.</p>
+      <Button onClick={pay} disabled={paying || verifying}>
+        {paying ? "Redirecting…" : verifying ? "Verifying…" : `Pay ${cedis(fee)} & activate store`}
+      </Button>
     </div>
   );
 }
@@ -57,29 +133,63 @@ function StoreLayout() {
 /* ─── Create store (no store yet) ─── */
 function CreateStoreCard() {
   const { user } = useAuth();
+  const { isSubagent, sponsorId } = useProfile();
   const qc = useQueryClient();
+
+  const { data: sponsorStore } = useQuery({
+    queryKey: ["sponsor-store-slug", sponsorId],
+    enabled: !!sponsorId,
+    queryFn: async () => (await supabase.from("stores").select("slug,name").eq("user_id", sponsorId!).maybeSingle()).data,
+  });
+
+  const prefix = isSubagent && sponsorStore?.slug ? `${sponsorStore.slug}-` : "";
   const [form, setForm] = useState({ name: "", slug: "", support_phone: "", support_whatsapp: "" });
+
   const create = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase.from("stores").insert({ ...form, user_id: user!.id, active: true });
+      const finalSlug = isSubagent ? `${prefix}${form.slug}` : form.slug;
+      const { error } = await supabase.from("stores").insert({ ...form, slug: finalSlug, user_id: user!.id, active: true });
       if (error) throw error;
     },
     onSuccess: () => { toast.success("Store created"); qc.invalidateQueries({ queryKey: ["my-store"] }); },
     onError: (e: any) => toast.error(e.message),
   });
+
+  const blocked = isSubagent && !sponsorStore?.slug;
+
   return (
     <div className="rounded-xl border border-border bg-card p-6 space-y-4">
       <h2 className="font-bold text-lg">Create your store</h2>
+      {isSubagent && (
+        <p className="text-xs text-muted-foreground">
+          As a subagent of <strong>{sponsorStore?.name ?? "your sponsor"}</strong>, your store URL must start with <code className="font-mono">{prefix || "your sponsor's slug "}</code>.
+        </p>
+      )}
+      {blocked && (
+        <div className="rounded-lg bg-amber-500/10 border border-amber-500/40 p-3 text-sm">
+          Your sponsor hasn't set up their store yet. Ask them to create one, then come back.
+        </div>
+      )}
       <div className="grid sm:grid-cols-2 gap-4">
         <div><Label>Store name</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div>
-        <div><Label>URL slug</Label><Input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value.replace(/[^a-z0-9-]/gi, "").toLowerCase() })} placeholder="kingsdata" /></div>
+        <div>
+          <Label>URL slug</Label>
+          {isSubagent ? (
+            <div className="flex items-center">
+              <span className="px-2 h-10 flex items-center rounded-l-md bg-muted text-sm text-muted-foreground border border-r-0 border-input font-mono">{prefix}</span>
+              <Input className="rounded-l-none" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value.replace(/[^a-z0-9-]/gi, "").toLowerCase() })} placeholder="yourname" />
+            </div>
+          ) : (
+            <Input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value.replace(/[^a-z0-9-]/gi, "").toLowerCase() })} placeholder="kingsdata" />
+          )}
+        </div>
         <div><Label>Support phone</Label><Input value={form.support_phone} onChange={(e) => setForm({ ...form, support_phone: e.target.value })} placeholder="0241234567" /></div>
         <div>
           <Label>WhatsApp channel / group link <span className="text-muted-foreground font-normal">(optional)</span></Label>
           <Input value={form.support_whatsapp} onChange={(e) => setForm({ ...form, support_whatsapp: e.target.value })} placeholder="https://whatsapp.com/channel/..." />
         </div>
       </div>
-      <Button onClick={() => create.mutate()} disabled={create.isPending || !form.name || !form.slug || !form.support_phone}>
+      <Button onClick={() => create.mutate()} disabled={create.isPending || !form.name || !form.slug || !form.support_phone || blocked}>
         {create.isPending ? "Creating..." : "Create store"}
       </Button>
     </div>
