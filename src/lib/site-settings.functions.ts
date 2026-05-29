@@ -16,6 +16,10 @@ export const updateSiteSettings = createServerFn({ method: "POST" })
       maintenance_mode: z.boolean(),
       whatsapp_enabled: z.boolean(),
       whatsapp_url: z.string().trim().max(500).optional().nullable(),
+      store_activation_enabled: z.boolean(),
+      store_activation_fee: z.number().min(0).max(100000),
+      subagent_activation_enabled: z.boolean(),
+      subagent_activation_base_fee: z.number().min(0).max(100000),
     }).parse(i)
   )
   .handler(async ({ data, context }) => {
@@ -26,6 +30,10 @@ export const updateSiteSettings = createServerFn({ method: "POST" })
         maintenance_mode: data.maintenance_mode,
         whatsapp_enabled: data.whatsapp_enabled,
         whatsapp_url: data.whatsapp_url || null,
+        store_activation_enabled: data.store_activation_enabled,
+        store_activation_fee: data.store_activation_fee,
+        subagent_activation_enabled: data.subagent_activation_enabled,
+        subagent_activation_base_fee: data.subagent_activation_base_fee,
         updated_at: new Date().toISOString(),
       })
       .eq("id", 1);
