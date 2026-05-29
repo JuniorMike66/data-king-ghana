@@ -2,7 +2,8 @@ import { createFileRoute, Outlet, useParams, useNavigate, Link } from "@tanstack
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { MessageCircle, Phone, Crown, Loader2 } from "lucide-react";
+import { MessageCircle, Phone, Crown } from "lucide-react";
+import { DataKingLoader, DataKingFullPageLoader } from "@/components/dataking-loader";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -95,7 +96,7 @@ export function PublicStore() {
   }, [search.reference]);
 
   if (isLoading) {
-    return <div className="min-h-screen flex items-center justify-center"><Loader2 className="animate-spin" /></div>;
+    return <DataKingFullPageLoader />;
   }
   if (!store) {
     return (
@@ -236,7 +237,7 @@ export function PublicStore() {
 
       {verifying && (
         <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur flex items-center justify-center">
-          <div className="text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto" /><p className="mt-2 text-sm">Verifying your payment...</p></div>
+          <DataKingLoader label="Verifying your payment..." size={64} />
         </div>
       )}
     </div>

@@ -2,7 +2,8 @@ import { createFileRoute, useParams, Link, useNavigate } from "@tanstack/react-r
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Crown, Check, Loader2, ArrowLeft } from "lucide-react";
+import { Crown, Check, ArrowLeft } from "lucide-react";
+import { DataKingFullPageLoader } from "@/components/dataking-loader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -101,7 +102,7 @@ function BecomeAgent() {
     navigate({ to: "/dashboard" });
   };
 
-  if (isLoading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="w-6 h-6 animate-spin" /></div>;
+  if (isLoading) return <DataKingFullPageLoader />;
   if (!store) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Store not found</div>;
 
   return (

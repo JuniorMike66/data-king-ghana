@@ -4,7 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
-import { Crown, Loader2, ShieldCheck, LogOut } from "lucide-react";
+import { Crown, ShieldCheck, LogOut } from "lucide-react";
+import { DataKingFullPageLoader } from "@/components/dataking-loader";
 import { toast } from "sonner";
 
 type Search = { act_ref?: string };
@@ -102,7 +103,7 @@ function ActivatePage() {
   };
 
   if (isLoading || loadingData || !data || data.notSubagent || data.already || !data.enabled) {
-    return <div className="min-h-screen flex items-center justify-center"><Loader2 className="w-6 h-6 animate-spin" /></div>;
+    return <DataKingFullPageLoader />;
   }
 
   return (
