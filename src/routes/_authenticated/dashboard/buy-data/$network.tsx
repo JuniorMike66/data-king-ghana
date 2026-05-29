@@ -34,15 +34,17 @@ function Page() {
       const { data } = await supabase
         .from("data_packages").select("*").eq("network", cfg.network).eq("active", true).order("sort_order");
       const list = data ?? [];
-      // Apply sponsor pricing if current user is a subagent
       const { data: me } = await supabase.auth.getUser();
-      if (me.user) {
-        const { data: prof } = await supabase.from("profiles").select("sponsor_id").eq("id", me.user.id).maybeSingle();
-        if (prof?.sponsor_id) {
-          const { data: sp } = await supabase.from("subagent_prices").select("package_id,price").eq("sponsor_id", prof.sponsor_id);
-          const map = new Map((sp ?? []).map((o: any) => [o.package_id, Number(o.price)]));
-          return list.map((p: any) => ({ ...p, price: map.get(p.id) ?? Number(p.price) }));
-        }
+      if (!me.user) return list;
+      const { data: prof } = await supabase
+        .from("profiles").select("sponsor_id,store_activated_at").eq("id", me.user.id).maybeSingle();
+      if (prof?.sponsor_id) {
+        const { data: sp } = await supabase.from("subagent_prices").select("package_id,price").eq("sponsor_id", prof.sponsor_id);
+        const map = new Map((sp ?? []).map((o: any) => [o.package_id, Number(o.price)]));
+        return list.map((p: any) => ({ ...p, price: map.get(p.id) ?? Number(p.agent_price ?? p.price) }));
+      }
+      if (prof?.store_activated_at) {
+        return list.map((p: any) => ({ ...p, price: Number(p.agent_price ?? p.price) }));
       }
       return list;
     },
