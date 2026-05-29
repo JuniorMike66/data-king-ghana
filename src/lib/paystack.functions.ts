@@ -48,13 +48,14 @@ export const verifyPaystackTopup = createServerFn({ method: "POST" })
     const tx = json.data;
     if (tx.status !== "success") return { credited: false, status: tx.status as string };
     if (tx.metadata?.user_id && tx.metadata.user_id !== userId) throw new Error("Reference does not belong to this user");
-    const amount = Number(tx.amount) / 100;
+    const grossAmount = Number(tx.amount) / 100;
+    const netAmount = Number(tx.metadata?.net_amount ?? grossAmount);
     const { error } = await supabaseAdmin.rpc("credit_wallet", {
       _user_id: userId,
-      _amount: amount,
+      _amount: netAmount,
       _reference: data.reference,
       _description: `Wallet top-up via Paystack (${tx.channel ?? "online"})`,
     });
     if (error) throw new Error(error.message);
-    return { credited: true, amount, status: "success" };
+    return { credited: true, amount: netAmount, status: "success" };
   });
