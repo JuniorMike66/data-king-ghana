@@ -10,7 +10,7 @@ export function useProfile() {
     queryFn: async () => {
       const { data } = await supabase
         .from("profiles")
-        .select("id, email, full_name, phone, sponsor_id")
+        .select("id, email, full_name, phone, sponsor_id, store_activated_at, subagent_activated_at")
         .eq("id", user!.id)
         .maybeSingle();
       return data;
@@ -20,6 +20,8 @@ export function useProfile() {
     profile: q.data,
     isSubagent: !!q.data?.sponsor_id,
     sponsorId: q.data?.sponsor_id ?? null,
+    storeActivatedAt: q.data?.store_activated_at ?? null,
+    subagentActivatedAt: q.data?.subagent_activated_at ?? null,
     isLoading: q.isLoading,
   };
 }

@@ -33,7 +33,62 @@ function Page() {
   return (
     <div className="space-y-6">
       <SubagentList sponsorId={user.id} />
+      <ActivationMarkup sponsorId={user.id} />
       <SubagentPricing sponsorId={user.id} />
+    </div>
+  );
+}
+
+function ActivationMarkup({ sponsorId }: { sponsorId: string }) {
+  const qc = useQueryClient();
+  const { data: settings } = useQuery({
+    queryKey: ["site-settings-sub-act"],
+    queryFn: async () => (await supabase.from("site_settings").select("subagent_activation_enabled,subagent_activation_base_fee").eq("id", 1).maybeSingle()).data,
+  });
+  const { data: row } = useQuery({
+    queryKey: ["my-sub-act-markup", sponsorId],
+    queryFn: async () => (await supabase.from("subagent_activation_markup").select("markup").eq("sponsor_id", sponsorId).maybeSingle()).data,
+  });
+  const [val, setVal] = useState<string>("");
+  useEffect(() => { if (row) setVal(String(row.markup ?? "")); }, [row]);
+
+  const save = useMutation({
+    mutationFn: async () => {
+      const m = Number(val) || 0;
+      const { error } = await supabase.from("subagent_activation_markup").upsert(
+        { sponsor_id: sponsorId, markup: m }, { onConflict: "sponsor_id" }
+      );
+      if (error) throw error;
+    },
+    onSuccess: () => { toast.success("Saved"); qc.invalidateQueries({ queryKey: ["my-sub-act-markup", sponsorId] }); },
+    onError: (e: any) => toast.error(e.message),
+  });
+
+  if (!settings?.subagent_activation_enabled) {
+    return (
+      <div className="rounded-xl border border-border bg-card p-5">
+        <h2 className="font-bold text-lg mb-1">Subagent activation</h2>
+        <p className="text-sm text-muted-foreground">Subagent activation is currently <strong>free</strong> (turned off by admin). When enabled, you'll be able to add your own markup here.</p>
+      </div>
+    );
+  }
+  const base = Number(settings.subagent_activation_base_fee ?? 0);
+  const markup = Number(val) || 0;
+  return (
+    <div className="rounded-xl border border-border bg-card p-5 space-y-3">
+      <h2 className="font-bold text-lg">Subagent activation markup</h2>
+      <p className="text-sm text-muted-foreground">Admin base fee: <strong>{cedis(base)}</strong>. Add your own markup — your subagents pay the total and you earn the markup as profit.</p>
+      <div className="flex items-end gap-3">
+        <div>
+          <label className="text-xs font-semibold">YOUR MARKUP (GH₵)</label>
+          <Input type="number" min={0} step="0.01" value={val} onChange={(e) => setVal(e.target.value)} className="w-32" />
+        </div>
+        <div className="text-sm">
+          <div className="text-muted-foreground text-xs">Total subagents pay</div>
+          <div className="font-bold text-lg">{cedis(base + markup)}</div>
+        </div>
+        <Button onClick={() => save.mutate()} disabled={save.isPending}>Save</Button>
+      </div>
     </div>
   );
 }

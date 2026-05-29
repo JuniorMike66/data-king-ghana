@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      activation_payments: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          kind: string
+          reference: string
+          sponsor_id: string | null
+          sponsor_markup: number
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          kind: string
+          reference: string
+          sponsor_id?: string | null
+          sponsor_markup?: number
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          kind?: string
+          reference?: string
+          sponsor_id?: string | null
+          sponsor_markup?: number
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       api_keys: {
         Row: {
           created_at: string
@@ -145,6 +184,8 @@ export type Database = {
           id: string
           phone: string | null
           sponsor_id: string | null
+          store_activated_at: string | null
+          subagent_activated_at: string | null
           updated_at: string
         }
         Insert: {
@@ -155,6 +196,8 @@ export type Database = {
           id: string
           phone?: string | null
           sponsor_id?: string | null
+          store_activated_at?: string | null
+          subagent_activated_at?: string | null
           updated_at?: string
         }
         Update: {
@@ -165,6 +208,8 @@ export type Database = {
           id?: string
           phone?: string | null
           sponsor_id?: string | null
+          store_activated_at?: string | null
+          subagent_activated_at?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -203,6 +248,10 @@ export type Database = {
         Row: {
           id: number
           maintenance_mode: boolean
+          store_activation_enabled: boolean
+          store_activation_fee: number
+          subagent_activation_base_fee: number
+          subagent_activation_enabled: boolean
           updated_at: string
           whatsapp_enabled: boolean
           whatsapp_url: string | null
@@ -210,6 +259,10 @@ export type Database = {
         Insert: {
           id?: number
           maintenance_mode?: boolean
+          store_activation_enabled?: boolean
+          store_activation_fee?: number
+          subagent_activation_base_fee?: number
+          subagent_activation_enabled?: boolean
           updated_at?: string
           whatsapp_enabled?: boolean
           whatsapp_url?: string | null
@@ -217,6 +270,10 @@ export type Database = {
         Update: {
           id?: number
           maintenance_mode?: boolean
+          store_activation_enabled?: boolean
+          store_activation_fee?: number
+          subagent_activation_base_fee?: number
+          subagent_activation_enabled?: boolean
           updated_at?: string
           whatsapp_enabled?: boolean
           whatsapp_url?: string | null
@@ -292,6 +349,27 @@ export type Database = {
           support_phone?: string
           support_whatsapp?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      subagent_activation_markup: {
+        Row: {
+          created_at: string
+          markup: number
+          sponsor_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          markup?: number
+          sponsor_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          markup?: number
+          sponsor_id?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -527,6 +605,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      mark_activation_completed: {
+        Args: { _reference: string }
+        Returns: undefined
+      }
       purchase_checker:
         | { Args: { _checker_id: string; _user_id: string }; Returns: string }
         | {
@@ -557,6 +639,11 @@ export type Database = {
         }
         Returns: string
       }
+      sponsor_activation_earnings: {
+        Args: { _user_id: string }
+        Returns: number
+      }
+      sponsor_profit_total: { Args: { _user_id: string }; Returns: number }
       store_profit_available: { Args: { _user_id: string }; Returns: number }
       store_profit_total: { Args: { _user_id: string }; Returns: number }
       store_tx_cost: { Args: { _tx_id: string }; Returns: number }

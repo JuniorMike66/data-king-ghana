@@ -35,6 +35,13 @@ export const Route = createFileRoute("/api/public/v1/paystack-webhook")({
         const meta = tx.metadata ?? {};
         const amount = Number(tx.amount) / 100;
 
+        // Activation payments (separate ledger from transactions)
+        if (meta.kind === "activation") {
+          const { error } = await supabaseAdmin.rpc("mark_activation_completed", { _reference: reference });
+          if (error) return json({ error: error.message }, 500);
+          return json({ ok: true, kind: "activation" });
+        }
+
         // Idempotency — both flows record `reference` on the transactions row.
         const { data: existing } = await supabaseAdmin
           .from("transactions").select("id").eq("reference", reference).maybeSingle();
