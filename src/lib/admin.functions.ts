@@ -125,6 +125,14 @@ export const adminUpdateWithdrawal = createServerFn({ method: "POST" })
   });
 
 
+function parseSizeLabelToMb(label: string): number {
+  const m = label.trim().match(/^([\d.]+)\s*(gb|mb|g|m)?$/i);
+  if (!m) return 0;
+  const n = parseFloat(m[1]);
+  const unit = (m[2] ?? "mb").toLowerCase();
+  return Math.round(unit.startsWith("g") ? n * 1024 : n);
+}
+
 export const adminUpsertPackage = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((i) =>
@@ -132,23 +140,25 @@ export const adminUpsertPackage = createServerFn({ method: "POST" })
       id: z.string().uuid().optional(),
       network: z.enum(["mtn", "airteltigo_ishare", "airteltigo_bigtime", "telecel"]),
       size_label: z.string().min(1).max(20),
-      size_mb: z.number().int().positive(),
       price: z.number().min(0),
       agent_price: z.number().min(0),
       active: z.boolean().default(true),
-      sort_order: z.number().int().default(0),
     }).parse(i)
   )
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
+    const size_mb = parseSizeLabelToMb(data.size_label) || 1;
+    const sort_order = size_mb; // auto-sort by size
+    const payload = { ...data, size_mb, sort_order };
     if (data.id) {
-      const { id, ...rest } = data;
+      const { id, ...rest } = payload;
       await supabaseAdmin.from("data_packages").update(rest).eq("id", id);
     } else {
-      await supabaseAdmin.from("data_packages").insert(data);
+      await supabaseAdmin.from("data_packages").insert(payload);
     }
     return { ok: true };
   });
+
 
 export const adminDeletePackage = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
