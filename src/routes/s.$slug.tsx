@@ -235,3 +235,52 @@ export function PublicStore() {
     </div>
   );
 }
+
+function NetworkSwitcher({ packages, setSelected, setPhone, setEmail }: { packages: any[]; setSelected: (p: any) => void; setPhone: (s: string) => void; setEmail: (s: string) => void }) {
+  const available = Object.keys(networks).filter((k) => packages.some((p) => p.network === k));
+  const [active, setActive] = useState<string | null>(null);
+  useEffect(() => {
+    if (available.length && (!active || !available.includes(active))) setActive(available[0]);
+  }, [available.join("|")]);
+  if (!available.length) return null;
+  const items = packages.filter((p) => p.network === active);
+  const cfg = active ? networks[active] : null;
+  return (
+    <div className="space-y-4">
+      <div className="sticky top-14 z-20 -mx-4 sm:mx-0 px-4 sm:px-0 py-2 bg-background/95 backdrop-blur border-b border-border sm:border-0 sm:bg-transparent sm:backdrop-blur-0">
+        <div className="flex gap-2 overflow-x-auto no-scrollbar">
+          {available.map((k) => (
+            <button
+              key={k}
+              onClick={() => setActive(k)}
+              className={`px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap border transition ${
+                active === k ? "bg-primary text-primary-foreground border-primary" : "bg-card text-foreground border-border hover:bg-muted"
+              }`}
+            >
+              {networks[k].label}
+            </button>
+          ))}
+        </div>
+      </div>
+      {cfg && (
+        <section>
+          <h2 className="text-xl font-bold mb-3">{cfg.label} Bundles</h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {items.map((p: any) => (
+              <button
+                key={p.id}
+                onClick={() => { setSelected(p); setPhone(""); setEmail(""); }}
+                className={`${cfg.color} rounded-xl p-4 text-left shadow hover:scale-[1.02] transition`}
+              >
+                <div className="text-2xl font-extrabold">{p.size_label}</div>
+                <div className="text-xl font-bold mt-2">₵{Number(p.price).toFixed(2)}</div>
+                <div className="text-[10px] opacity-80 mt-1">NO EXPIRY · Tap to buy</div>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+    </div>
+  );
+}
+
