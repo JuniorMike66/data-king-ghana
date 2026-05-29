@@ -47,7 +47,7 @@ const more = [
 function Sidebar({ onNav }: { onNav?: () => void }) {
   const path = useRouterState({ select: (r) => r.location.pathname });
   const { isAdmin, signOut, user } = useAuth();
-  const { isSubagent } = useProfile();
+  const { isSubagent } = profileMod.useProfile();
   const isActive = (to: string) => path === to;
   const buyOpen = path.startsWith("/dashboard/buy-data");
   const storeOpen = path.startsWith("/dashboard/store");
@@ -130,7 +130,7 @@ function Sidebar({ onNav }: { onNav?: () => void }) {
 
 function Layout() {
   const { isAuthenticated, isLoading, isAdmin, user } = useAuth();
-  const { isSubagent, subagentActivatedAt, isLoading: profileLoading } = useProfile();
+  const { isSubagent, subagentActivatedAt, isLoading: profileLoading } = profileMod.useProfile();
   const navigate = useNavigate();
   const path = useRouterState({ select: (r) => r.location.pathname });
   const [open, setOpen] = useState(false);
