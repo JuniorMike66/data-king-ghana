@@ -634,7 +634,9 @@ export function CustomPricing({ storeId }: { storeId: string }) {
   return (
     <div className="space-y-4">
       <p className="text-xs text-muted-foreground">
-        Set your selling price per bundle. The difference between your cost and your price is your profit. Leave blank to use the base price.
+        {isSubagent
+          ? "Set your selling price per bundle. The difference between the base price and your selling price is your profit."
+          : "Set your selling price per bundle. The difference between your cost and your price is your profit. Leave blank to use the base price."}
       </p>
       {Object.entries(grouped).map(([net, items]: any) => (
         <div key={net} className="space-y-2">
@@ -648,7 +650,9 @@ export function CustomPricing({ storeId }: { storeId: string }) {
                 <div key={p.id} className="flex items-center gap-3 py-2 text-sm">
                   <div className="flex-1">
                     <div className="font-medium">{p.size_label}</div>
-                    <div className="text-xs text-muted-foreground">Your cost: {cedis(cost)} · Base: {cedis(base)}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {isSubagent ? `Base price: ${cedis(base)}` : `Your cost: ${cedis(cost)} · Base: ${cedis(base)}`}
+                    </div>
                   </div>
 
                   <Input
