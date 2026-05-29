@@ -351,10 +351,9 @@ export function StoreTransactions({ storeId }: { storeId: string }) {
           </div>
           <div className="text-right">
             <div className="font-semibold">{cedis(t.amount)}</div>
-            <Badge variant={t.status === "completed" ? "default" : t.status === "failed" ? "destructive" : "secondary"}>
-              {t.status}
-            </Badge>
+            <Badge variant="default">success</Badge>
           </div>
+
         </div>
       ))}
     </div>

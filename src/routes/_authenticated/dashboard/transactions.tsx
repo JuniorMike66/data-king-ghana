@@ -10,9 +10,11 @@ export const Route = createFileRoute("/_authenticated/dashboard/transactions")({
 const statusColor: Record<string, string> = {
   pending: "bg-amber-500/15 text-amber-500",
   completed: "bg-emerald-500/15 text-emerald-500",
+  success: "bg-emerald-500/15 text-emerald-500",
   failed: "bg-destructive/15 text-destructive",
   refunded: "bg-sky-500/15 text-sky-500",
 };
+
 
 function Tx() {
   const { user } = useAuth();
@@ -45,15 +47,25 @@ function Tx() {
             {filtered.length === 0 && (
               <tr><td colSpan={5} className="p-8 text-center text-muted-foreground">No transactions yet.</td></tr>
             )}
-            {filtered.map((t) => (
+            {filtered.map((t) => {
+              // Customers only ever see "success" on their orders — real status
+              // lives on the admin dashboard. Wallet top-ups & withdrawals keep
+              // their actual status so users can see top-ups land.
+              const display =
+                t.type === "wallet_topup" || t.type === "withdrawal" || t.type === "refund"
+                  ? t.status
+                  : "success";
+              return (
               <tr key={t.id}>
                 <td className="p-3 whitespace-nowrap">{new Date(t.created_at).toLocaleString()}</td>
                 <td className="p-3 capitalize">{t.type.replace("_", " ")}</td>
                 <td className="p-3">{t.description ?? "—"}</td>
                 <td className="p-3 font-semibold">GH₵{Number(t.amount).toFixed(2)}</td>
-                <td className="p-3"><span className={`px-2 py-0.5 rounded text-xs font-semibold ${statusColor[t.status] ?? ""}`}>{t.status}</span></td>
+                <td className="p-3"><span className={`px-2 py-0.5 rounded text-xs font-semibold ${statusColor[display] ?? statusColor.completed}`}>{display}</span></td>
               </tr>
-            ))}
+              );
+            })}
+
           </tbody>
         </table>
       </div>
