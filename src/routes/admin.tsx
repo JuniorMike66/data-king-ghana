@@ -5,6 +5,8 @@ import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import { AdminRealtimeNotifier } from "@/components/admin-realtime-notifier";
+
 
 export const Route = createFileRoute("/admin")({ component: AdminLayout });
 
