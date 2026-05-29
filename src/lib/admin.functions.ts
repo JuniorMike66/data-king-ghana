@@ -152,10 +152,12 @@ export const adminUpsertPackage = createServerFn({ method: "POST" })
     const payload = { ...data, size_mb, sort_order };
     if (data.id) {
       const { id, ...rest } = payload;
-      await supabaseAdmin.from("data_packages").update(rest).eq("id", id);
+      await supabaseAdmin.from("data_packages").update(rest).eq("id", id!);
     } else {
-      await supabaseAdmin.from("data_packages").insert(payload);
+      const { id: _ignored, ...rest } = payload;
+      await supabaseAdmin.from("data_packages").insert(rest);
     }
+
     return { ok: true };
   });
 
