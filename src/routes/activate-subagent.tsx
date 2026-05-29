@@ -4,7 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
-import { Crown, Loader2, ShieldCheck, LogOut } from "lucide-react";
+import { Crown, ShieldCheck, LogOut } from "lucide-react";
+import { DataKingFullPageLoader } from "@/components/dataking-loader";
 import { toast } from "sonner";
 
 type Search = { act_ref?: string };
