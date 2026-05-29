@@ -129,13 +129,27 @@ function Sidebar({ onNav }: { onNav?: () => void }) {
 }
 
 function Layout() {
-  const { isAuthenticated, isLoading, user } = useAuth();
+  const { isAuthenticated, isLoading, isAdmin, user } = useAuth();
+  const { isSubagent, subagentActivatedAt, isLoading: profileLoading } = useProfile();
   const navigate = useNavigate();
+  const path = useRouterState({ select: (r) => r.location.pathname });
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) navigate({ to: "/login" });
   }, [isAuthenticated, isLoading, navigate]);
+
+  // Subagent activation gate
+  const { data: actSettings } = useQuery({
+    queryKey: ["site-settings-activation"],
+    queryFn: async () => (await supabase.from("site_settings").select("subagent_activation_enabled").eq("id", 1).maybeSingle()).data,
+  });
+  const needsActivation = !isAdmin && isSubagent && !subagentActivatedAt && !!actSettings?.subagent_activation_enabled;
+  useEffect(() => {
+    if (!isLoading && !profileLoading && needsActivation && path !== "/activate-subagent") {
+      navigate({ to: "/activate-subagent", replace: true });
+    }
+  }, [isLoading, profileLoading, needsActivation, path, navigate]);
 
   const { data: balance } = useQuery({
     queryKey: ["wallet", user?.id],
