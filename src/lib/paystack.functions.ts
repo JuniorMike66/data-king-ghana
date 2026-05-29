@@ -14,6 +14,7 @@ export const initPaystackTopup = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { userId, claims } = context;
     const reference = `DK-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+    const { gross, fee } = addPaystackFee(data.amount);
     const res = await fetch("https://api.paystack.co/transaction/initialize", {
       method: "POST",
       headers: {
@@ -22,11 +23,11 @@ export const initPaystackTopup = createServerFn({ method: "POST" })
       },
       body: JSON.stringify({
         email: claims.email ?? `user-${userId}@dataking.gh`,
-        amount: Math.round(data.amount * 100),
+        amount: Math.round(gross * 100),
         currency: "GHS",
         reference,
         channels: ["mobile_money", "card"],
-        metadata: { user_id: userId, kind: "wallet_topup" },
+        metadata: { user_id: userId, kind: "wallet_topup", net_amount: data.amount, paystack_fee: fee },
       }),
     });
     const json: any = await res.json();
