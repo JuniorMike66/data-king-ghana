@@ -186,7 +186,7 @@ export function PublicStore() {
       )}
 
       {/* Order modal */}
-      <Dialog open={!!selected} onOpenChange={(o) => { if (!o && !paying) setSelected(null); }}>
+      <Dialog open={!!selected && !payOpen} onOpenChange={(o) => { if (!o) setSelected(null); }}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Buy {selected?.size_label} {selected ? networks[selected.network]?.label : ""}</DialogTitle>
