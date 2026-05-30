@@ -116,30 +116,13 @@ export function PublicStore() {
 
   const waLink = (store.support_whatsapp ?? "").trim();
 
-  const startPurchase = async () => {
+  const [payOpen, setPayOpen] = useState(false);
+
+  const startPurchase = () => {
     if (!selected) return;
     if (!/^0\d{9}$/.test(phone)) return toast.error("Enter a valid 10-digit phone");
     if (!/^\S+@\S+\.\S+$/.test(email)) return toast.error("Enter a valid email for receipt");
-    setPaying(true);
-    try {
-      const res = await fetch("/api/public/v1/store-order/init", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          store_slug: slug,
-          package_id: selected.id,
-          recipient_phone: phone,
-          customer_email: email,
-          origin: window.location.origin,
-        }),
-      });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error ?? "Could not start payment");
-      window.location.href = json.authorization_url;
-    } catch (e: any) {
-      toast.error(e.message);
-      setPaying(false);
-    }
+    setPayOpen(true);
   };
 
   return (
