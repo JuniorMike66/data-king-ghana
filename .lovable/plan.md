@@ -1,69 +1,93 @@
-# Plan
+# Payments overhaul — reliability fixes + in-app Paystack mobile money UI
 
-## 1. Subagent store slug = sponsor's slug + suffix
+Two problems to solve in one pass:
 
-- When a **subagent** (a profile with `sponsor_id`) creates their store, force the slug to start with their sponsor's store slug, e.g. `kingsdata-john`.
-- Implementation:
-  - In `CreateStoreCard` (store.tsx), if current user is a subagent, fetch sponsor's store slug, auto-prefill `{sponsorSlug}-` and lock that prefix (input only allows editing the part after the dash).
-  - Server-side safety: a DB trigger on `stores` insert/update that, when `sponsor_id` is set, enforces `slug LIKE sponsor_slug || '-%'`.
+1. **Missing records on admin dashboard / API.** Today, store orders and wallet top-ups are only written to `transactions` from the Paystack webhook OR from a verify call when the user returns to the callback URL. If the user closes their tab and the webhook fails or signature mismatches, the row is never inserted → admin never sees it, API never knows, money is paid but data is never sent. The `verify` and `webhook` handlers also disagree on the `amount` field (verify writes gross-with-fee; webhook writes net price).
 
-## 2. Subagent pricing UX (store packages)
+2. **Replace Paystack's hosted page with our own UI**, but keep Paystack as the actual engine via their **Charge API** (`/charge`, `/charge/submit_otp`, `/charge/{reference}`).
 
-- In `CustomPricing` (store.tsx), detect if viewer is a subagent. If yes:
-  - Show only **Base price** (= what they pay = sponsor's `subagent_prices.price`).
-  - Hide "Admin retail" and admin `agent_price`.
-  - Input is their selling price; the difference is their profit.
-- For regular users, keep current display.
+---
 
-## 3. Sponsor earns profit on subagent sales (realtime)
+## Part 1 — Reliability fixes (Part 1 is independent of the UI rewrite and ships first)
 
-- Currently `store_tx_cost` returns cost = sponsor's subagent_price for orders on subagent stores. So subagent's profit is calculated correctly.
-- New: the **sponsor** also earns `(sponsor_subagent_price − admin_agent_price)` for every completed subagent-store sale.
-- Implementation: a new SQL function `sponsor_profit_total(_user_id)` that sums over completed `data_purchase` transactions whose `metadata->>'store_id'` belongs to a store whose `sponsor_id = _user_id`, computing `(stored cost − admin agent_price)`.
-- Add this to the user's profit overview: `store_profit_total + sponsor_profit_total = total profit`, and same for available. Easiest: extend `store_profit_total` and `store_profit_available` to include sponsor earnings, OR add a wrapper `total_profit_total/_available` used by the dashboard and withdrawal RPC. I'll extend the existing functions so withdrawals automatically include sponsor profit.
+- **Insert the `transactions` row at `init` time, not at webhook/verify time.** Status starts as `pending_payment`. Webhook/verify then transitions it to `pending` (paid, awaiting provider) or `failed`. This guarantees every attempt shows on the admin dashboard regardless of whether Paystack callbacks succeed.
+- Same pattern for wallet top-ups: insert a `wallet_topup` transaction at init with `pending_payment`, flip to `completed` only after Paystack confirms.
+- **Unify amount semantics**: the `transactions.amount` field always stores the bundle/topup price (net). Paystack fee goes in `metadata.paystack_fee`. Fix the verify handler to match.
+- **Backstop poller** (server function called from a small effect after init) that polls `/transaction/verify/{ref}` for up to 90s if the webhook hasn't moved the row. Catches dropped webhooks.
+- Add `gateway_event_id` idempotency in webhook so a retried delivery doesn't double-credit (uses `event.data.id` from Paystack).
 
-## 4. Activation fees
+## Part 2 — Custom in-app mobile money UI (Paystack Charge API)
 
-### Schema
-- Extend `site_settings`:
-  - `store_activation_fee numeric default 0`
-  - `store_activation_enabled boolean default false`
-  - `subagent_activation_base_fee numeric default 0`
-  - `subagent_activation_enabled boolean default false`
-- New table `activation_payments`:
-  - `id`, `user_id`, `kind` (`store` | `subagent`), `amount`, `reference`, `status` (`pending`/`completed`/`failed`), `created_at`.
-- Add column on `profiles`: `store_activated_at timestamptz`, `subagent_activated_at timestamptz`.
-- New table `subagent_activation_markup`:
-  - `sponsor_id uuid pk`, `markup numeric default 0`. Lets each agent add their own profit on top of the admin base fee. Sponsor earns the markup amount when their subagent activates.
+Flow inside our own dialog (no Paystack popup, no redirect):
 
-### Flow — store activation (regular users)
-- Before `CreateStoreCard` shows the form, check: if `store_activation_enabled` and `profiles.store_activated_at is null` → render an "Activate your store" card that initiates Paystack payment for `store_activation_fee`.
-- New TanStack server route `/api/public/v1/activation/init` and `/api/public/v1/activation/verify` (mirroring existing store-order pattern). On verify success, set `profiles.store_activated_at = now()`, log into `activation_payments`.
-- Then user sees the create-store form as today.
+```text
+[Step 1: collect]   email, momo number, auto-detected network
+                    ↓ call POST /api/public/v1/paystack/charge
+[Paystack response] status = send_otp | pay_offline | success | failed
+                    ↓
+[Step 2a: OTP]      if send_otp → 6-digit input → POST /charge/submit_otp
+[Step 2b: prompt]   if pay_offline → "Approve the prompt on your phone, then
+                    tap I've completed payment" → POST /charge/{reference}
+[Step 3]            on success → backend processes (data dispatch / wallet credit)
+                    → close dialog → toast
+```
 
-### Flow — subagent activation
-- Subagent signs up via `become-agent` page → after login, normal redirect to `/dashboard`.
-- Add a gate in `src/routes/_authenticated.tsx` (or a layout wrapper around dashboard): if user is subagent AND subagent activation enabled AND not yet activated → redirect to `/activate-subagent`.
-- Build `/activate-subagent` route: shows total = `subagent_activation_base_fee + sponsor_markup`. On Paystack success, mark `profiles.subagent_activated_at = now()` AND credit sponsor's profit ledger with the markup portion (insert a synthetic `transactions` row tagged in metadata so `sponsor_profit_total` picks it up, OR a dedicated `sponsor_earnings` table — going with metadata-tagged transactions for consistency).
-- Logging in always: same gate redirects until paid.
+### Auto-detect network from phone prefix (Ghana)
+- `024 054 055 059` → MTN (`mtn`)
+- `020 050` → Telecel (`vod`)
+- `026 056 027 057` → AirtelTigo (`atl`)
+- Show the detected network as a chip; let user override via a small dropdown.
 
-### Admin UI
-- In `admin.settings.tsx`, add a section "Activation fees" with toggles + amount inputs for both store and subagent.
-- When admin disables a fee, the gate is bypassed → free activation, dashboards immediately accessible.
+### Momo name
+Paystack's `/bank/resolve` doesn't reliably support MoMo lookup in GH and many merchants don't have it enabled. Plan: **skip name lookup** (it's not required by Paystack's charge call) and just display "MoMo prompt will show on your phone". If you want it later we can add it behind a feature flag.
 
-### Agent UI for subagent markup
-- New section in `store.subagents.tsx`: "Subagent activation markup" — show admin base fee, input for their markup, total. Save to `subagent_activation_markup`.
+### New / changed server endpoints
 
-## File touches (summary)
+| Endpoint | Purpose |
+|---|---|
+| `POST /api/public/v1/paystack/charge` | Init charge (wallet topup OR store order OR activation). Creates the pending DB row, calls Paystack `/charge`, returns `{ reference, status, display_text }` |
+| `POST /api/public/v1/paystack/submit-otp` | Forwards OTP to Paystack `/charge/submit_otp`, returns updated status |
+| `POST /api/public/v1/paystack/check` | Polls `/transaction/verify/{ref}`; if success and DB still `pending_payment`, runs the same processing the webhook does |
+| `POST /api/public/v1/paystack-webhook` | Kept, hardened with `gateway_event_id` idempotency |
 
-- DB migration: site_settings columns, profiles columns, `activation_payments` + `subagent_activation_markup` tables with RLS/GRANTs, updated `store_profit_total/_available` to include sponsor earnings, new slug-enforcement trigger.
-- Server routes: `api/public/v1/activation.init.tsx`, `api/public/v1/activation.verify.tsx`, extend `paystack-webhook.tsx` if needed for activation refs.
-- Frontend:
-  - `src/routes/_authenticated/dashboard/store.tsx` — subagent slug prefix in CreateStoreCard, subagent-aware CustomPricing.
-  - `src/routes/_authenticated/dashboard/store.subagents.tsx` — activation markup card.
-  - `src/routes/_authenticated.tsx` — subagent activation gate.
-  - `src/routes/activate-subagent.tsx` — new route (under _authenticated).
-  - `src/routes/admin.settings.tsx` — admin activation controls.
+### Changed UI
 
-## Open question
-For "Without this they should not access their dashboard" — confirmed: subagents are blocked from every authenticated route except the activation page until they pay. For **regular users** the activation fee only blocks store creation (not the rest of the dashboard like wallet/buy-data), correct?
+- New shared component `PaystackMomoDialog` used by:
+  - Wallet top-up (`dashboard/wallet.tsx`)
+  - Public store checkout (`s.$slug.tsx`)
+  - Store activation (`activate-subagent.tsx`, `become-agent.tsx`)
+- Removes all `window.location.href = authorization_url` redirects and the `?reference=…` callback verify dance.
+
+### Customer-facing status
+Per existing rule: customer always sees "Payment confirmed — your data is on the way". Real status only on admin dashboard. This stays.
+
+---
+
+## Testing (I'll run these after implementing)
+
+1. Wallet top-up via in-app dialog (real Paystack test momo number 0551234987 → OTP `123456`).
+2. Public store order via in-app dialog.
+3. Force a webhook failure (block signature) → confirm backstop poller still flips the row and dispatches.
+4. Verify admin dashboard shows every attempt (including `pending_payment` and `failed`).
+5. Verify the public API (`/api/public/v1/data/purchase` and `transactions/$id`) returns the same records.
+
+---
+
+## Files I'll create/edit
+
+**New**
+- `src/components/paystack-momo-dialog.tsx` — the shared in-app payment UI
+- `src/lib/paystack-charge.functions.ts` — server fns wrapping Charge API
+- `src/routes/api/public/v1/paystack.charge.tsx`, `paystack.submit-otp.tsx`, `paystack.check.tsx`
+- `supabase/migrations/<ts>_payment_reliability.sql` — adds `pending_payment` status value, `gateway_event_id` column with unique index
+
+**Edit**
+- `src/routes/api/public/v1/paystack-webhook.tsx` — idempotency + transition existing rows instead of insert
+- `src/routes/api/public/v1/store-order.init.tsx`, `store-order.verify.tsx` — pre-insert pending row, fix amount
+- `src/lib/paystack.functions.ts` — pre-insert pending wallet_topup row; keep hosted fallback only as escape hatch
+- `src/routes/_authenticated/dashboard/wallet.tsx` — use new dialog
+- `src/routes/s.$slug.tsx` — use new dialog
+- `src/routes/activate-subagent.tsx`, `src/routes/s.$slug.become-agent.tsx` — use new dialog
+- `src/routes/admin.transactions.tsx` / `admin.orders.tsx` — show new `pending_payment` and `failed` statuses with badges
+
+This is a large change (~12 files + 1 migration). Reply **approve** to proceed, or tell me what you want to adjust (e.g. keep the hosted redirect as a fallback toggle, or drop the in-app card-only path).
