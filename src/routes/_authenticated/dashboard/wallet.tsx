@@ -114,7 +114,7 @@ function WalletPage() {
                 </div>
                 {fees && (
                   <div className="rounded-md bg-muted p-2 text-xs space-y-1">
-                    <div className="flex justify-between"><span>Top-up amount</span><span>GH₵{fees.net.toFixed(2)}</span></div>
+                    <div className="flex justify-between"><span>Top-up amount</span><span>GH₵{amountNum.toFixed(2)}</span></div>
                     <div className="flex justify-between text-muted-foreground"><span>Paystack fee</span><span>GH₵{fees.fee.toFixed(2)}</span></div>
                     <div className="flex justify-between font-bold border-t border-border pt-1"><span>You pay</span><span>GH₵{fees.gross.toFixed(2)}</span></div>
                   </div>
