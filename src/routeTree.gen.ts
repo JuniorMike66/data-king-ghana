@@ -48,6 +48,9 @@ import { Route as AuthenticatedDashboardBuyDataNetworkRouteImport } from './rout
 import { Route as ApiPublicV1TransactionsIdRouteImport } from './routes/api/public/v1/transactions.$id'
 import { Route as ApiPublicV1StoreOrderVerifyRouteImport } from './routes/api/public/v1/store-order.verify'
 import { Route as ApiPublicV1StoreOrderInitRouteImport } from './routes/api/public/v1/store-order.init'
+import { Route as ApiPublicV1PaySubmitOtpRouteImport } from './routes/api/public/v1/pay.submit-otp'
+import { Route as ApiPublicV1PayCheckRouteImport } from './routes/api/public/v1/pay.check'
+import { Route as ApiPublicV1PayChargeRouteImport } from './routes/api/public/v1/pay.charge'
 import { Route as ApiPublicV1DataPurchaseRouteImport } from './routes/api/public/v1/data.purchase'
 import { Route as ApiPublicV1CheckersPurchaseRouteImport } from './routes/api/public/v1/checkers.purchase'
 import { Route as ApiPublicV1ActivationVerifyRouteImport } from './routes/api/public/v1/activation.verify'
@@ -266,6 +269,21 @@ const ApiPublicV1StoreOrderInitRoute =
     path: '/api/public/v1/store-order/init',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicV1PaySubmitOtpRoute = ApiPublicV1PaySubmitOtpRouteImport.update({
+  id: '/api/public/v1/pay/submit-otp',
+  path: '/api/public/v1/pay/submit-otp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicV1PayCheckRoute = ApiPublicV1PayCheckRouteImport.update({
+  id: '/api/public/v1/pay/check',
+  path: '/api/public/v1/pay/check',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicV1PayChargeRoute = ApiPublicV1PayChargeRouteImport.update({
+  id: '/api/public/v1/pay/charge',
+  path: '/api/public/v1/pay/charge',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicV1DataPurchaseRoute = ApiPublicV1DataPurchaseRouteImport.update({
   id: '/api/public/v1/data/purchase',
   path: '/api/public/v1/data/purchase',
@@ -330,6 +348,9 @@ export interface FileRoutesByFullPath {
   '/api/public/v1/activation/verify': typeof ApiPublicV1ActivationVerifyRoute
   '/api/public/v1/checkers/purchase': typeof ApiPublicV1CheckersPurchaseRoute
   '/api/public/v1/data/purchase': typeof ApiPublicV1DataPurchaseRoute
+  '/api/public/v1/pay/charge': typeof ApiPublicV1PayChargeRoute
+  '/api/public/v1/pay/check': typeof ApiPublicV1PayCheckRoute
+  '/api/public/v1/pay/submit-otp': typeof ApiPublicV1PaySubmitOtpRoute
   '/api/public/v1/store-order/init': typeof ApiPublicV1StoreOrderInitRoute
   '/api/public/v1/store-order/verify': typeof ApiPublicV1StoreOrderVerifyRoute
   '/api/public/v1/transactions/$id': typeof ApiPublicV1TransactionsIdRoute
@@ -371,6 +392,9 @@ export interface FileRoutesByTo {
   '/api/public/v1/activation/verify': typeof ApiPublicV1ActivationVerifyRoute
   '/api/public/v1/checkers/purchase': typeof ApiPublicV1CheckersPurchaseRoute
   '/api/public/v1/data/purchase': typeof ApiPublicV1DataPurchaseRoute
+  '/api/public/v1/pay/charge': typeof ApiPublicV1PayChargeRoute
+  '/api/public/v1/pay/check': typeof ApiPublicV1PayCheckRoute
+  '/api/public/v1/pay/submit-otp': typeof ApiPublicV1PaySubmitOtpRoute
   '/api/public/v1/store-order/init': typeof ApiPublicV1StoreOrderInitRoute
   '/api/public/v1/store-order/verify': typeof ApiPublicV1StoreOrderVerifyRoute
   '/api/public/v1/transactions/$id': typeof ApiPublicV1TransactionsIdRoute
@@ -417,6 +441,9 @@ export interface FileRoutesById {
   '/api/public/v1/activation/verify': typeof ApiPublicV1ActivationVerifyRoute
   '/api/public/v1/checkers/purchase': typeof ApiPublicV1CheckersPurchaseRoute
   '/api/public/v1/data/purchase': typeof ApiPublicV1DataPurchaseRoute
+  '/api/public/v1/pay/charge': typeof ApiPublicV1PayChargeRoute
+  '/api/public/v1/pay/check': typeof ApiPublicV1PayCheckRoute
+  '/api/public/v1/pay/submit-otp': typeof ApiPublicV1PaySubmitOtpRoute
   '/api/public/v1/store-order/init': typeof ApiPublicV1StoreOrderInitRoute
   '/api/public/v1/store-order/verify': typeof ApiPublicV1StoreOrderVerifyRoute
   '/api/public/v1/transactions/$id': typeof ApiPublicV1TransactionsIdRoute
@@ -463,6 +490,9 @@ export interface FileRouteTypes {
     | '/api/public/v1/activation/verify'
     | '/api/public/v1/checkers/purchase'
     | '/api/public/v1/data/purchase'
+    | '/api/public/v1/pay/charge'
+    | '/api/public/v1/pay/check'
+    | '/api/public/v1/pay/submit-otp'
     | '/api/public/v1/store-order/init'
     | '/api/public/v1/store-order/verify'
     | '/api/public/v1/transactions/$id'
@@ -504,6 +534,9 @@ export interface FileRouteTypes {
     | '/api/public/v1/activation/verify'
     | '/api/public/v1/checkers/purchase'
     | '/api/public/v1/data/purchase'
+    | '/api/public/v1/pay/charge'
+    | '/api/public/v1/pay/check'
+    | '/api/public/v1/pay/submit-otp'
     | '/api/public/v1/store-order/init'
     | '/api/public/v1/store-order/verify'
     | '/api/public/v1/transactions/$id'
@@ -549,6 +582,9 @@ export interface FileRouteTypes {
     | '/api/public/v1/activation/verify'
     | '/api/public/v1/checkers/purchase'
     | '/api/public/v1/data/purchase'
+    | '/api/public/v1/pay/charge'
+    | '/api/public/v1/pay/check'
+    | '/api/public/v1/pay/submit-otp'
     | '/api/public/v1/store-order/init'
     | '/api/public/v1/store-order/verify'
     | '/api/public/v1/transactions/$id'
@@ -569,6 +605,9 @@ export interface RootRouteChildren {
   ApiPublicV1ActivationVerifyRoute: typeof ApiPublicV1ActivationVerifyRoute
   ApiPublicV1CheckersPurchaseRoute: typeof ApiPublicV1CheckersPurchaseRoute
   ApiPublicV1DataPurchaseRoute: typeof ApiPublicV1DataPurchaseRoute
+  ApiPublicV1PayChargeRoute: typeof ApiPublicV1PayChargeRoute
+  ApiPublicV1PayCheckRoute: typeof ApiPublicV1PayCheckRoute
+  ApiPublicV1PaySubmitOtpRoute: typeof ApiPublicV1PaySubmitOtpRoute
   ApiPublicV1StoreOrderInitRoute: typeof ApiPublicV1StoreOrderInitRoute
   ApiPublicV1StoreOrderVerifyRoute: typeof ApiPublicV1StoreOrderVerifyRoute
   ApiPublicV1TransactionsIdRoute: typeof ApiPublicV1TransactionsIdRoute
@@ -849,6 +888,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicV1StoreOrderInitRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/v1/pay/submit-otp': {
+      id: '/api/public/v1/pay/submit-otp'
+      path: '/api/public/v1/pay/submit-otp'
+      fullPath: '/api/public/v1/pay/submit-otp'
+      preLoaderRoute: typeof ApiPublicV1PaySubmitOtpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/v1/pay/check': {
+      id: '/api/public/v1/pay/check'
+      path: '/api/public/v1/pay/check'
+      fullPath: '/api/public/v1/pay/check'
+      preLoaderRoute: typeof ApiPublicV1PayCheckRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/v1/pay/charge': {
+      id: '/api/public/v1/pay/charge'
+      path: '/api/public/v1/pay/charge'
+      fullPath: '/api/public/v1/pay/charge'
+      preLoaderRoute: typeof ApiPublicV1PayChargeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/v1/data/purchase': {
       id: '/api/public/v1/data/purchase'
       path: '/api/public/v1/data/purchase'
@@ -994,6 +1054,9 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicV1ActivationVerifyRoute: ApiPublicV1ActivationVerifyRoute,
   ApiPublicV1CheckersPurchaseRoute: ApiPublicV1CheckersPurchaseRoute,
   ApiPublicV1DataPurchaseRoute: ApiPublicV1DataPurchaseRoute,
+  ApiPublicV1PayChargeRoute: ApiPublicV1PayChargeRoute,
+  ApiPublicV1PayCheckRoute: ApiPublicV1PayCheckRoute,
+  ApiPublicV1PaySubmitOtpRoute: ApiPublicV1PaySubmitOtpRoute,
   ApiPublicV1StoreOrderInitRoute: ApiPublicV1StoreOrderInitRoute,
   ApiPublicV1StoreOrderVerifyRoute: ApiPublicV1StoreOrderVerifyRoute,
   ApiPublicV1TransactionsIdRoute: ApiPublicV1TransactionsIdRoute,
@@ -1001,13 +1064,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

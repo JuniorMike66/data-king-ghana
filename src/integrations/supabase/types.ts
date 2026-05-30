@@ -446,6 +446,7 @@ export type Database = {
           amount: number
           created_at: string
           description: string | null
+          gateway_event_id: string | null
           id: string
           metadata: Json | null
           network: Database["public"]["Enums"]["network_type"] | null
@@ -461,6 +462,7 @@ export type Database = {
           amount: number
           created_at?: string
           description?: string | null
+          gateway_event_id?: string | null
           id?: string
           metadata?: Json | null
           network?: Database["public"]["Enums"]["network_type"] | null
@@ -476,6 +478,7 @@ export type Database = {
           amount?: number
           created_at?: string
           description?: string | null
+          gateway_event_id?: string | null
           id?: string
           metadata?: Json | null
           network?: Database["public"]["Enums"]["network_type"] | null
@@ -589,6 +592,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      complete_wallet_topup: {
+        Args: {
+          _channel: string
+          _gateway_event_id: string
+          _reference: string
+        }
+        Returns: undefined
+      }
       credit_wallet: {
         Args: {
           _amount: number
@@ -608,6 +619,14 @@ export type Database = {
       mark_activation_completed: {
         Args: { _reference: string }
         Returns: undefined
+      }
+      mark_store_order_paid: {
+        Args: {
+          _channel: string
+          _gateway_event_id: string
+          _reference: string
+        }
+        Returns: string
       }
       purchase_checker:
         | { Args: { _checker_id: string; _user_id: string }; Returns: string }
@@ -656,6 +675,7 @@ export type Database = {
         | "airteltigo_bigtime"
         | "telecel"
       transaction_status:
+        | "pending_payment"
         | "pending"
         | "processing"
         | "completed"
@@ -804,6 +824,7 @@ export const Constants = {
         "telecel",
       ],
       transaction_status: [
+        "pending_payment",
         "pending",
         "processing",
         "completed",
