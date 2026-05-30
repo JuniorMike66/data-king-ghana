@@ -148,7 +148,7 @@ function WalletPage() {
       <PaystackMomoDialog
         open={payOpen}
         onOpenChange={setPayOpen}
-        totalDisplay={fees ? { net: fees.net, fee: fees.fee, gross: fees.gross } : null}
+        totalDisplay={fees ? { net: amountNum, fee: fees.fee, gross: fees.gross } : null}
         defaults={{ email: user?.email ?? undefined }}
         buildPayload={() => {
           if (!user || amountNum < 1) return null;
