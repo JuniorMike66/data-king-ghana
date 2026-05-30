@@ -242,6 +242,9 @@ export function PublicStore() {
           }}
           title={`Pay for ${selected.size_label} ${networks[selected.network]?.label ?? ""}`}
         />
+      )}
+
+
 
       {verifying && (
         <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur flex items-center justify-center">
