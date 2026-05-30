@@ -211,13 +211,37 @@ export function PublicStore() {
               <Label>Your email (for payment receipt)</Label>
               <Input type="email" placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
             </div>
-            <Button className="w-full" disabled={paying} onClick={startPurchase}>
-              {paying ? "Redirecting to payment..." : "Pay & Order"}
+            <Button className="w-full" onClick={startPurchase}>
+              Pay & Order
             </Button>
-            <p className="text-[11px] text-muted-foreground">You'll be redirected to a secure Paystack page (Mobile Money or Card). Data is sent automatically after payment.</p>
+            <p className="text-[11px] text-muted-foreground">Pay securely with Mobile Money — your data is sent automatically after payment.</p>
           </div>
         </DialogContent>
       </Dialog>
+
+      {selected && (
+        <PaystackMomoDialog
+          open={payOpen}
+          onOpenChange={(o) => { setPayOpen(o); if (!o) { /* keep selected */ } }}
+          totalDisplay={(() => {
+            const p = Number(selected.price);
+            const f = addPaystackFee(p);
+            return { net: p, fee: f.fee, gross: f.gross };
+          })()}
+          defaults={{ phone, email }}
+          buildPayload={() => ({
+            kind: "store_order",
+            store_slug: slug,
+            package_id: selected.id,
+            recipient_phone: phone,
+            customer_email: email,
+          })}
+          onSuccess={() => {
+            toast.success("Payment confirmed — your data is on the way!");
+            setSelected(null);
+          }}
+          title={`Pay for ${selected.size_label} ${networks[selected.network]?.label ?? ""}`}
+        />
 
       {verifying && (
         <div className="fixed inset-0 z-50 bg-background/80 backdrop-blur flex items-center justify-center">
