@@ -37,6 +37,7 @@ import { Route as AuthenticatedDashboardProfileRouteImport } from './routes/_aut
 import { Route as AuthenticatedDashboardDeveloperRouteImport } from './routes/_authenticated/dashboard/developer'
 import { Route as AuthenticatedDashboardCheckersRouteImport } from './routes/_authenticated/dashboard/checkers'
 import { Route as AuthenticatedDashboardStoreIndexRouteImport } from './routes/_authenticated/dashboard/store.index'
+import { Route as ApiPublicV1TrackOrderRouteImport } from './routes/api/public/v1/track-order'
 import { Route as ApiPublicV1PaystackWebhookRouteImport } from './routes/api/public/v1/paystack-webhook'
 import { Route as ApiPublicV1BalanceRouteImport } from './routes/api/public/v1/balance'
 import { Route as AuthenticatedDashboardStoreWithdrawalsRouteImport } from './routes/_authenticated/dashboard/store.withdrawals'
@@ -204,6 +205,11 @@ const AuthenticatedDashboardStoreIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedDashboardStoreRoute,
   } as any)
+const ApiPublicV1TrackOrderRoute = ApiPublicV1TrackOrderRouteImport.update({
+  id: '/api/public/v1/track-order',
+  path: '/api/public/v1/track-order',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicV1PaystackWebhookRoute =
   ApiPublicV1PaystackWebhookRouteImport.update({
     id: '/api/public/v1/paystack-webhook',
@@ -343,6 +349,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/store/withdrawals': typeof AuthenticatedDashboardStoreWithdrawalsRoute
   '/api/public/v1/balance': typeof ApiPublicV1BalanceRoute
   '/api/public/v1/paystack-webhook': typeof ApiPublicV1PaystackWebhookRoute
+  '/api/public/v1/track-order': typeof ApiPublicV1TrackOrderRoute
   '/dashboard/store/': typeof AuthenticatedDashboardStoreIndexRoute
   '/api/public/v1/activation/init': typeof ApiPublicV1ActivationInitRoute
   '/api/public/v1/activation/verify': typeof ApiPublicV1ActivationVerifyRoute
@@ -387,6 +394,7 @@ export interface FileRoutesByTo {
   '/dashboard/store/withdrawals': typeof AuthenticatedDashboardStoreWithdrawalsRoute
   '/api/public/v1/balance': typeof ApiPublicV1BalanceRoute
   '/api/public/v1/paystack-webhook': typeof ApiPublicV1PaystackWebhookRoute
+  '/api/public/v1/track-order': typeof ApiPublicV1TrackOrderRoute
   '/dashboard/store': typeof AuthenticatedDashboardStoreIndexRoute
   '/api/public/v1/activation/init': typeof ApiPublicV1ActivationInitRoute
   '/api/public/v1/activation/verify': typeof ApiPublicV1ActivationVerifyRoute
@@ -436,6 +444,7 @@ export interface FileRoutesById {
   '/_authenticated/dashboard/store/withdrawals': typeof AuthenticatedDashboardStoreWithdrawalsRoute
   '/api/public/v1/balance': typeof ApiPublicV1BalanceRoute
   '/api/public/v1/paystack-webhook': typeof ApiPublicV1PaystackWebhookRoute
+  '/api/public/v1/track-order': typeof ApiPublicV1TrackOrderRoute
   '/_authenticated/dashboard/store/': typeof AuthenticatedDashboardStoreIndexRoute
   '/api/public/v1/activation/init': typeof ApiPublicV1ActivationInitRoute
   '/api/public/v1/activation/verify': typeof ApiPublicV1ActivationVerifyRoute
@@ -485,6 +494,7 @@ export interface FileRouteTypes {
     | '/dashboard/store/withdrawals'
     | '/api/public/v1/balance'
     | '/api/public/v1/paystack-webhook'
+    | '/api/public/v1/track-order'
     | '/dashboard/store/'
     | '/api/public/v1/activation/init'
     | '/api/public/v1/activation/verify'
@@ -529,6 +539,7 @@ export interface FileRouteTypes {
     | '/dashboard/store/withdrawals'
     | '/api/public/v1/balance'
     | '/api/public/v1/paystack-webhook'
+    | '/api/public/v1/track-order'
     | '/dashboard/store'
     | '/api/public/v1/activation/init'
     | '/api/public/v1/activation/verify'
@@ -577,6 +588,7 @@ export interface FileRouteTypes {
     | '/_authenticated/dashboard/store/withdrawals'
     | '/api/public/v1/balance'
     | '/api/public/v1/paystack-webhook'
+    | '/api/public/v1/track-order'
     | '/_authenticated/dashboard/store/'
     | '/api/public/v1/activation/init'
     | '/api/public/v1/activation/verify'
@@ -601,6 +613,7 @@ export interface RootRouteChildren {
   SSlugRoute: typeof SSlugRouteWithChildren
   ApiPublicV1BalanceRoute: typeof ApiPublicV1BalanceRoute
   ApiPublicV1PaystackWebhookRoute: typeof ApiPublicV1PaystackWebhookRoute
+  ApiPublicV1TrackOrderRoute: typeof ApiPublicV1TrackOrderRoute
   ApiPublicV1ActivationInitRoute: typeof ApiPublicV1ActivationInitRoute
   ApiPublicV1ActivationVerifyRoute: typeof ApiPublicV1ActivationVerifyRoute
   ApiPublicV1CheckersPurchaseRoute: typeof ApiPublicV1CheckersPurchaseRoute
@@ -810,6 +823,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard/store/'
       preLoaderRoute: typeof AuthenticatedDashboardStoreIndexRouteImport
       parentRoute: typeof AuthenticatedDashboardStoreRoute
+    }
+    '/api/public/v1/track-order': {
+      id: '/api/public/v1/track-order'
+      path: '/api/public/v1/track-order'
+      fullPath: '/api/public/v1/track-order'
+      preLoaderRoute: typeof ApiPublicV1TrackOrderRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/public/v1/paystack-webhook': {
       id: '/api/public/v1/paystack-webhook'
@@ -1050,6 +1070,7 @@ const rootRouteChildren: RootRouteChildren = {
   SSlugRoute: SSlugRouteWithChildren,
   ApiPublicV1BalanceRoute: ApiPublicV1BalanceRoute,
   ApiPublicV1PaystackWebhookRoute: ApiPublicV1PaystackWebhookRoute,
+  ApiPublicV1TrackOrderRoute: ApiPublicV1TrackOrderRoute,
   ApiPublicV1ActivationInitRoute: ApiPublicV1ActivationInitRoute,
   ApiPublicV1ActivationVerifyRoute: ApiPublicV1ActivationVerifyRoute,
   ApiPublicV1CheckersPurchaseRoute: ApiPublicV1CheckersPurchaseRoute,
