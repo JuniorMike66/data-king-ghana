@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { addPaystackFee } from "@/lib/paystack-fees";
 import { PaystackMomoDialog } from "@/components/paystack-momo-dialog";
+import { FloatingOrderTracker } from "@/components/floating-order-tracker";
 
 type SearchParams = { reference?: string };
 
@@ -184,6 +185,9 @@ export function PublicStore() {
           <MessageCircle className="w-7 h-7" fill="white" />
         </a>
       )}
+
+      {/* Floating order tracker — stack above WhatsApp if present */}
+      <FloatingOrderTracker bottomClassName={waLink ? "bottom-24" : "bottom-6"} />
 
       {/* Order modal */}
       <Dialog open={!!selected && !payOpen} onOpenChange={(o) => { if (!o) setSelected(null); }}>

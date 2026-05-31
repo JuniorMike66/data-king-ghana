@@ -14,6 +14,7 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
 import { NotificationPopup } from "@/components/notification-popup";
+import { FloatingOrderTracker } from "@/components/floating-order-tracker";
 
 export const Route = createFileRoute("/_authenticated")({ component: Layout });
 
@@ -191,6 +192,7 @@ function Layout() {
           <Outlet />
         </div>
       </main>
+      <FloatingOrderTracker />
     </div>
   );
 }
