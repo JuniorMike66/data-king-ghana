@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet, useNavigate, Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Shield, ArrowLeft, Users, ShoppingBag, Package, Banknote, Settings, Bell, FileCheck, LogOut, Menu, Receipt } from "lucide-react";
+import { Shield, ArrowLeft, Users, ShoppingBag, Package, Banknote, Settings, Bell, FileCheck, LogOut, Menu, Receipt, Gift } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -17,6 +17,7 @@ const items = [
   { to: "/admin/packages", label: "Packages", icon: Package },
   { to: "/admin/checkers", label: "Result Checkers", icon: FileCheck },
   { to: "/admin/withdrawals", label: "Withdrawals", icon: Banknote },
+  { to: "/admin/campaigns", label: "Free Campaigns", icon: Gift },
   { to: "/admin/settings", label: "Site Settings", icon: Settings },
   { to: "/admin/notifications", label: "Notifications", icon: Bell },
 ];
