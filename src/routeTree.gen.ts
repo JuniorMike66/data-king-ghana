@@ -25,6 +25,7 @@ import { Route as AdminPackagesRouteImport } from './routes/admin.packages'
 import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
 import { Route as AdminNotificationsRouteImport } from './routes/admin.notifications'
 import { Route as AdminCheckersRouteImport } from './routes/admin.checkers'
+import { Route as AdminCampaignsRouteImport } from './routes/admin.campaigns'
 import { Route as SSlugIndexRouteImport } from './routes/s.$slug.index'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard.index'
 import { Route as SSlugBecomeAgentRouteImport } from './routes/s.$slug.become-agent'
@@ -134,6 +135,11 @@ const AdminNotificationsRoute = AdminNotificationsRouteImport.update({
 const AdminCheckersRoute = AdminCheckersRouteImport.update({
   id: '/checkers',
   path: '/checkers',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCampaignsRoute = AdminCampaignsRouteImport.update({
+  id: '/campaigns',
+  path: '/campaigns',
   getParentRoute: () => AdminRoute,
 } as any)
 const SSlugIndexRoute = SSlugIndexRouteImport.update({
@@ -321,6 +327,7 @@ export interface FileRoutesByFullPath {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/admin/campaigns': typeof AdminCampaignsRoute
   '/admin/checkers': typeof AdminCheckersRoute
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/orders': typeof AdminOrdersRoute
@@ -368,6 +375,7 @@ export interface FileRoutesByTo {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/admin/campaigns': typeof AdminCampaignsRoute
   '/admin/checkers': typeof AdminCheckersRoute
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/orders': typeof AdminOrdersRoute
@@ -416,6 +424,7 @@ export interface FileRoutesById {
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/admin/campaigns': typeof AdminCampaignsRoute
   '/admin/checkers': typeof AdminCheckersRoute
   '/admin/notifications': typeof AdminNotificationsRoute
   '/admin/orders': typeof AdminOrdersRoute
@@ -466,6 +475,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/signup'
+    | '/admin/campaigns'
     | '/admin/checkers'
     | '/admin/notifications'
     | '/admin/orders'
@@ -513,6 +523,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/signup'
+    | '/admin/campaigns'
     | '/admin/checkers'
     | '/admin/notifications'
     | '/admin/orders'
@@ -560,6 +571,7 @@ export interface FileRouteTypes {
     | '/forgot-password'
     | '/login'
     | '/signup'
+    | '/admin/campaigns'
     | '/admin/checkers'
     | '/admin/notifications'
     | '/admin/orders'
@@ -738,6 +750,13 @@ declare module '@tanstack/react-router' {
       path: '/checkers'
       fullPath: '/admin/checkers'
       preLoaderRoute: typeof AdminCheckersRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/campaigns': {
+      id: '/admin/campaigns'
+      path: '/campaigns'
+      fullPath: '/admin/campaigns'
+      preLoaderRoute: typeof AdminCampaignsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/s/$slug/': {
@@ -1022,6 +1041,7 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 )
 
 interface AdminRouteChildren {
+  AdminCampaignsRoute: typeof AdminCampaignsRoute
   AdminCheckersRoute: typeof AdminCheckersRoute
   AdminNotificationsRoute: typeof AdminNotificationsRoute
   AdminOrdersRoute: typeof AdminOrdersRoute
@@ -1034,6 +1054,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminCampaignsRoute: AdminCampaignsRoute,
   AdminCheckersRoute: AdminCheckersRoute,
   AdminNotificationsRoute: AdminNotificationsRoute,
   AdminOrdersRoute: AdminOrdersRoute,

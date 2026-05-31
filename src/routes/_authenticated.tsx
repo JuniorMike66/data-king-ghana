@@ -15,6 +15,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { cn } from "@/lib/utils";
 import { NotificationPopup } from "@/components/notification-popup";
 import { FloatingOrderTracker } from "@/components/floating-order-tracker";
+import { FloatingClaimButton } from "@/components/floating-claim-button";
 
 export const Route = createFileRoute("/_authenticated")({ component: Layout });
 
@@ -193,6 +194,7 @@ function Layout() {
         </div>
       </main>
       <FloatingOrderTracker />
+      <FloatingClaimButton />
     </div>
   );
 }
