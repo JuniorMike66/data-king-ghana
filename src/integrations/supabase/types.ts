@@ -122,6 +122,83 @@ export type Database = {
         }
         Relationships: []
       }
+      free_campaign_tokens: {
+        Row: {
+          campaign_id: string
+          claimed_at: string | null
+          claimed_by_user_id: string | null
+          claimed_phone: string | null
+          code: string
+          created_at: string
+          id: string
+          transaction_id: string | null
+        }
+        Insert: {
+          campaign_id: string
+          claimed_at?: string | null
+          claimed_by_user_id?: string | null
+          claimed_phone?: string | null
+          code: string
+          created_at?: string
+          id?: string
+          transaction_id?: string | null
+        }
+        Update: {
+          campaign_id?: string
+          claimed_at?: string | null
+          claimed_by_user_id?: string | null
+          claimed_phone?: string | null
+          code?: string
+          created_at?: string
+          id?: string
+          transaction_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "free_campaign_tokens_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "free_campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      free_campaigns: {
+        Row: {
+          created_at: string
+          created_by: string
+          data_mb: number
+          id: string
+          name: string
+          network: Database["public"]["Enums"]["network_type"]
+          status: string
+          total_tokens: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          data_mb: number
+          id?: string
+          name: string
+          network: Database["public"]["Enums"]["network_type"]
+          status?: string
+          total_tokens: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          data_mb?: number
+          id?: string
+          name?: string
+          network?: Database["public"]["Enums"]["network_type"]
+          status?: string
+          total_tokens?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       notification_dismissals: {
         Row: {
           dismissed_at: string
@@ -592,6 +669,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      claim_free_token: {
+        Args: { _code: string; _phone: string; _user_id: string }
+        Returns: {
+          campaign_id: string
+          data_mb: number
+          network: Database["public"]["Enums"]["network_type"]
+          token_id: string
+          transaction_id: string
+        }[]
+      }
       complete_wallet_topup: {
         Args: {
           _channel: string
