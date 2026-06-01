@@ -64,11 +64,34 @@ function OrdersPage() {
                   </td>
                   <td className="p-3 font-mono">{t.recipient_phone ?? "—"}</td>
                   <td className="p-3">
-                    {t.description}
-                    {meta.retry_count ? <span className="ml-2 text-[10px] text-muted-foreground">(retried ×{meta.retry_count})</span> : null}
+                    <div className="flex items-start gap-1 flex-wrap">
+                      <span>{t.description}</span>
+                      {meta.retry_count ? <span className="text-[10px] text-muted-foreground">(retried ×{meta.retry_count})</span> : null}
+                      {t.provider_insufficient_balance && (
+                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-amber-500/15 text-amber-600" title="Provider rejected — top up the provider account, then Retry. Customer was NOT refunded.">
+                          <Wallet className="w-3 h-3" /> Provider balance low
+                        </span>
+                      )}
+                      {t.flags && (
+                        <span
+                          className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold ${t.flags.level === "high" ? "bg-destructive/15 text-destructive" : "bg-amber-500/15 text-amber-600"}`}
+                          title={t.flags.reasons.join(" · ")}
+                        >
+                          <AlertTriangle className="w-3 h-3" /> Suspicious
+                        </span>
+                      )}
+                    </div>
+                    {t.flags && (
+                      <div className="text-[10px] text-muted-foreground mt-0.5">{t.flags.reasons.join(" · ")}</div>
+                    )}
                   </td>
                   <td className="p-3 font-bold">GH₵{Number(t.amount).toFixed(2)}</td>
-                  <td className="p-3">{t.status}</td>
+                  <td className="p-3">
+                    {t.status}
+                    {t.no_refund_issued && t.status === "pending" && (
+                      <div className="text-[10px] text-amber-600 font-semibold">customer paid · no refund</div>
+                    )}
+                  </td>
                   <td className="p-3 text-xs max-w-[220px] truncate" title={providerErr ?? ""}>
                     {providerErr ? <span className="text-destructive">{providerErr}</span> : meta.provider_reference ? <span className="text-emerald-500">{meta.provider_reference}</span> : "—"}
                   </td>
