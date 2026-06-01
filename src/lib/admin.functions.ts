@@ -70,7 +70,100 @@ export const adminListOrders = createServerFn({ method: "GET" })
     await assertAdmin(context.userId);
     const { data } = await supabaseAdmin
       .from("transactions").select("*").order("created_at", { ascending: false }).limit(500);
-    return data ?? [];
+    const rows = data ?? [];
+
+    // Collect IDs to enrich
+    const userIds = new Set<string>();
+    const storeIds = new Set<string>();
+    const campaignIds = new Set<string>();
+    for (const t of rows) {
+      if (t.user_id) userIds.add(t.user_id);
+      const m: any = t.metadata ?? {};
+      if (m.store_id) storeIds.add(m.store_id);
+      if (m.store_sponsor_id) userIds.add(m.store_sponsor_id);
+      if (m.campaign_id) campaignIds.add(m.campaign_id);
+    }
+
+    const [profilesRes, storesRes, campaignsRes] = await Promise.all([
+      userIds.size
+        ? supabaseAdmin.from("profiles").select("id,full_name,email,phone,sponsor_id").in("id", Array.from(userIds))
+        : Promise.resolve({ data: [] as any[] }),
+      storeIds.size
+        ? supabaseAdmin.from("stores").select("id,name,slug,user_id,sponsor_id").in("id", Array.from(storeIds))
+        : Promise.resolve({ data: [] as any[] }),
+      campaignIds.size
+        ? supabaseAdmin.from("free_campaigns").select("id,name").in("id", Array.from(campaignIds))
+        : Promise.resolve({ data: [] as any[] }),
+    ]);
+
+    const profileMap = new Map<string, any>((profilesRes.data ?? []).map((p: any) => [p.id, p]));
+    const storeMap = new Map<string, any>((storesRes.data ?? []).map((s: any) => [s.id, s]));
+    const campaignMap = new Map<string, any>((campaignsRes.data ?? []).map((c: any) => [c.id, c]));
+
+    // Pull sponsor profiles for stores/buyers that have one
+    const sponsorIds = new Set<string>();
+    for (const s of storesRes.data ?? []) if (s.sponsor_id) sponsorIds.add(s.sponsor_id);
+    for (const p of profilesRes.data ?? []) if (p.sponsor_id) sponsorIds.add(p.sponsor_id);
+    const missingSponsors = Array.from(sponsorIds).filter((id) => !profileMap.has(id));
+    if (missingSponsors.length) {
+      const { data: extra } = await supabaseAdmin
+        .from("profiles").select("id,full_name,email,phone,sponsor_id").in("id", missingSponsors);
+      for (const p of extra ?? []) profileMap.set(p.id, p);
+    }
+
+    const nameOf = (p: any) => (p?.full_name?.trim() || p?.email || "Unknown");
+
+    return rows.map((t: any) => {
+      const m: any = t.metadata ?? {};
+      const buyer = profileMap.get(t.user_id);
+      let source: {
+        kind: string;
+        label: string;
+        detail?: string;
+      };
+
+      if (m.source === "store_order" && m.store_id) {
+        const store = storeMap.get(m.store_id);
+        const owner = store ? profileMap.get(store.user_id) : null;
+        if (store?.sponsor_id) {
+          const sponsor = profileMap.get(store.sponsor_id);
+          source = {
+            kind: "subagent_store",
+            label: `Subagent store: ${store?.name ?? "—"}`,
+            detail: `${nameOf(owner)} · sponsored by ${nameOf(sponsor)}`,
+          };
+        } else {
+          source = {
+            kind: "agent_store",
+            label: `Agent store: ${store?.name ?? "—"}`,
+            detail: nameOf(owner),
+          };
+        }
+      } else if (m.source === "free_campaign" && m.campaign_id) {
+        const camp = campaignMap.get(m.campaign_id);
+        source = {
+          kind: "free_campaign",
+          label: `Free campaign${camp?.name ? `: ${camp.name}` : ""}`,
+          detail: `Claimed by ${nameOf(buyer)}`,
+        };
+      } else if (t.type === "wallet_topup") {
+        source = { kind: "wallet_topup", label: "Wallet top-up", detail: nameOf(buyer) };
+      } else if (t.type === "withdrawal") {
+        source = { kind: "withdrawal", label: "Withdrawal", detail: nameOf(buyer) };
+      } else if (m.source === "api" || m.via === "api") {
+        source = { kind: "api", label: `API — ${nameOf(buyer)}`, detail: buyer?.email ?? undefined };
+      } else {
+        // Direct purchase from the user's own dashboard.
+        const role = buyer?.sponsor_id ? "Subagent" : "Agent/User";
+        source = {
+          kind: "dashboard",
+          label: `${role} dashboard: ${nameOf(buyer)}`,
+          detail: buyer?.email ?? undefined,
+        };
+      }
+
+      return { ...t, source };
+    });
   });
 
 export const adminUpdateOrderStatus = createServerFn({ method: "POST" })
