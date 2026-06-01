@@ -118,7 +118,7 @@ export function PublicStore() {
 
   const waLink = (store.support_whatsapp ?? "").trim();
 
-  const [payOpen, setPayOpen] = useState(false);
+
 
   const startPurchase = () => {
     if (!selected) return;
