@@ -42,6 +42,7 @@ export function PublicStore() {
   const [email, setEmail] = useState("");
   const [paying, setPaying] = useState(false);
   const [verifying, setVerifying] = useState(false);
+  const [payOpen, setPayOpen] = useState(false);
 
   const { data: store, isLoading } = useQuery({
     queryKey: ["public-store", slug],
