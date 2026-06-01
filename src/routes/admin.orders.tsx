@@ -39,7 +39,7 @@ function OrdersPage() {
       <div className="rounded-xl border border-border bg-card overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="bg-muted text-left text-xs uppercase"><tr>
-            <th className="p-3">Date</th><th className="p-3">Type</th><th className="p-3">Phone</th>
+            <th className="p-3">Date</th><th className="p-3">Type</th><th className="p-3">Source</th><th className="p-3">Phone</th>
             <th className="p-3">Description</th><th className="p-3">Amount</th><th className="p-3">Status</th><th className="p-3">Provider</th><th className="p-3"></th>
           </tr></thead>
           <tbody className="divide-y divide-border">
@@ -56,6 +56,12 @@ function OrdersPage() {
                 <tr key={t.id}>
                   <td className="p-3 whitespace-nowrap">{new Date(t.created_at).toLocaleString()}</td>
                   <td className="p-3 capitalize">{t.type.replace("_", " ")}</td>
+                  <td className="p-3 max-w-[240px]">
+                    <div className="font-medium truncate" title={t.source?.label ?? ""}>{t.source?.label ?? "—"}</div>
+                    {t.source?.detail && (
+                      <div className="text-[11px] text-muted-foreground truncate" title={t.source.detail}>{t.source.detail}</div>
+                    )}
+                  </td>
                   <td className="p-3 font-mono">{t.recipient_phone ?? "—"}</td>
                   <td className="p-3">
                     {t.description}
