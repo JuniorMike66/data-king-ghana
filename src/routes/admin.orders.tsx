@@ -39,7 +39,7 @@ function OrdersPage() {
       <div className="rounded-xl border border-border bg-card overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="bg-muted text-left text-xs uppercase"><tr>
-            <th className="p-3">Date</th><th className="p-3">Type</th><th className="p-3">Phone</th>
+            <th className="p-3">Date</th><th className="p-3">Type</th><th className="p-3">Source</th><th className="p-3">Phone</th>
             <th className="p-3">Description</th><th className="p-3">Amount</th><th className="p-3">Status</th><th className="p-3">Provider</th><th className="p-3"></th>
           </tr></thead>
           <tbody className="divide-y divide-border">
