@@ -113,62 +113,7 @@ export const adminListOrders = createServerFn({ method: "GET" })
 
     const nameOf = (p: any) => (p?.full_name?.trim() || p?.email || "Unknown");
 
-    return rows.map((t: any) => {
-      const m: any = t.metadata ?? {};
-      const buyer = profileMap.get(t.user_id);
-      let source: {
-        kind: string;
-        label: string;
-        detail?: string;
-      };
-
-      if (m.source === "store_order" && m.store_id) {
-        const store = storeMap.get(m.store_id);
-        const owner = store ? profileMap.get(store.user_id) : null;
-        if (store?.sponsor_id) {
-          const sponsor = profileMap.get(store.sponsor_id);
-          source = {
-            kind: "subagent_store",
-            label: `Subagent store: ${store?.name ?? "—"}`,
-            detail: `${nameOf(owner)} · sponsored by ${nameOf(sponsor)}`,
-          };
-        } else {
-          source = {
-            kind: "agent_store",
-            label: `Agent store: ${store?.name ?? "—"}`,
-            detail: nameOf(owner),
-          };
-        }
-      } else if (m.source === "free_campaign" && m.campaign_id) {
-        const camp = campaignMap.get(m.campaign_id);
-        source = {
-          kind: "free_campaign",
-          label: `Free campaign${camp?.name ? `: ${camp.name}` : ""}`,
-          detail: `Claimed by ${nameOf(buyer)}`,
-        };
-      } else if (t.type === "wallet_topup") {
-        source = { kind: "wallet_topup", label: "Wallet top-up", detail: nameOf(buyer) };
-      } else if (t.type === "withdrawal") {
-        source = { kind: "withdrawal", label: "Withdrawal", detail: nameOf(buyer) };
-      } else if (m.source === "api" || m.via === "api") {
-        source = { kind: "api", label: `API — ${nameOf(buyer)}`, detail: buyer?.email ?? undefined };
-      } else {
-        // Direct purchase from the user's own dashboard.
-        const role = buyer?.sponsor_id ? "Subagent" : "Agent/User";
-        source = {
-          kind: "dashboard",
-          label: `${role} dashboard: ${nameOf(buyer)}`,
-          detail: buyer?.email ?? undefined,
-        };
-      }
-
-    // ============= Suspicious-activity flags =============
-    // Look at the window we already have. We flag rows by:
-    //  - same recipient phone got >=2 non-failed data orders in a 30-min window
-    //  - same buyer placed >=8 data orders in a 60-min window
-    //  - provider reported insufficient balance
-    //  - the order has been retried 2+ times
-    //  - the order is still pending after >=15 minutes
+    // ============= Suspicious-activity precomputation =============
     type FlagInfo = { reasons: string[]; level: "high" | "medium" };
     const phoneTimes = new Map<string, number[]>();
     const userTimes = new Map<string, number[]>();
@@ -188,7 +133,7 @@ export const adminListOrders = createServerFn({ method: "GET" })
     const countWithin = (arr: number[] | undefined, ts: number, ms: number) =>
       arr ? arr.filter((x) => Math.abs(x - ts) <= ms).length : 0;
 
-    const enriched = rows.map((t: any) => {
+    return rows.map((t: any) => {
       const m: any = t.metadata ?? {};
       const buyer = profileMap.get(t.user_id);
       let source: { kind: string; label: string; detail?: string };
@@ -225,10 +170,14 @@ export const adminListOrders = createServerFn({ method: "GET" })
         source = { kind: "api", label: `API — ${nameOf(buyer)}`, detail: buyer?.email ?? undefined };
       } else {
         const role = buyer?.sponsor_id ? "Subagent" : "Agent/User";
-        source = { kind: "dashboard", label: `${role} dashboard: ${nameOf(buyer)}`, detail: buyer?.email ?? undefined };
+        source = {
+          kind: "dashboard",
+          label: `${role} dashboard: ${nameOf(buyer)}`,
+          detail: buyer?.email ?? undefined,
+        };
       }
 
-      // Compute suspicious flags for data orders
+      // Suspicious flags for data orders
       const flag: FlagInfo = { reasons: [], level: "medium" };
       if (t.type === "data_purchase") {
         const ts = new Date(t.created_at).getTime();
@@ -253,8 +202,6 @@ export const adminListOrders = createServerFn({ method: "GET" })
         no_refund_issued: !!m.no_refund_issued,
       };
     });
-
-    return enriched;
   });
 
 export const adminUpdateOrderStatus = createServerFn({ method: "POST" })
