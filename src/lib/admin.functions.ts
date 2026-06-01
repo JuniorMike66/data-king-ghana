@@ -113,14 +113,30 @@ export const adminListOrders = createServerFn({ method: "GET" })
 
     const nameOf = (p: any) => (p?.full_name?.trim() || p?.email || "Unknown");
 
+    // ============= Suspicious-activity precomputation =============
+    type FlagInfo = { reasons: string[]; level: "high" | "medium" };
+    const phoneTimes = new Map<string, number[]>();
+    const userTimes = new Map<string, number[]>();
+    for (const t of rows) {
+      if (t.type !== "data_purchase") continue;
+      if (t.status === "failed" || t.status === "refunded") continue;
+      const ts = new Date(t.created_at).getTime();
+      if (t.recipient_phone) {
+        const arr = phoneTimes.get(t.recipient_phone) ?? [];
+        arr.push(ts); phoneTimes.set(t.recipient_phone, arr);
+      }
+      if (t.user_id) {
+        const arr = userTimes.get(t.user_id) ?? [];
+        arr.push(ts); userTimes.set(t.user_id, arr);
+      }
+    }
+    const countWithin = (arr: number[] | undefined, ts: number, ms: number) =>
+      arr ? arr.filter((x) => Math.abs(x - ts) <= ms).length : 0;
+
     return rows.map((t: any) => {
       const m: any = t.metadata ?? {};
       const buyer = profileMap.get(t.user_id);
-      let source: {
-        kind: string;
-        label: string;
-        detail?: string;
-      };
+      let source: { kind: string; label: string; detail?: string };
 
       if (m.source === "store_order" && m.store_id) {
         const store = storeMap.get(m.store_id);
@@ -153,7 +169,6 @@ export const adminListOrders = createServerFn({ method: "GET" })
       } else if (m.source === "api" || m.via === "api") {
         source = { kind: "api", label: `API — ${nameOf(buyer)}`, detail: buyer?.email ?? undefined };
       } else {
-        // Direct purchase from the user's own dashboard.
         const role = buyer?.sponsor_id ? "Subagent" : "Agent/User";
         source = {
           kind: "dashboard",
@@ -162,7 +177,30 @@ export const adminListOrders = createServerFn({ method: "GET" })
         };
       }
 
-      return { ...t, source };
+      // Suspicious flags for data orders
+      const flag: FlagInfo = { reasons: [], level: "medium" };
+      if (t.type === "data_purchase") {
+        const ts = new Date(t.created_at).getTime();
+        const phoneCount = countWithin(phoneTimes.get(t.recipient_phone), ts, 30 * 60 * 1000);
+        if (phoneCount >= 2) flag.reasons.push(`${phoneCount} orders to this number in 30 min`);
+        const userCount = countWithin(userTimes.get(t.user_id), ts, 60 * 60 * 1000);
+        if (userCount >= 8) flag.reasons.push(`${userCount} orders by this buyer in 1 hr`);
+        if (m.provider_insufficient_balance) { flag.reasons.push("Provider wallet low"); flag.level = "high"; }
+        const retries = Number(m.retry_count ?? 0);
+        if (retries >= 2) flag.reasons.push(`Retried ${retries}×`);
+        if (t.status === "pending") {
+          const ageMin = (Date.now() - ts) / 60000;
+          if (ageMin >= 15 && !m.provider_insufficient_balance) flag.reasons.push(`Pending ${Math.round(ageMin)}m`);
+        }
+      }
+
+      return {
+        ...t,
+        source,
+        flags: flag.reasons.length ? flag : null,
+        provider_insufficient_balance: !!m.provider_insufficient_balance,
+        no_refund_issued: !!m.no_refund_issued,
+      };
     });
   });
 
@@ -197,9 +235,12 @@ export const adminRetryOrder = createServerFn({ method: "POST" })
     const { data: pkg } = await supabaseAdmin.from("data_packages").select("size_mb,network").eq("id", tx.package_id).maybeSingle();
     if (!pkg) throw new Error("Package no longer exists");
 
-    // If previously failed, the wallet was refunded — re-debit it now so the
-    // user pays for the retried order. Skip re-debit for pending retries.
-    if (tx.status === "failed") {
+    // Re-debit ONLY if the wallet was previously refunded. Insufficient-balance
+    // retries keep status=pending with `no_refund_issued=true` — never re-debit
+    // those, the customer already paid for the order.
+    const meta: any = tx.metadata ?? {};
+    const noRefundIssued = !!meta.no_refund_issued;
+    if (tx.status === "failed" && !noRefundIssued) {
       const { data: wal } = await supabaseAdmin.from("wallets").select("balance").eq("user_id", tx.user_id).maybeSingle();
       const bal = Number(wal?.balance ?? 0);
       if (bal < Number(tx.amount)) throw new Error("Customer wallet has insufficient balance for re-debit");
@@ -207,13 +248,14 @@ export const adminRetryOrder = createServerFn({ method: "POST" })
     }
 
     // Reset transaction state & clear provider lock so dispatch will run
-    const meta: any = tx.metadata ?? {};
     const cleaned = { ...meta };
     delete cleaned.dispatched_at;
     delete cleaned.provider_error;
     delete cleaned.provider_response;
     delete cleaned.http;
     delete cleaned.provider_reference;
+    delete cleaned.provider_insufficient_balance;
+    delete cleaned.no_refund_issued;
     cleaned.retry_count = (Number(meta.retry_count) || 0) + 1;
     cleaned.last_retry_at = new Date().toISOString();
     await supabaseAdmin.from("transactions").update({ status: "pending", metadata: cleaned }).eq("id", tx.id);

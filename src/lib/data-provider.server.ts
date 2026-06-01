@@ -20,6 +20,7 @@ const NETWORK_KEY: Record<string, string> = {
 };
 
 async function refund(userId: string, amount: number) {
+  if (!amount || amount <= 0) return;
   const { data: w } = await supabaseAdmin
     .from("wallets").select("balance").eq("user_id", userId).maybeSingle();
   if (w) {
@@ -28,6 +29,27 @@ async function refund(userId: string, amount: number) {
       .update({ balance: Number(w.balance) + Number(amount) })
       .eq("user_id", userId);
   }
+}
+
+// Detect provider "insufficient balance" / "wallet empty" style failures so we
+// can keep the order pending (already paid by the customer) and let an admin
+// retry it once the provider account has been topped up — without refunding
+// the customer or charging them twice.
+function isInsufficientBalanceError(body: any, httpStatus: number): boolean {
+  try {
+    const blob = JSON.stringify(body ?? {}).toLowerCase();
+    if (
+      blob.includes("insufficient balance") ||
+      blob.includes("insufficient funds") ||
+      blob.includes("wallet balance") ||
+      blob.includes("low balance") ||
+      blob.includes("balance is low") ||
+      blob.includes("not enough balance")
+    ) return true;
+  } catch { /* ignore */ }
+  // Some providers return 402 Payment Required for low balance.
+  if (httpStatus === 402) return true;
+  return false;
 }
 
 export async function dispatchDataPurchase(input: DispatchInput) {
@@ -95,26 +117,64 @@ export async function dispatchDataPurchase(input: DispatchInput) {
         .update({
           status: providerStatus === "completed" ? "completed" : "pending",
           metadata: {
+            ...meta,
             provider: "spendless",
             provider_reference: body?.data?.reference ?? body?.data?.orderId ?? null,
             provider_response: body,
+            no_refund_issued: false,
           },
         })
         .eq("id", input.transactionId);
-    } else {
+      return;
+    }
+
+    // === FAILURE PATH ===
+    // If the provider rejected the order because THEIR wallet is empty, we
+    // keep the order pending (customer sees "success") and flag it for the
+    // admin to retry. No refund is issued, so the retry must NOT re-debit.
+    if (isInsufficientBalanceError(body, res.status)) {
       await supabaseAdmin
         .from("transactions")
         .update({
-          status: "failed",
-          metadata: { provider: "spendless", http: res.status, provider_response: body },
+          status: "pending",
+          metadata: {
+            ...meta,
+            provider: "spendless",
+            http: res.status,
+            provider_response: body,
+            provider_error:
+              body?.message ?? body?.error ?? "Provider wallet balance is too low",
+            provider_insufficient_balance: true,
+            no_refund_issued: true,
+            // Clear dispatch lock so admin retry can re-call the provider.
+            dispatched_at: null,
+            flagged_suspicious: meta.flagged_suspicious ?? false,
+          },
         })
         .eq("id", input.transactionId);
-      await refund(input.userId, input.amount);
+      return;
     }
+
+    // Generic failure — refund the customer and mark failed as before.
+    await supabaseAdmin
+      .from("transactions")
+      .update({
+        status: "failed",
+        metadata: {
+          ...meta,
+          provider: "spendless",
+          http: res.status,
+          provider_response: body,
+          provider_error: body?.message ?? body?.error ?? "Provider rejected the order",
+          no_refund_issued: false,
+        },
+      })
+      .eq("id", input.transactionId);
+    await refund(input.userId, input.amount);
   } catch (e: any) {
     await supabaseAdmin
       .from("transactions")
-      .update({ metadata: { provider: "spendless", provider_error: String(e?.message ?? e) } })
+      .update({ metadata: { ...meta, provider: "spendless", provider_error: String(e?.message ?? e) } })
       .eq("id", input.transactionId);
   }
 }
