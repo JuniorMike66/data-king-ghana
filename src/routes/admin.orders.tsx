@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { RefreshCw } from "lucide-react";
+import { RefreshCw, AlertTriangle, Wallet } from "lucide-react";
 import { adminListOrders, adminUpdateOrderStatus, adminRetryOrder } from "@/lib/admin.functions";
 
 export const Route = createFileRoute("/admin/orders")({ component: OrdersPage });
