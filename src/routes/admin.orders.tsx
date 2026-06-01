@@ -56,6 +56,12 @@ function OrdersPage() {
                 <tr key={t.id}>
                   <td className="p-3 whitespace-nowrap">{new Date(t.created_at).toLocaleString()}</td>
                   <td className="p-3 capitalize">{t.type.replace("_", " ")}</td>
+                  <td className="p-3 max-w-[240px]">
+                    <div className="font-medium truncate" title={t.source?.label ?? ""}>{t.source?.label ?? "—"}</div>
+                    {t.source?.detail && (
+                      <div className="text-[11px] text-muted-foreground truncate" title={t.source.detail}>{t.source.detail}</div>
+                    )}
+                  </td>
                   <td className="p-3 font-mono">{t.recipient_phone ?? "—"}</td>
                   <td className="p-3">
                     {t.description}
