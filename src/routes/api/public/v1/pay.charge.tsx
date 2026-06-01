@@ -120,6 +120,21 @@ export const Route = createFileRoute("/api/public/v1/pay/charge")({
             .from("data_packages").select("*").eq("id", input.package_id).eq("active", true).maybeSingle();
           if (!pkg) return json({ error: "Package not available" }, 404);
 
+          // 7-minute cooldown — block back-to-back orders to the same number.
+          const sinceIso = new Date(Date.now() - 7 * 60 * 1000).toISOString();
+          const { data: recent } = await supabaseAdmin
+            .from("transactions")
+            .select("id")
+            .eq("recipient_phone", input.recipient_phone)
+            .eq("type", "data_purchase")
+            .not("status", "in", "(failed,refunded)")
+            .gte("created_at", sinceIso)
+            .limit(1);
+          if (recent && recent.length) {
+            return json({ error: `A data order to ${input.recipient_phone} was just placed. Please wait 7 minutes before sending another.` }, 429);
+          }
+
+
           let cost = Number(pkg.agent_price ?? pkg.price);
           if (store.sponsor_id) {
             const { data: sp } = await supabaseAdmin
