@@ -235,9 +235,12 @@ export const adminRetryOrder = createServerFn({ method: "POST" })
     const { data: pkg } = await supabaseAdmin.from("data_packages").select("size_mb,network").eq("id", tx.package_id).maybeSingle();
     if (!pkg) throw new Error("Package no longer exists");
 
-    // If previously failed, the wallet was refunded — re-debit it now so the
-    // user pays for the retried order. Skip re-debit for pending retries.
-    if (tx.status === "failed") {
+    // Re-debit ONLY if the wallet was previously refunded. Insufficient-balance
+    // retries keep status=pending with `no_refund_issued=true` — never re-debit
+    // those, the customer already paid for the order.
+    const meta: any = tx.metadata ?? {};
+    const noRefundIssued = !!meta.no_refund_issued;
+    if (tx.status === "failed" && !noRefundIssued) {
       const { data: wal } = await supabaseAdmin.from("wallets").select("balance").eq("user_id", tx.user_id).maybeSingle();
       const bal = Number(wal?.balance ?? 0);
       if (bal < Number(tx.amount)) throw new Error("Customer wallet has insufficient balance for re-debit");
@@ -245,13 +248,14 @@ export const adminRetryOrder = createServerFn({ method: "POST" })
     }
 
     // Reset transaction state & clear provider lock so dispatch will run
-    const meta: any = tx.metadata ?? {};
     const cleaned = { ...meta };
     delete cleaned.dispatched_at;
     delete cleaned.provider_error;
     delete cleaned.provider_response;
     delete cleaned.http;
     delete cleaned.provider_reference;
+    delete cleaned.provider_insufficient_balance;
+    delete cleaned.no_refund_issued;
     cleaned.retry_count = (Number(meta.retry_count) || 0) + 1;
     cleaned.last_retry_at = new Date().toISOString();
     await supabaseAdmin.from("transactions").update({ status: "pending", metadata: cleaned }).eq("id", tx.id);
