@@ -127,7 +127,7 @@ export const Route = createFileRoute("/api/public/v1/pay/charge")({
             .select("id")
             .eq("recipient_phone", input.recipient_phone)
             .eq("type", "data_purchase")
-            .not("status", "in", "(failed,refunded)")
+            .not("status", "in", "(failed,refunded,pending_payment)")
             .gte("created_at", sinceIso)
             .limit(1);
           if (recent && recent.length) {
