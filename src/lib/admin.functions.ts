@@ -325,13 +325,19 @@ export const adminUpsertPackage = createServerFn({ method: "POST" })
       price: z.number().min(0),
       agent_price: z.number().min(0),
       active: z.boolean().default(true),
+      provider_package_id: z.string().trim().max(80).optional().nullable(),
     }).parse(i)
   )
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
     const size_mb = parseSizeLabelToMb(data.size_label) || 1;
     const sort_order = size_mb; // auto-sort by size
-    const payload = { ...data, size_mb, sort_order };
+    const payload = {
+      ...data,
+      size_mb,
+      sort_order,
+      provider_package_id: data.provider_package_id?.trim() || null,
+    };
     if (data.id) {
       const { id, ...rest } = payload;
       await supabaseAdmin.from("data_packages").update(rest).eq("id", id!);

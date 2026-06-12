@@ -94,6 +94,7 @@ export type Database = {
           id: string
           network: Database["public"]["Enums"]["network_type"]
           price: number
+          provider_package_id: string | null
           size_label: string
           size_mb: number
           sort_order: number
@@ -105,6 +106,7 @@ export type Database = {
           id?: string
           network: Database["public"]["Enums"]["network_type"]
           price: number
+          provider_package_id?: string | null
           size_label: string
           size_mb: number
           sort_order?: number
@@ -116,6 +118,7 @@ export type Database = {
           id?: string
           network?: Database["public"]["Enums"]["network_type"]
           price?: number
+          provider_package_id?: string | null
           size_label?: string
           size_mb?: number
           sort_order?: number

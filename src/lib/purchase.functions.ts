@@ -22,7 +22,10 @@ export const buyData = createServerFn({ method: "POST" })
 
     // Fire-and-await provider dispatch (cheap, but waits so the user sees result)
     const { data: pkg } = await supabaseAdmin
-      .from("data_packages").select("network,size_mb,price").eq("id", data.packageId).single();
+      .from("data_packages")
+      .select("network,size_mb,price,provider_package_id")
+      .eq("id", data.packageId)
+      .single();
     if (pkg) {
       await dispatchDataPurchase({
         transactionId: txId as string,
@@ -31,6 +34,7 @@ export const buyData = createServerFn({ method: "POST" })
         phone: data.phone,
         sizeMb: pkg.size_mb,
         amount: Number(pkg.price),
+        packageId: (pkg as any).provider_package_id ?? null,
       });
     }
     return { transactionId: txId };
