@@ -1,0 +1,1 @@
+ALTER TABLE public.data_packages ADD COLUMN IF NOT EXISTS provider_package_id text;
