@@ -69,12 +69,14 @@ function PackageDialog({ upsert, pkg, onDone }: any) {
     price: String(pkg?.price ?? 0),
     agent_price: String(pkg?.agent_price ?? 0),
     active: pkg?.active ?? true,
+    provider_package_id: pkg?.provider_package_id ?? "",
   });
   const mut = useMutation({
     mutationFn: () => upsert({
       data: {
         id: pkg?.id, network: f.network as any, size_label: f.size_label,
         price: Number(f.price), agent_price: Number(f.agent_price), active: f.active,
+        provider_package_id: f.provider_package_id || null,
       },
     }),
     onSuccess: () => { toast.success("Saved"); setOpen(false); onDone(); },
@@ -101,6 +103,18 @@ function PackageDialog({ upsert, pkg, onDone }: any) {
             <div className="col-span-2"><Label>Size label</Label><Input value={f.size_label} onChange={(e) => setF({ ...f, size_label: e.target.value })} placeholder="e.g. 1GB or 500MB" /></div>
             <div><Label>Price</Label><Input type="number" step="0.01" value={f.price} onChange={(e) => setF({ ...f, price: e.target.value })} /></div>
             <div><Label>Agent price</Label><Input type="number" step="0.01" value={f.agent_price} onChange={(e) => setF({ ...f, agent_price: e.target.value })} /></div>
+            <div className="col-span-2">
+              <Label>SwiftData package ID</Label>
+              <Input
+                value={f.provider_package_id}
+                onChange={(e) => setF({ ...f, provider_package_id: e.target.value.trim() })}
+                placeholder="e.g. yellow_5gb (leave blank to auto-derive)"
+              />
+              <p className="text-[11px] text-muted-foreground mt-1">
+                The exact <code>package_id</code> from SwiftData's <code>/plans</code> endpoint. If left blank we auto-derive
+                from network + size (e.g. MTN 5GB → <code>yellow_5gb</code>). Override here if SwiftData uses a different ID.
+              </p>
+            </div>
           </div>
           <p className="text-xs text-muted-foreground">Sorting is automatic based on bundle size.</p>
           <Button onClick={() => mut.mutate()} disabled={mut.isPending}>Save</Button>
