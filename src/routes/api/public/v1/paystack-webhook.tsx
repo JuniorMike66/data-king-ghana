@@ -118,29 +118,17 @@ export const Route = createFileRoute("/api/public/v1/paystack-webhook")({
             txId = txRow.id as string;
           }
 
-          // Now dispatch (only one webhook delivery wins the dispatch race because
-          // we set provider_dispatched_at before calling out).
-          const { data: row } = await supabaseAdmin
-            .from("transactions")
-            .select("metadata,package_id,recipient_phone,amount")
-            .eq("id", txId).single();
-          if (row && !(row.metadata as any)?.provider_dispatched_at) {
-            await supabaseAdmin.from("transactions")
-              .update({ metadata: { ...(row.metadata as any ?? {}), provider_dispatched_at: new Date().toISOString() } })
-              .eq("id", txId);
-            const { data: pkg } = await supabaseAdmin
-              .from("data_packages").select("network,size_mb").eq("id", row.package_id!).maybeSingle();
-            if (pkg) {
-              await dispatchDataPurchase({
-                transactionId: txId,
-                userId: meta.store_owner_id,
-                network: pkg.network as string,
-                phone: row.recipient_phone ?? meta.recipient_phone,
-                sizeMb: pkg.size_mb,
-                amount: Number(row.amount),
-              });
-            }
-          }
+          // dispatchDataPurchase handles its own idempotency lock and resolves
+          // network / package / phone / amount from the transaction row.
+          await dispatchDataPurchase({
+            transactionId: txId,
+            userId: meta.store_owner_id,
+            network: "",
+            phone: meta.recipient_phone,
+            sizeMb: 0,
+            amount: 0,
+          });
+
           return json({ ok: true, kind: "store_order" });
         }
 
