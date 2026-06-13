@@ -90,7 +90,7 @@ export async function dispatchDataPurchase(input: DispatchInput) {
   // Idempotency: never dispatch the same transaction twice.
   const { data: current } = await supabaseAdmin
     .from("transactions")
-    .select("status,metadata")
+    .select("status,metadata,package_id,network,recipient_phone,amount,user_id")
     .eq("id", input.transactionId)
     .maybeSingle();
   if (!current) return;
@@ -100,16 +100,35 @@ export async function dispatchDataPurchase(input: DispatchInput) {
     current.status === "refunded"
   ) return;
   const meta: any = current.metadata ?? {};
-  if (meta.provider === "swiftdata" && (meta.provider_reference || meta.dispatched_at)) return;
+  // Respect every lock key callers have ever set.
+  if (
+    meta.provider === "swiftdata" &&
+    (meta.provider_reference || meta.dispatched_at || meta.provider_dispatched_at)
+  ) return;
 
-  // Resolve SwiftData package_id: prefer the per-package override, fall back
-  // to an auto-derived ID.
-  let providerPackageId = input.packageId ?? null;
-  if (!providerPackageId && input.packageId !== undefined) {
-    providerPackageId = autoDeriveProviderPackageId(input.network, input.sizeMb);
+  // Pull authoritative values from the transaction + linked package row so
+  // every dispatch path (webhook, verify poller, retry, campaign, public API)
+  // uses the same SwiftData package_id the admin configured.
+  const network = (current.network as string) ?? input.network;
+  const phone = (current.recipient_phone as string) ?? input.phone;
+  const userId = (current.user_id as string) ?? input.userId;
+  const amount = Number(current.amount ?? input.amount ?? 0);
+
+  let providerPackageId: string | null = input.packageId ?? null;
+  let sizeMb = input.sizeMb;
+  if (current.package_id) {
+    const { data: pkg } = await supabaseAdmin
+      .from("data_packages")
+      .select("provider_package_id,size_mb")
+      .eq("id", current.package_id)
+      .maybeSingle();
+    if (pkg) {
+      if ((pkg as any).provider_package_id) providerPackageId = (pkg as any).provider_package_id as string;
+      if (pkg.size_mb) sizeMb = Number(pkg.size_mb);
+    }
   }
   if (!providerPackageId) {
-    providerPackageId = autoDeriveProviderPackageId(input.network, input.sizeMb);
+    providerPackageId = autoDeriveProviderPackageId(network, sizeMb);
   }
   if (!providerPackageId) {
     await supabaseAdmin
@@ -119,15 +138,16 @@ export async function dispatchDataPurchase(input: DispatchInput) {
         metadata: {
           ...meta,
           provider: "swiftdata",
-          provider_error: `No SwiftData package_id mapping for ${input.network} / ${input.sizeMb}MB. Set "provider_package_id" on the package.`,
+          provider_error: `No SwiftData package_id mapping for ${network} / ${sizeMb}MB. Set "provider_package_id" on the package.`,
         },
       })
       .eq("id", input.transactionId);
-    await refund(input.userId, input.amount);
+    await refund(userId, amount);
     return;
   }
 
   // Mark as dispatched immediately so a concurrent call sees the lock.
+  const dispatchedAt = new Date().toISOString();
   await supabaseAdmin
     .from("transactions")
     .update({
@@ -135,16 +155,19 @@ export async function dispatchDataPurchase(input: DispatchInput) {
         ...meta,
         provider: "swiftdata",
         provider_package_id: providerPackageId,
-        dispatched_at: new Date().toISOString(),
+        dispatched_at: dispatchedAt,
+        provider_dispatched_at: dispatchedAt,
       },
     })
     .eq("id", input.transactionId);
 
+
   const payload = {
     package_id: providerPackageId,
-    phone: input.phone,
+    phone,
     request_id: input.transactionId,
   };
+
   const rawBody = JSON.stringify(payload);
 
   const headers: Record<string, string> = {
@@ -214,12 +237,14 @@ export async function dispatchDataPurchase(input: DispatchInput) {
             no_refund_issued: true,
             // Clear dispatch lock so admin retry can re-call the provider.
             dispatched_at: null,
+            provider_dispatched_at: null,
             flagged_suspicious: meta.flagged_suspicious ?? false,
           },
         })
         .eq("id", input.transactionId);
       return;
     }
+
 
     // Generic failure — refund the customer and mark failed.
     await supabaseAdmin
@@ -237,7 +262,7 @@ export async function dispatchDataPurchase(input: DispatchInput) {
         },
       })
       .eq("id", input.transactionId);
-    await refund(input.userId, input.amount);
+    await refund(userId, amount);
   } catch (e: any) {
     await supabaseAdmin
       .from("transactions")
