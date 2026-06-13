@@ -237,12 +237,14 @@ export async function dispatchDataPurchase(input: DispatchInput) {
             no_refund_issued: true,
             // Clear dispatch lock so admin retry can re-call the provider.
             dispatched_at: null,
+            provider_dispatched_at: null,
             flagged_suspicious: meta.flagged_suspicious ?? false,
           },
         })
         .eq("id", input.transactionId);
       return;
     }
+
 
     // Generic failure — refund the customer and mark failed.
     await supabaseAdmin
