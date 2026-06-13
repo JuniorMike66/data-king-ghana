@@ -164,9 +164,10 @@ export async function dispatchDataPurchase(input: DispatchInput) {
 
   const payload = {
     package_id: providerPackageId,
-    phone: input.phone,
+    phone,
     request_id: input.transactionId,
   };
+
   const rawBody = JSON.stringify(payload);
 
   const headers: Record<string, string> = {
