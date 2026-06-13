@@ -111,7 +111,7 @@ export const Route = createFileRoute("/api/public/v1/paystack-webhook")({
                 customer_email: tx.customer?.email ?? null,
                 paystack_channel: tx.channel,
                 paid_at: tx.paid_at,
-                provider_dispatched_at: new Date().toISOString(),
+
               },
             }).select("id").single();
             if (txErr) return json({ error: txErr.message }, 500);
