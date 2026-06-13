@@ -262,7 +262,7 @@ export async function dispatchDataPurchase(input: DispatchInput) {
         },
       })
       .eq("id", input.transactionId);
-    await refund(input.userId, input.amount);
+    await refund(userId, amount);
   } catch (e: any) {
     await supabaseAdmin
       .from("transactions")
