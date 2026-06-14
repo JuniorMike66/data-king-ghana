@@ -5,7 +5,6 @@
 // an insufficient provider wallet balance.
 //
 // Docs: https://swiftdatagh.shop/api-docs
-import { createHmac } from "node:crypto";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 type DispatchInput = {
@@ -77,8 +76,7 @@ function isInsufficientBalanceError(body: any, httpStatus: number): boolean {
 }
 
 export async function dispatchDataPurchase(input: DispatchInput) {
-  const apiKey = process.env.SWIFT_API_KEY;
-  const apiSecret = process.env.SWIFT_API_SECRET;
+  const apiKey = process.env.SWIFT_API_KEY?.trim();
   if (!apiKey) {
     await supabaseAdmin
       .from("transactions")
@@ -170,17 +168,15 @@ export async function dispatchDataPurchase(input: DispatchInput) {
 
   const rawBody = JSON.stringify(payload);
 
+  // HMAC signing is optional per SwiftData docs. We rely on bearer auth +
+  // idempotency key, which avoids the "Invalid signature" rejection we were
+  // hitting when the stored secret didn't match the live API key.
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${apiKey}`,
     "X-API-Key": apiKey,
     "X-Idempotency-Key": input.transactionId,
   };
-  if (apiSecret) {
-    headers["X-Swift-Signature"] = createHmac("sha256", apiSecret)
-      .update(rawBody)
-      .digest("hex");
-  }
 
   try {
     const res = await fetch(`${SWIFT_BASE}/payment/data`, {

@@ -355,7 +355,18 @@ export const adminDeletePackage = createServerFn({ method: "POST" })
   .inputValidator((i) => z.object({ id: z.string().uuid() }).parse(i))
   .handler(async ({ data, context }) => {
     await assertAdmin(context.userId);
-    await supabaseAdmin.from("data_packages").delete().eq("id", data.id);
+    const { error } = await supabaseAdmin.from("data_packages").delete().eq("id", data.id);
+    if (error) {
+      // Most likely cause: existing transactions still reference this package
+      // (foreign key). Fall back to deactivating so it disappears from the
+      // store UI without breaking historical order records.
+      const { error: updErr } = await supabaseAdmin
+        .from("data_packages")
+        .update({ active: false })
+        .eq("id", data.id);
+      if (updErr) throw new Error(updErr.message);
+      return { ok: true, deactivated: true };
+    }
     return { ok: true };
   });
 
