@@ -185,7 +185,7 @@ function Layout() {
             </Button>
             <h1 className="font-bold text-lg">DataKing Ghana</h1>
           </div>
-          <Link to="/dashboard/wallet" className="hidden sm:flex items-center gap-2 rounded-full border border-primary/40 px-3 py-1.5 text-sm hover:bg-primary/10">
+          <Link to="/dashboard/wallet" search={{ reference: undefined, trxref: undefined }} className="hidden sm:flex items-center gap-2 rounded-full border border-primary/40 px-3 py-1.5 text-sm hover:bg-primary/10">
             <Wallet className="w-4 h-4 text-primary" /> <span className="font-semibold">GH₵ {(balance ?? 0).toFixed(2)}</span>
           </Link>
         </header>
