@@ -9,73 +9,62 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SignupRouteImport } from './routes/signup'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
-import { Route as AdminRouteImport } from './routes/admin'
-import { Route as ActivateSubagentRouteImport } from './routes/activate-subagent'
-import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
+import { Route as ActivateSubagentRouteImport } from './routes/activate-subagent'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as SignupRouteImport } from './routes/signup'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
-import { Route as SSlugRouteImport } from './routes/s.$slug'
-import { Route as AdminWithdrawalsRouteImport } from './routes/admin.withdrawals'
-import { Route as AdminTransactionsRouteImport } from './routes/admin.transactions'
-import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
-import { Route as AdminPackagesRouteImport } from './routes/admin.packages'
-import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
-import { Route as AdminNotificationsRouteImport } from './routes/admin.notifications'
-import { Route as AdminCheckersRouteImport } from './routes/admin.checkers'
 import { Route as AdminCampaignsRouteImport } from './routes/admin.campaigns'
-import { Route as SSlugIndexRouteImport } from './routes/s.$slug.index'
+import { Route as AdminCheckersRouteImport } from './routes/admin.checkers'
+import { Route as AdminNotificationsRouteImport } from './routes/admin.notifications'
+import { Route as AdminOrdersRouteImport } from './routes/admin.orders'
+import { Route as AdminPackagesRouteImport } from './routes/admin.packages'
+import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
+import { Route as AdminTransactionsRouteImport } from './routes/admin.transactions'
+import { Route as AdminWithdrawalsRouteImport } from './routes/admin.withdrawals'
+import { Route as SSlugRouteImport } from './routes/s.$slug'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard.index'
-import { Route as SSlugBecomeAgentRouteImport } from './routes/s.$slug.become-agent'
-import { Route as AdminUsersUserIdRouteImport } from './routes/admin.users.$userId'
-import { Route as AuthenticatedDashboardWalletRouteImport } from './routes/_authenticated/dashboard/wallet'
-import { Route as AuthenticatedDashboardTransactionsRouteImport } from './routes/_authenticated/dashboard/transactions'
-import { Route as AuthenticatedDashboardStoreRouteImport } from './routes/_authenticated/dashboard/store'
-import { Route as AuthenticatedDashboardReportRouteImport } from './routes/_authenticated/dashboard/report'
-import { Route as AuthenticatedDashboardProfileRouteImport } from './routes/_authenticated/dashboard/profile'
-import { Route as AuthenticatedDashboardDeveloperRouteImport } from './routes/_authenticated/dashboard/developer'
 import { Route as AuthenticatedDashboardCheckersRouteImport } from './routes/_authenticated/dashboard/checkers'
-import { Route as AuthenticatedDashboardStoreIndexRouteImport } from './routes/_authenticated/dashboard/store.index'
-import { Route as ApiPublicV1TrackOrderRouteImport } from './routes/api/public/v1/track-order'
-import { Route as ApiPublicV1PaystackWebhookRouteImport } from './routes/api/public/v1/paystack-webhook'
-import { Route as ApiPublicV1BalanceRouteImport } from './routes/api/public/v1/balance'
-import { Route as AuthenticatedDashboardStoreWithdrawalsRouteImport } from './routes/_authenticated/dashboard/store.withdrawals'
-import { Route as AuthenticatedDashboardStoreTransactionsRouteImport } from './routes/_authenticated/dashboard/store.transactions'
-import { Route as AuthenticatedDashboardStoreSubagentsRouteImport } from './routes/_authenticated/dashboard/store.subagents'
-import { Route as AuthenticatedDashboardStoreSettingsRouteImport } from './routes/_authenticated/dashboard/store.settings'
-import { Route as AuthenticatedDashboardStorePackagesRouteImport } from './routes/_authenticated/dashboard/store.packages'
+import { Route as AuthenticatedDashboardDeveloperRouteImport } from './routes/_authenticated/dashboard/developer'
+import { Route as AuthenticatedDashboardProfileRouteImport } from './routes/_authenticated/dashboard/profile'
+import { Route as AuthenticatedDashboardReportRouteImport } from './routes/_authenticated/dashboard/report'
+import { Route as AuthenticatedDashboardStoreRouteImport } from './routes/_authenticated/dashboard/store'
+import { Route as AuthenticatedDashboardTransactionsRouteImport } from './routes/_authenticated/dashboard/transactions'
+import { Route as AuthenticatedDashboardWalletRouteImport } from './routes/_authenticated/dashboard/wallet'
+import { Route as AdminUsersUserIdRouteImport } from './routes/admin.users.$userId'
+import { Route as SSlugIndexRouteImport } from './routes/s.$slug.index'
+import { Route as SSlugBecomeAgentRouteImport } from './routes/s.$slug.become-agent'
 import { Route as AuthenticatedDashboardBuyDataNetworkRouteImport } from './routes/_authenticated/dashboard/buy-data/$network'
-import { Route as ApiPublicV1TransactionsIdRouteImport } from './routes/api/public/v1/transactions.$id'
-import { Route as ApiPublicV1StoreOrderVerifyRouteImport } from './routes/api/public/v1/store-order.verify'
-import { Route as ApiPublicV1StoreOrderInitRouteImport } from './routes/api/public/v1/store-order.init'
-import { Route as ApiPublicV1PaySubmitOtpRouteImport } from './routes/api/public/v1/pay.submit-otp'
-import { Route as ApiPublicV1PayCheckRouteImport } from './routes/api/public/v1/pay.check'
-import { Route as ApiPublicV1PayChargeRouteImport } from './routes/api/public/v1/pay.charge'
-import { Route as ApiPublicV1DataPurchaseRouteImport } from './routes/api/public/v1/data.purchase'
-import { Route as ApiPublicV1CheckersPurchaseRouteImport } from './routes/api/public/v1/checkers.purchase'
-import { Route as ApiPublicV1ActivationVerifyRouteImport } from './routes/api/public/v1/activation.verify'
+import { Route as AuthenticatedDashboardStoreIndexRouteImport } from './routes/_authenticated/dashboard/store.index'
+import { Route as AuthenticatedDashboardStorePackagesRouteImport } from './routes/_authenticated/dashboard/store.packages'
+import { Route as AuthenticatedDashboardStoreSettingsRouteImport } from './routes/_authenticated/dashboard/store.settings'
+import { Route as AuthenticatedDashboardStoreSubagentsRouteImport } from './routes/_authenticated/dashboard/store.subagents'
+import { Route as AuthenticatedDashboardStoreTransactionsRouteImport } from './routes/_authenticated/dashboard/store.transactions'
+import { Route as AuthenticatedDashboardStoreWithdrawalsRouteImport } from './routes/_authenticated/dashboard/store.withdrawals'
+import { Route as ApiPublicV1BalanceRouteImport } from './routes/api/public/v1/balance'
+import { Route as ApiPublicV1PaystackWebhookRouteImport } from './routes/api/public/v1/paystack-webhook'
+import { Route as ApiPublicV1TrackOrderRouteImport } from './routes/api/public/v1/track-order'
 import { Route as ApiPublicV1ActivationInitRouteImport } from './routes/api/public/v1/activation.init'
+import { Route as ApiPublicV1ActivationVerifyRouteImport } from './routes/api/public/v1/activation.verify'
+import { Route as ApiPublicV1CheckersPurchaseRouteImport } from './routes/api/public/v1/checkers.purchase'
+import { Route as ApiPublicV1DataPurchaseRouteImport } from './routes/api/public/v1/data.purchase'
+import { Route as ApiPublicV1PayChargeRouteImport } from './routes/api/public/v1/pay.charge'
+import { Route as ApiPublicV1PayCheckRouteImport } from './routes/api/public/v1/pay.check'
+import { Route as ApiPublicV1PaySubmitOtpRouteImport } from './routes/api/public/v1/pay.submit-otp'
+import { Route as ApiPublicV1StoreOrderInitRouteImport } from './routes/api/public/v1/store-order.init'
+import { Route as ApiPublicV1StoreOrderVerifyRouteImport } from './routes/api/public/v1/store-order.verify'
+import { Route as ApiPublicV1TransactionsIdRouteImport } from './routes/api/public/v1/transactions.$id'
 
-const SignupRoute = SignupRouteImport.update({
-  id: '/signup',
-  path: '/signup',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
-  id: '/forgot-password',
-  path: '/forgot-password',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminRoute = AdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ActivateSubagentRoute = ActivateSubagentRouteImport.update({
@@ -83,13 +72,24 @@ const ActivateSubagentRoute = ActivateSubagentRouteImport.update({
   path: '/activate-subagent',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedRoute = AuthenticatedRouteImport.update({
-  id: '/_authenticated',
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
@@ -97,39 +97,9 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AdminRoute,
 } as any)
-const SSlugRoute = SSlugRouteImport.update({
-  id: '/s/$slug',
-  path: '/s/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminWithdrawalsRoute = AdminWithdrawalsRouteImport.update({
-  id: '/withdrawals',
-  path: '/withdrawals',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminTransactionsRoute = AdminTransactionsRouteImport.update({
-  id: '/transactions',
-  path: '/transactions',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminSettingsRoute = AdminSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminPackagesRoute = AdminPackagesRouteImport.update({
-  id: '/packages',
-  path: '/packages',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminOrdersRoute = AdminOrdersRouteImport.update({
-  id: '/orders',
-  path: '/orders',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminNotificationsRoute = AdminNotificationsRouteImport.update({
-  id: '/notifications',
-  path: '/notifications',
+const AdminCampaignsRoute = AdminCampaignsRouteImport.update({
+  id: '/campaigns',
+  path: '/campaigns',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminCheckersRoute = AdminCheckersRouteImport.update({
@@ -137,66 +107,45 @@ const AdminCheckersRoute = AdminCheckersRouteImport.update({
   path: '/checkers',
   getParentRoute: () => AdminRoute,
 } as any)
-const AdminCampaignsRoute = AdminCampaignsRouteImport.update({
-  id: '/campaigns',
-  path: '/campaigns',
+const AdminNotificationsRoute = AdminNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
   getParentRoute: () => AdminRoute,
 } as any)
-const SSlugIndexRoute = SSlugIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => SSlugRoute,
+const AdminOrdersRoute = AdminOrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminPackagesRoute = AdminPackagesRouteImport.update({
+  id: '/packages',
+  path: '/packages',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminSettingsRoute = AdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminTransactionsRoute = AdminTransactionsRouteImport.update({
+  id: '/transactions',
+  path: '/transactions',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminWithdrawalsRoute = AdminWithdrawalsRouteImport.update({
+  id: '/withdrawals',
+  path: '/withdrawals',
+  getParentRoute: () => AdminRoute,
+} as any)
+const SSlugRoute = SSlugRouteImport.update({
+  id: '/s/$slug',
+  path: '/s/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedDashboardIndexRoute =
   AuthenticatedDashboardIndexRouteImport.update({
     id: '/dashboard/',
     path: '/dashboard/',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
-const SSlugBecomeAgentRoute = SSlugBecomeAgentRouteImport.update({
-  id: '/become-agent',
-  path: '/become-agent',
-  getParentRoute: () => SSlugRoute,
-} as any)
-const AdminUsersUserIdRoute = AdminUsersUserIdRouteImport.update({
-  id: '/users/$userId',
-  path: '/users/$userId',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AuthenticatedDashboardWalletRoute =
-  AuthenticatedDashboardWalletRouteImport.update({
-    id: '/dashboard/wallet',
-    path: '/dashboard/wallet',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
-const AuthenticatedDashboardTransactionsRoute =
-  AuthenticatedDashboardTransactionsRouteImport.update({
-    id: '/dashboard/transactions',
-    path: '/dashboard/transactions',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
-const AuthenticatedDashboardStoreRoute =
-  AuthenticatedDashboardStoreRouteImport.update({
-    id: '/dashboard/store',
-    path: '/dashboard/store',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
-const AuthenticatedDashboardReportRoute =
-  AuthenticatedDashboardReportRouteImport.update({
-    id: '/dashboard/report',
-    path: '/dashboard/report',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
-const AuthenticatedDashboardProfileRoute =
-  AuthenticatedDashboardProfileRouteImport.update({
-    id: '/dashboard/profile',
-    path: '/dashboard/profile',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
-const AuthenticatedDashboardDeveloperRoute =
-  AuthenticatedDashboardDeveloperRouteImport.update({
-    id: '/dashboard/developer',
-    path: '/dashboard/developer',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedDashboardCheckersRoute =
@@ -205,50 +154,67 @@ const AuthenticatedDashboardCheckersRoute =
     path: '/dashboard/checkers',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedDashboardDeveloperRoute =
+  AuthenticatedDashboardDeveloperRouteImport.update({
+    id: '/dashboard/developer',
+    path: '/dashboard/developer',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedDashboardProfileRoute =
+  AuthenticatedDashboardProfileRouteImport.update({
+    id: '/dashboard/profile',
+    path: '/dashboard/profile',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedDashboardReportRoute =
+  AuthenticatedDashboardReportRouteImport.update({
+    id: '/dashboard/report',
+    path: '/dashboard/report',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedDashboardStoreRoute =
+  AuthenticatedDashboardStoreRouteImport.update({
+    id: '/dashboard/store',
+    path: '/dashboard/store',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedDashboardTransactionsRoute =
+  AuthenticatedDashboardTransactionsRouteImport.update({
+    id: '/dashboard/transactions',
+    path: '/dashboard/transactions',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedDashboardWalletRoute =
+  AuthenticatedDashboardWalletRouteImport.update({
+    id: '/dashboard/wallet',
+    path: '/dashboard/wallet',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AdminUsersUserIdRoute = AdminUsersUserIdRouteImport.update({
+  id: '/users/$userId',
+  path: '/users/$userId',
+  getParentRoute: () => AdminRoute,
+} as any)
+const SSlugIndexRoute = SSlugIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SSlugRoute,
+} as any)
+const SSlugBecomeAgentRoute = SSlugBecomeAgentRouteImport.update({
+  id: '/become-agent',
+  path: '/become-agent',
+  getParentRoute: () => SSlugRoute,
+} as any)
+const AuthenticatedDashboardBuyDataNetworkRoute =
+  AuthenticatedDashboardBuyDataNetworkRouteImport.update({
+    id: '/dashboard/buy-data/$network',
+    path: '/dashboard/buy-data/$network',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedDashboardStoreIndexRoute =
   AuthenticatedDashboardStoreIndexRouteImport.update({
     id: '/',
     path: '/',
-    getParentRoute: () => AuthenticatedDashboardStoreRoute,
-  } as any)
-const ApiPublicV1TrackOrderRoute = ApiPublicV1TrackOrderRouteImport.update({
-  id: '/api/public/v1/track-order',
-  path: '/api/public/v1/track-order',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicV1PaystackWebhookRoute =
-  ApiPublicV1PaystackWebhookRouteImport.update({
-    id: '/api/public/v1/paystack-webhook',
-    path: '/api/public/v1/paystack-webhook',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicV1BalanceRoute = ApiPublicV1BalanceRouteImport.update({
-  id: '/api/public/v1/balance',
-  path: '/api/public/v1/balance',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedDashboardStoreWithdrawalsRoute =
-  AuthenticatedDashboardStoreWithdrawalsRouteImport.update({
-    id: '/withdrawals',
-    path: '/withdrawals',
-    getParentRoute: () => AuthenticatedDashboardStoreRoute,
-  } as any)
-const AuthenticatedDashboardStoreTransactionsRoute =
-  AuthenticatedDashboardStoreTransactionsRouteImport.update({
-    id: '/transactions',
-    path: '/transactions',
-    getParentRoute: () => AuthenticatedDashboardStoreRoute,
-  } as any)
-const AuthenticatedDashboardStoreSubagentsRoute =
-  AuthenticatedDashboardStoreSubagentsRouteImport.update({
-    id: '/subagents',
-    path: '/subagents',
-    getParentRoute: () => AuthenticatedDashboardStoreRoute,
-  } as any)
-const AuthenticatedDashboardStoreSettingsRoute =
-  AuthenticatedDashboardStoreSettingsRouteImport.update({
-    id: '/settings',
-    path: '/settings',
     getParentRoute: () => AuthenticatedDashboardStoreRoute,
   } as any)
 const AuthenticatedDashboardStorePackagesRoute =
@@ -257,54 +223,50 @@ const AuthenticatedDashboardStorePackagesRoute =
     path: '/packages',
     getParentRoute: () => AuthenticatedDashboardStoreRoute,
   } as any)
-const AuthenticatedDashboardBuyDataNetworkRoute =
-  AuthenticatedDashboardBuyDataNetworkRouteImport.update({
-    id: '/dashboard/buy-data/$network',
-    path: '/dashboard/buy-data/$network',
-    getParentRoute: () => AuthenticatedRoute,
+const AuthenticatedDashboardStoreSettingsRoute =
+  AuthenticatedDashboardStoreSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthenticatedDashboardStoreRoute,
   } as any)
-const ApiPublicV1TransactionsIdRoute =
-  ApiPublicV1TransactionsIdRouteImport.update({
-    id: '/api/public/v1/transactions/$id',
-    path: '/api/public/v1/transactions/$id',
+const AuthenticatedDashboardStoreSubagentsRoute =
+  AuthenticatedDashboardStoreSubagentsRouteImport.update({
+    id: '/subagents',
+    path: '/subagents',
+    getParentRoute: () => AuthenticatedDashboardStoreRoute,
+  } as any)
+const AuthenticatedDashboardStoreTransactionsRoute =
+  AuthenticatedDashboardStoreTransactionsRouteImport.update({
+    id: '/transactions',
+    path: '/transactions',
+    getParentRoute: () => AuthenticatedDashboardStoreRoute,
+  } as any)
+const AuthenticatedDashboardStoreWithdrawalsRoute =
+  AuthenticatedDashboardStoreWithdrawalsRouteImport.update({
+    id: '/withdrawals',
+    path: '/withdrawals',
+    getParentRoute: () => AuthenticatedDashboardStoreRoute,
+  } as any)
+const ApiPublicV1BalanceRoute = ApiPublicV1BalanceRouteImport.update({
+  id: '/api/public/v1/balance',
+  path: '/api/public/v1/balance',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicV1PaystackWebhookRoute =
+  ApiPublicV1PaystackWebhookRouteImport.update({
+    id: '/api/public/v1/paystack-webhook',
+    path: '/api/public/v1/paystack-webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicV1StoreOrderVerifyRoute =
-  ApiPublicV1StoreOrderVerifyRouteImport.update({
-    id: '/api/public/v1/store-order/verify',
-    path: '/api/public/v1/store-order/verify',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicV1StoreOrderInitRoute =
-  ApiPublicV1StoreOrderInitRouteImport.update({
-    id: '/api/public/v1/store-order/init',
-    path: '/api/public/v1/store-order/init',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const ApiPublicV1PaySubmitOtpRoute = ApiPublicV1PaySubmitOtpRouteImport.update({
-  id: '/api/public/v1/pay/submit-otp',
-  path: '/api/public/v1/pay/submit-otp',
+const ApiPublicV1TrackOrderRoute = ApiPublicV1TrackOrderRouteImport.update({
+  id: '/api/public/v1/track-order',
+  path: '/api/public/v1/track-order',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicV1PayCheckRoute = ApiPublicV1PayCheckRouteImport.update({
-  id: '/api/public/v1/pay/check',
-  path: '/api/public/v1/pay/check',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicV1PayChargeRoute = ApiPublicV1PayChargeRouteImport.update({
-  id: '/api/public/v1/pay/charge',
-  path: '/api/public/v1/pay/charge',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicV1DataPurchaseRoute = ApiPublicV1DataPurchaseRouteImport.update({
-  id: '/api/public/v1/data/purchase',
-  path: '/api/public/v1/data/purchase',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicV1CheckersPurchaseRoute =
-  ApiPublicV1CheckersPurchaseRouteImport.update({
-    id: '/api/public/v1/checkers/purchase',
-    path: '/api/public/v1/checkers/purchase',
+const ApiPublicV1ActivationInitRoute =
+  ApiPublicV1ActivationInitRouteImport.update({
+    id: '/api/public/v1/activation/init',
+    path: '/api/public/v1/activation/init',
     getParentRoute: () => rootRouteImport,
   } as any)
 const ApiPublicV1ActivationVerifyRoute =
@@ -313,10 +275,48 @@ const ApiPublicV1ActivationVerifyRoute =
     path: '/api/public/v1/activation/verify',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicV1ActivationInitRoute =
-  ApiPublicV1ActivationInitRouteImport.update({
-    id: '/api/public/v1/activation/init',
-    path: '/api/public/v1/activation/init',
+const ApiPublicV1CheckersPurchaseRoute =
+  ApiPublicV1CheckersPurchaseRouteImport.update({
+    id: '/api/public/v1/checkers/purchase',
+    path: '/api/public/v1/checkers/purchase',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicV1DataPurchaseRoute = ApiPublicV1DataPurchaseRouteImport.update({
+  id: '/api/public/v1/data/purchase',
+  path: '/api/public/v1/data/purchase',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicV1PayChargeRoute = ApiPublicV1PayChargeRouteImport.update({
+  id: '/api/public/v1/pay/charge',
+  path: '/api/public/v1/pay/charge',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicV1PayCheckRoute = ApiPublicV1PayCheckRouteImport.update({
+  id: '/api/public/v1/pay/check',
+  path: '/api/public/v1/pay/check',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicV1PaySubmitOtpRoute = ApiPublicV1PaySubmitOtpRouteImport.update({
+  id: '/api/public/v1/pay/submit-otp',
+  path: '/api/public/v1/pay/submit-otp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicV1StoreOrderInitRoute =
+  ApiPublicV1StoreOrderInitRouteImport.update({
+    id: '/api/public/v1/store-order/init',
+    path: '/api/public/v1/store-order/init',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicV1StoreOrderVerifyRoute =
+  ApiPublicV1StoreOrderVerifyRouteImport.update({
+    id: '/api/public/v1/store-order/verify',
+    path: '/api/public/v1/store-order/verify',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicV1TransactionsIdRoute =
+  ApiPublicV1TransactionsIdRouteImport.update({
+    id: '/api/public/v1/transactions/$id',
+    path: '/api/public/v1/transactions/$id',
     getParentRoute: () => rootRouteImport,
   } as any)
 
@@ -640,39 +640,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/signup': {
-      id: '/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof SignupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/forgot-password': {
-      id: '/forgot-password'
-      path: '/forgot-password'
-      fullPath: '/forgot-password'
-      preLoaderRoute: typeof ForgotPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin': {
-      id: '/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AdminRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/activate-subagent': {
-      id: '/activate-subagent'
-      path: '/activate-subagent'
-      fullPath: '/activate-subagent'
-      preLoaderRoute: typeof ActivateSubagentRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -682,11 +654,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/activate-subagent': {
+      id: '/activate-subagent'
+      path: '/activate-subagent'
+      fullPath: '/activate-subagent'
+      preLoaderRoute: typeof ActivateSubagentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/': {
@@ -696,53 +696,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/s/$slug': {
-      id: '/s/$slug'
-      path: '/s/$slug'
-      fullPath: '/s/$slug'
-      preLoaderRoute: typeof SSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/withdrawals': {
-      id: '/admin/withdrawals'
-      path: '/withdrawals'
-      fullPath: '/admin/withdrawals'
-      preLoaderRoute: typeof AdminWithdrawalsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/transactions': {
-      id: '/admin/transactions'
-      path: '/transactions'
-      fullPath: '/admin/transactions'
-      preLoaderRoute: typeof AdminTransactionsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/settings': {
-      id: '/admin/settings'
-      path: '/settings'
-      fullPath: '/admin/settings'
-      preLoaderRoute: typeof AdminSettingsRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/packages': {
-      id: '/admin/packages'
-      path: '/packages'
-      fullPath: '/admin/packages'
-      preLoaderRoute: typeof AdminPackagesRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/orders': {
-      id: '/admin/orders'
-      path: '/orders'
-      fullPath: '/admin/orders'
-      preLoaderRoute: typeof AdminOrdersRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/admin/notifications': {
-      id: '/admin/notifications'
-      path: '/notifications'
-      fullPath: '/admin/notifications'
-      preLoaderRoute: typeof AdminNotificationsRouteImport
+    '/admin/campaigns': {
+      id: '/admin/campaigns'
+      path: '/campaigns'
+      fullPath: '/admin/campaigns'
+      preLoaderRoute: typeof AdminCampaignsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/checkers': {
@@ -752,81 +710,60 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCheckersRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/admin/campaigns': {
-      id: '/admin/campaigns'
-      path: '/campaigns'
-      fullPath: '/admin/campaigns'
-      preLoaderRoute: typeof AdminCampaignsRouteImport
+    '/admin/notifications': {
+      id: '/admin/notifications'
+      path: '/notifications'
+      fullPath: '/admin/notifications'
+      preLoaderRoute: typeof AdminNotificationsRouteImport
       parentRoute: typeof AdminRoute
     }
-    '/s/$slug/': {
-      id: '/s/$slug/'
-      path: '/'
-      fullPath: '/s/$slug/'
-      preLoaderRoute: typeof SSlugIndexRouteImport
-      parentRoute: typeof SSlugRoute
+    '/admin/orders': {
+      id: '/admin/orders'
+      path: '/orders'
+      fullPath: '/admin/orders'
+      preLoaderRoute: typeof AdminOrdersRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/packages': {
+      id: '/admin/packages'
+      path: '/packages'
+      fullPath: '/admin/packages'
+      preLoaderRoute: typeof AdminPackagesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/settings': {
+      id: '/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AdminSettingsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/transactions': {
+      id: '/admin/transactions'
+      path: '/transactions'
+      fullPath: '/admin/transactions'
+      preLoaderRoute: typeof AdminTransactionsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/withdrawals': {
+      id: '/admin/withdrawals'
+      path: '/withdrawals'
+      fullPath: '/admin/withdrawals'
+      preLoaderRoute: typeof AdminWithdrawalsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/s/$slug': {
+      id: '/s/$slug'
+      path: '/s/$slug'
+      fullPath: '/s/$slug'
+      preLoaderRoute: typeof SSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/dashboard/': {
       id: '/_authenticated/dashboard/'
       path: '/dashboard'
       fullPath: '/dashboard/'
       preLoaderRoute: typeof AuthenticatedDashboardIndexRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/s/$slug/become-agent': {
-      id: '/s/$slug/become-agent'
-      path: '/become-agent'
-      fullPath: '/s/$slug/become-agent'
-      preLoaderRoute: typeof SSlugBecomeAgentRouteImport
-      parentRoute: typeof SSlugRoute
-    }
-    '/admin/users/$userId': {
-      id: '/admin/users/$userId'
-      path: '/users/$userId'
-      fullPath: '/admin/users/$userId'
-      preLoaderRoute: typeof AdminUsersUserIdRouteImport
-      parentRoute: typeof AdminRoute
-    }
-    '/_authenticated/dashboard/wallet': {
-      id: '/_authenticated/dashboard/wallet'
-      path: '/dashboard/wallet'
-      fullPath: '/dashboard/wallet'
-      preLoaderRoute: typeof AuthenticatedDashboardWalletRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/dashboard/transactions': {
-      id: '/_authenticated/dashboard/transactions'
-      path: '/dashboard/transactions'
-      fullPath: '/dashboard/transactions'
-      preLoaderRoute: typeof AuthenticatedDashboardTransactionsRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/dashboard/store': {
-      id: '/_authenticated/dashboard/store'
-      path: '/dashboard/store'
-      fullPath: '/dashboard/store'
-      preLoaderRoute: typeof AuthenticatedDashboardStoreRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/dashboard/report': {
-      id: '/_authenticated/dashboard/report'
-      path: '/dashboard/report'
-      fullPath: '/dashboard/report'
-      preLoaderRoute: typeof AuthenticatedDashboardReportRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/dashboard/profile': {
-      id: '/_authenticated/dashboard/profile'
-      path: '/dashboard/profile'
-      fullPath: '/dashboard/profile'
-      preLoaderRoute: typeof AuthenticatedDashboardProfileRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/dashboard/developer': {
-      id: '/_authenticated/dashboard/developer'
-      path: '/dashboard/developer'
-      fullPath: '/dashboard/developer'
-      preLoaderRoute: typeof AuthenticatedDashboardDeveloperRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/dashboard/checkers': {
@@ -836,60 +773,81 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardCheckersRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/dashboard/developer': {
+      id: '/_authenticated/dashboard/developer'
+      path: '/dashboard/developer'
+      fullPath: '/dashboard/developer'
+      preLoaderRoute: typeof AuthenticatedDashboardDeveloperRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/dashboard/profile': {
+      id: '/_authenticated/dashboard/profile'
+      path: '/dashboard/profile'
+      fullPath: '/dashboard/profile'
+      preLoaderRoute: typeof AuthenticatedDashboardProfileRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/dashboard/report': {
+      id: '/_authenticated/dashboard/report'
+      path: '/dashboard/report'
+      fullPath: '/dashboard/report'
+      preLoaderRoute: typeof AuthenticatedDashboardReportRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/dashboard/store': {
+      id: '/_authenticated/dashboard/store'
+      path: '/dashboard/store'
+      fullPath: '/dashboard/store'
+      preLoaderRoute: typeof AuthenticatedDashboardStoreRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/dashboard/transactions': {
+      id: '/_authenticated/dashboard/transactions'
+      path: '/dashboard/transactions'
+      fullPath: '/dashboard/transactions'
+      preLoaderRoute: typeof AuthenticatedDashboardTransactionsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/dashboard/wallet': {
+      id: '/_authenticated/dashboard/wallet'
+      path: '/dashboard/wallet'
+      fullPath: '/dashboard/wallet'
+      preLoaderRoute: typeof AuthenticatedDashboardWalletRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/admin/users/$userId': {
+      id: '/admin/users/$userId'
+      path: '/users/$userId'
+      fullPath: '/admin/users/$userId'
+      preLoaderRoute: typeof AdminUsersUserIdRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/s/$slug/': {
+      id: '/s/$slug/'
+      path: '/'
+      fullPath: '/s/$slug/'
+      preLoaderRoute: typeof SSlugIndexRouteImport
+      parentRoute: typeof SSlugRoute
+    }
+    '/s/$slug/become-agent': {
+      id: '/s/$slug/become-agent'
+      path: '/become-agent'
+      fullPath: '/s/$slug/become-agent'
+      preLoaderRoute: typeof SSlugBecomeAgentRouteImport
+      parentRoute: typeof SSlugRoute
+    }
+    '/_authenticated/dashboard/buy-data/$network': {
+      id: '/_authenticated/dashboard/buy-data/$network'
+      path: '/dashboard/buy-data/$network'
+      fullPath: '/dashboard/buy-data/$network'
+      preLoaderRoute: typeof AuthenticatedDashboardBuyDataNetworkRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/dashboard/store/': {
       id: '/_authenticated/dashboard/store/'
       path: '/'
       fullPath: '/dashboard/store/'
       preLoaderRoute: typeof AuthenticatedDashboardStoreIndexRouteImport
-      parentRoute: typeof AuthenticatedDashboardStoreRoute
-    }
-    '/api/public/v1/track-order': {
-      id: '/api/public/v1/track-order'
-      path: '/api/public/v1/track-order'
-      fullPath: '/api/public/v1/track-order'
-      preLoaderRoute: typeof ApiPublicV1TrackOrderRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/v1/paystack-webhook': {
-      id: '/api/public/v1/paystack-webhook'
-      path: '/api/public/v1/paystack-webhook'
-      fullPath: '/api/public/v1/paystack-webhook'
-      preLoaderRoute: typeof ApiPublicV1PaystackWebhookRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/v1/balance': {
-      id: '/api/public/v1/balance'
-      path: '/api/public/v1/balance'
-      fullPath: '/api/public/v1/balance'
-      preLoaderRoute: typeof ApiPublicV1BalanceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/dashboard/store/withdrawals': {
-      id: '/_authenticated/dashboard/store/withdrawals'
-      path: '/withdrawals'
-      fullPath: '/dashboard/store/withdrawals'
-      preLoaderRoute: typeof AuthenticatedDashboardStoreWithdrawalsRouteImport
-      parentRoute: typeof AuthenticatedDashboardStoreRoute
-    }
-    '/_authenticated/dashboard/store/transactions': {
-      id: '/_authenticated/dashboard/store/transactions'
-      path: '/transactions'
-      fullPath: '/dashboard/store/transactions'
-      preLoaderRoute: typeof AuthenticatedDashboardStoreTransactionsRouteImport
-      parentRoute: typeof AuthenticatedDashboardStoreRoute
-    }
-    '/_authenticated/dashboard/store/subagents': {
-      id: '/_authenticated/dashboard/store/subagents'
-      path: '/subagents'
-      fullPath: '/dashboard/store/subagents'
-      preLoaderRoute: typeof AuthenticatedDashboardStoreSubagentsRouteImport
-      parentRoute: typeof AuthenticatedDashboardStoreRoute
-    }
-    '/_authenticated/dashboard/store/settings': {
-      id: '/_authenticated/dashboard/store/settings'
-      path: '/settings'
-      fullPath: '/dashboard/store/settings'
-      preLoaderRoute: typeof AuthenticatedDashboardStoreSettingsRouteImport
       parentRoute: typeof AuthenticatedDashboardStoreRoute
     }
     '/_authenticated/dashboard/store/packages': {
@@ -899,67 +857,60 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardStorePackagesRouteImport
       parentRoute: typeof AuthenticatedDashboardStoreRoute
     }
-    '/_authenticated/dashboard/buy-data/$network': {
-      id: '/_authenticated/dashboard/buy-data/$network'
-      path: '/dashboard/buy-data/$network'
-      fullPath: '/dashboard/buy-data/$network'
-      preLoaderRoute: typeof AuthenticatedDashboardBuyDataNetworkRouteImport
-      parentRoute: typeof AuthenticatedRoute
+    '/_authenticated/dashboard/store/settings': {
+      id: '/_authenticated/dashboard/store/settings'
+      path: '/settings'
+      fullPath: '/dashboard/store/settings'
+      preLoaderRoute: typeof AuthenticatedDashboardStoreSettingsRouteImport
+      parentRoute: typeof AuthenticatedDashboardStoreRoute
     }
-    '/api/public/v1/transactions/$id': {
-      id: '/api/public/v1/transactions/$id'
-      path: '/api/public/v1/transactions/$id'
-      fullPath: '/api/public/v1/transactions/$id'
-      preLoaderRoute: typeof ApiPublicV1TransactionsIdRouteImport
+    '/_authenticated/dashboard/store/subagents': {
+      id: '/_authenticated/dashboard/store/subagents'
+      path: '/subagents'
+      fullPath: '/dashboard/store/subagents'
+      preLoaderRoute: typeof AuthenticatedDashboardStoreSubagentsRouteImport
+      parentRoute: typeof AuthenticatedDashboardStoreRoute
+    }
+    '/_authenticated/dashboard/store/transactions': {
+      id: '/_authenticated/dashboard/store/transactions'
+      path: '/transactions'
+      fullPath: '/dashboard/store/transactions'
+      preLoaderRoute: typeof AuthenticatedDashboardStoreTransactionsRouteImport
+      parentRoute: typeof AuthenticatedDashboardStoreRoute
+    }
+    '/_authenticated/dashboard/store/withdrawals': {
+      id: '/_authenticated/dashboard/store/withdrawals'
+      path: '/withdrawals'
+      fullPath: '/dashboard/store/withdrawals'
+      preLoaderRoute: typeof AuthenticatedDashboardStoreWithdrawalsRouteImport
+      parentRoute: typeof AuthenticatedDashboardStoreRoute
+    }
+    '/api/public/v1/balance': {
+      id: '/api/public/v1/balance'
+      path: '/api/public/v1/balance'
+      fullPath: '/api/public/v1/balance'
+      preLoaderRoute: typeof ApiPublicV1BalanceRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/v1/store-order/verify': {
-      id: '/api/public/v1/store-order/verify'
-      path: '/api/public/v1/store-order/verify'
-      fullPath: '/api/public/v1/store-order/verify'
-      preLoaderRoute: typeof ApiPublicV1StoreOrderVerifyRouteImport
+    '/api/public/v1/paystack-webhook': {
+      id: '/api/public/v1/paystack-webhook'
+      path: '/api/public/v1/paystack-webhook'
+      fullPath: '/api/public/v1/paystack-webhook'
+      preLoaderRoute: typeof ApiPublicV1PaystackWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/v1/store-order/init': {
-      id: '/api/public/v1/store-order/init'
-      path: '/api/public/v1/store-order/init'
-      fullPath: '/api/public/v1/store-order/init'
-      preLoaderRoute: typeof ApiPublicV1StoreOrderInitRouteImport
+    '/api/public/v1/track-order': {
+      id: '/api/public/v1/track-order'
+      path: '/api/public/v1/track-order'
+      fullPath: '/api/public/v1/track-order'
+      preLoaderRoute: typeof ApiPublicV1TrackOrderRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/v1/pay/submit-otp': {
-      id: '/api/public/v1/pay/submit-otp'
-      path: '/api/public/v1/pay/submit-otp'
-      fullPath: '/api/public/v1/pay/submit-otp'
-      preLoaderRoute: typeof ApiPublicV1PaySubmitOtpRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/v1/pay/check': {
-      id: '/api/public/v1/pay/check'
-      path: '/api/public/v1/pay/check'
-      fullPath: '/api/public/v1/pay/check'
-      preLoaderRoute: typeof ApiPublicV1PayCheckRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/v1/pay/charge': {
-      id: '/api/public/v1/pay/charge'
-      path: '/api/public/v1/pay/charge'
-      fullPath: '/api/public/v1/pay/charge'
-      preLoaderRoute: typeof ApiPublicV1PayChargeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/v1/data/purchase': {
-      id: '/api/public/v1/data/purchase'
-      path: '/api/public/v1/data/purchase'
-      fullPath: '/api/public/v1/data/purchase'
-      preLoaderRoute: typeof ApiPublicV1DataPurchaseRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/v1/checkers/purchase': {
-      id: '/api/public/v1/checkers/purchase'
-      path: '/api/public/v1/checkers/purchase'
-      fullPath: '/api/public/v1/checkers/purchase'
-      preLoaderRoute: typeof ApiPublicV1CheckersPurchaseRouteImport
+    '/api/public/v1/activation/init': {
+      id: '/api/public/v1/activation/init'
+      path: '/api/public/v1/activation/init'
+      fullPath: '/api/public/v1/activation/init'
+      preLoaderRoute: typeof ApiPublicV1ActivationInitRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/v1/activation/verify': {
@@ -969,11 +920,60 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicV1ActivationVerifyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/v1/activation/init': {
-      id: '/api/public/v1/activation/init'
-      path: '/api/public/v1/activation/init'
-      fullPath: '/api/public/v1/activation/init'
-      preLoaderRoute: typeof ApiPublicV1ActivationInitRouteImport
+    '/api/public/v1/checkers/purchase': {
+      id: '/api/public/v1/checkers/purchase'
+      path: '/api/public/v1/checkers/purchase'
+      fullPath: '/api/public/v1/checkers/purchase'
+      preLoaderRoute: typeof ApiPublicV1CheckersPurchaseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/v1/data/purchase': {
+      id: '/api/public/v1/data/purchase'
+      path: '/api/public/v1/data/purchase'
+      fullPath: '/api/public/v1/data/purchase'
+      preLoaderRoute: typeof ApiPublicV1DataPurchaseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/v1/pay/charge': {
+      id: '/api/public/v1/pay/charge'
+      path: '/api/public/v1/pay/charge'
+      fullPath: '/api/public/v1/pay/charge'
+      preLoaderRoute: typeof ApiPublicV1PayChargeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/v1/pay/check': {
+      id: '/api/public/v1/pay/check'
+      path: '/api/public/v1/pay/check'
+      fullPath: '/api/public/v1/pay/check'
+      preLoaderRoute: typeof ApiPublicV1PayCheckRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/v1/pay/submit-otp': {
+      id: '/api/public/v1/pay/submit-otp'
+      path: '/api/public/v1/pay/submit-otp'
+      fullPath: '/api/public/v1/pay/submit-otp'
+      preLoaderRoute: typeof ApiPublicV1PaySubmitOtpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/v1/store-order/init': {
+      id: '/api/public/v1/store-order/init'
+      path: '/api/public/v1/store-order/init'
+      fullPath: '/api/public/v1/store-order/init'
+      preLoaderRoute: typeof ApiPublicV1StoreOrderInitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/v1/store-order/verify': {
+      id: '/api/public/v1/store-order/verify'
+      path: '/api/public/v1/store-order/verify'
+      fullPath: '/api/public/v1/store-order/verify'
+      preLoaderRoute: typeof ApiPublicV1StoreOrderVerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/v1/transactions/$id': {
+      id: '/api/public/v1/transactions/$id'
+      path: '/api/public/v1/transactions/$id'
+      fullPath: '/api/public/v1/transactions/$id'
+      preLoaderRoute: typeof ApiPublicV1TransactionsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
