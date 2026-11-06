@@ -18,15 +18,15 @@ type DispatchInput = {
 };
 
 const SWIFT_BASE =
-  "https://lsocdjpflecduumopijn.supabase.co/functions/v1/developer-api";
+  "https://ihrvvniomtoofrjkmalb.supabase.co/functions/v1/api/v1";
 
 // SwiftData uses network codes like YELLO (MTN), RED (AT), TELECEL.
 // We retain this for reference / future endpoints that need it.
 const NETWORK_KEY: Record<string, string> = {
-  mtn: "YELLO",
-  airteltigo_ishare: "RED",
-  airteltigo_bigtime: "RED",
-  telecel: "TELECEL",
+  mtn: "yello",
+  airteltigo_ishare: "at_ishare",
+  airteltigo_bigtime: "at_bigtime",
+  telecel: "telecel",
 };
 
 // Fallback mapping from our (network, size_mb) to SwiftData package_id when an
@@ -76,11 +76,11 @@ function isInsufficientBalanceError(body: any, httpStatus: number): boolean {
 }
 
 export async function dispatchDataPurchase(input: DispatchInput) {
-  const apiKey = process.env.SWIFT_API_KEY?.trim();
+  const apiKey = process.env.SWIFT_RESELLER_API_KEY?.trim();
   if (!apiKey) {
     await supabaseAdmin
       .from("transactions")
-      .update({ metadata: { provider_error: "SWIFT_API_KEY not configured" } })
+      .update({ metadata: { provider_error: "SWIFT_RESELLER_API_KEY not configured" } })
       .eq("id", input.transactionId);
     return;
   }
@@ -104,92 +104,56 @@ export async function dispatchDataPurchase(input: DispatchInput) {
     (meta.provider_reference || meta.dispatched_at || meta.provider_dispatched_at)
   ) return;
 
-  // Pull authoritative values from the transaction + linked package row so
-  // every dispatch path (webhook, verify poller, retry, campaign, public API)
-  // uses the same SwiftData package_id the admin configured.
   const network = (current.network as string) ?? input.network;
   const phone = (current.recipient_phone as string) ?? input.phone;
   const userId = (current.user_id as string) ?? input.userId;
   const amount = Number(current.amount ?? input.amount ?? 0);
 
-  let providerPackageId: string | null = input.packageId ?? null;
   let sizeMb = input.sizeMb;
   if (current.package_id) {
     const { data: pkg } = await supabaseAdmin
-      .from("data_packages")
-      .select("provider_package_id,size_mb")
-      .eq("id", current.package_id)
-      .maybeSingle();
-    if (pkg) {
-      if ((pkg as any).provider_package_id) providerPackageId = (pkg as any).provider_package_id as string;
-      if (pkg.size_mb) sizeMb = Number(pkg.size_mb);
-    }
+      .from("data_packages").select("size_mb").eq("id", current.package_id).maybeSingle();
+    if (pkg?.size_mb) sizeMb = Number(pkg.size_mb);
   }
-  if (!providerPackageId) {
-    providerPackageId = autoDeriveProviderPackageId(network, sizeMb);
-  }
-  if (!providerPackageId) {
-    await supabaseAdmin
-      .from("transactions")
-      .update({
-        status: "failed",
-        metadata: {
-          ...meta,
-          provider: "swiftdata",
-          provider_error: `No SwiftData package_id mapping for ${network} / ${sizeMb}MB. Set "provider_package_id" on the package.`,
-        },
-      })
-      .eq("id", input.transactionId);
+  const providerNetwork = NETWORK_KEY[network];
+  const sizeGb = Math.round((sizeMb / 1024) * 100) / 100;
+  const providerPackageId = providerNetwork ? `${providerNetwork}_${sizeGb}gb` : null;
+  if (!providerNetwork || !sizeGb) {
+    await supabaseAdmin.from("transactions").update({
+      status: "failed",
+      metadata: { ...meta, provider: "swiftdata", provider_error: `Unsupported network/size: ${network} / ${sizeMb}MB` },
+    }).eq("id", input.transactionId);
     await refund(userId, amount);
     return;
   }
 
-  // Mark as dispatched immediately so a concurrent call sees the lock.
   const dispatchedAt = new Date().toISOString();
-  await supabaseAdmin
-    .from("transactions")
-    .update({
-      metadata: {
-        ...meta,
-        provider: "swiftdata",
-        provider_package_id: providerPackageId,
-        dispatched_at: dispatchedAt,
-        provider_dispatched_at: dispatchedAt,
-      },
-    })
-    .eq("id", input.transactionId);
+  await supabaseAdmin.from("transactions").update({
+    metadata: { ...meta, provider: "swiftdata", provider_package_id: providerPackageId,
+      dispatched_at: dispatchedAt, provider_dispatched_at: dispatchedAt },
+  }).eq("id", input.transactionId);
 
-
-  const payload = {
-    package_id: providerPackageId,
-    phone,
-    request_id: input.transactionId,
-  };
-
-  const rawBody = JSON.stringify(payload);
-
-  // HMAC signing is optional per SwiftData docs. We rely on bearer auth +
-  // idempotency key, which avoids the "Invalid signature" rejection we were
-  // hitting when the stored secret didn't match the live API key.
+  // Unique per attempt so admin retries are not rejected as duplicate references.
+  const retryN = Number(meta.retry_count ?? 0);
+  const reference = retryN > 0 ? `${input.transactionId}-r${retryN}` : input.transactionId;
+  const rawBody = JSON.stringify({ phone, network: providerNetwork, size_gb: sizeGb, reference });
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${apiKey}`,
-    "X-API-Key": apiKey,
-    "X-Idempotency-Key": input.transactionId,
   };
 
   try {
-    const res = await fetch(`${SWIFT_BASE}/payment/data`, {
+    const res = await fetch(`${SWIFT_BASE}/buy-data`, {
       method: "POST",
       headers,
       body: rawBody,
     });
 
     const body: any = await res.json().catch(() => ({}));
-    const providerStatus = String(body?.status ?? "").toLowerCase();
+    const providerStatus = String(body?.order?.status ?? body?.status ?? "").toLowerCase();
     // SwiftData lifecycle: pending → paid → processing → fulfilled / fulfillment_failed
     const failedStatuses = new Set(["fulfillment_failed", "failed", "cancelled", "canceled"]);
-    const completedStatuses = new Set(["fulfilled", "completed", "success"]);
+    const completedStatuses = new Set(["completed", "fulfilled"]);
     const success =
       res.ok &&
       body?.success !== false &&
@@ -204,7 +168,7 @@ export async function dispatchDataPurchase(input: DispatchInput) {
             ...meta,
             provider: "swiftdata",
             provider_package_id: providerPackageId,
-            provider_reference: body?.order_id ?? null,
+            provider_reference: body?.order?.reference ?? body?.order_id ?? null,
             provider_status: providerStatus || null,
             provider_response: body,
             no_refund_issued: false,
