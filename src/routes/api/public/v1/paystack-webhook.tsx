@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import crypto from "crypto";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { dispatchDataPurchase } from "@/lib/data-provider.server";
+import { finalizeGuestPayment } from "@/lib/guest-payment.server";
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json" } });
@@ -31,6 +32,15 @@ export const Route = createFileRoute("/api/public/v1/paystack-webhook")({
         const reference: string = tx.reference;
         const meta = tx.metadata ?? {};
         const gatewayEventId = String(tx.id ?? `evt-${reference}`);
+
+        if (meta.kind === "guest_order") {
+          try {
+            await finalizeGuestPayment(tx);
+            return json({ ok: true, kind: "guest_order" });
+          } catch (error) {
+            return json({ error: error instanceof Error ? error.message : "Guest payment processing failed" }, 500);
+          }
+        }
 
         // ===== ACTIVATION =====
         if (meta.kind === "activation") {

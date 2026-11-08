@@ -35,7 +35,7 @@ function relTime(iso: string) {
   return `${Math.floor(diff / 86400)}d ago`;
 }
 
-export function FloatingOrderTracker({ bottomClassName = "bottom-24" }: { bottomClassName?: string }) {
+export function FloatingOrderTracker({ bottomClassName = "bottom-24", inline = false }: { bottomClassName?: string; inline?: boolean }) {
   const [open, setOpen] = useState(false);
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
@@ -62,13 +62,15 @@ export function FloatingOrderTracker({ bottomClassName = "bottom-24" }: { bottom
 
   return (
     <>
-      <button
+      <Button
+        variant={inline ? "outline" : "default"}
         onClick={() => setOpen(true)}
         aria-label="Track an order"
-        className={`fixed ${bottomClassName} right-6 z-50 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-transform`}
+        className={inline ? "gap-2" : `fixed ${bottomClassName} right-6 z-50 w-14 h-14 rounded-full shadow-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-transform`}
       >
         <PackageSearch className="w-6 h-6" />
-      </button>
+        {inline && "Track order"}
+      </Button>
 
       <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) { setOrders(null); setSearched(false); setPhone(""); } }}>
         <DialogContent className="sm:max-w-md">
@@ -79,13 +81,14 @@ export function FloatingOrderTracker({ bottomClassName = "bottom-24" }: { bottom
               <div className="flex gap-2 mt-1">
                 <Input
                   placeholder="0241234567"
+                  aria-label="Order recipient phone"
                   inputMode="numeric"
                   maxLength={10}
                   value={phone}
                   onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
                   onKeyDown={(e) => { if (e.key === "Enter") search(); }}
                 />
-                <Button onClick={search} disabled={loading}>
+                <Button onClick={search} disabled={loading} aria-label="Find orders">
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
                 </Button>
               </div>

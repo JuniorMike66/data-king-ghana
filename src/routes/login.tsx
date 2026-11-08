@@ -8,6 +8,7 @@ import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { FloatingOrderTracker } from "@/components/floating-order-tracker";
 
 const schema = z.object({
   email: z.string().trim().email("Enter a valid email").max(255),
@@ -15,6 +16,13 @@ const schema = z.object({
 });
 
 export const Route = createFileRoute("/login")({
+  head: () => ({ meta: [
+    { title: "Sign In or Buy as Guest — DataKing Ghana" },
+    { name: "description", content: "Sign in to DataKing Ghana or buy and track data bundles without an account." },
+    { property: "og:title", content: "Sign In or Buy as Guest — DataKing Ghana" },
+    { property: "og:description", content: "Access your account, buy data as a guest, or track an order." },
+    { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
+  ] }),
   component: LoginPage,
 });
 
@@ -100,6 +108,11 @@ function LoginPage() {
             Create Account
           </Button>
         </Link>
+
+        <div className="mt-6 pt-4 border-t border-border/30 flex flex-wrap justify-center gap-2">
+          <Button asChild variant="secondary"><Link to="/buy-data">Buy data as guest</Link></Button>
+          <FloatingOrderTracker inline />
+        </div>
 
         <div className="mt-8 pt-4 border-t border-border/30 text-center">
           <p className="text-[10px] tracking-widest text-muted-foreground/70 mb-1">DEVELOPED BY</p>

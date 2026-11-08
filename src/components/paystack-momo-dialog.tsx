@@ -10,6 +10,7 @@ import { DataKingLoader } from "@/components/dataking-loader";
 import { detectMomoProvider, providerLabel, MOMO_PROVIDERS, type MomoProvider } from "@/lib/paystack-networks";
 
 type ChargePayload =
+  | { kind: "guest_order"; package_id: string; recipient_phone: string; customer_email: string }
   | { kind: "wallet_topup"; amount: number; user_id: string; email: string }
   | {
       kind: "store_order";

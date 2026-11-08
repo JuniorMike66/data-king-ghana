@@ -33,7 +33,15 @@ const ActivationSchema = z.object({
   momo: MomoSchema,
 });
 
-const Schema = z.discriminatedUnion("kind", [WalletTopupSchema, StoreOrderSchema, ActivationSchema]);
+const GuestOrderSchema = z.object({
+  kind: z.literal("guest_order"),
+  package_id: z.string().uuid(),
+  recipient_phone: z.string().regex(/^0\d{9}$/),
+  customer_email: z.string().email().max(120),
+  momo: MomoSchema,
+});
+
+const Schema = z.discriminatedUnion("kind", [WalletTopupSchema, StoreOrderSchema, ActivationSchema, GuestOrderSchema]);
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json" } });
@@ -65,6 +73,31 @@ export const Route = createFileRoute("/api/public/v1/pay/charge")({
         const parsed = Schema.safeParse(body);
         if (!parsed.success) return json({ error: "Invalid input", details: parsed.error.issues }, 400);
         const input = parsed.data;
+
+        if (input.kind === "guest_order") {
+          const reference = `GO-${crypto.randomUUID()}`;
+          const { error: orderError } = await supabaseAdmin.rpc("start_guest_order", {
+            _package_id: input.package_id, _phone: input.recipient_phone,
+            _email: input.customer_email, _reference: reference,
+          });
+          if (orderError) return json({ error: orderError.message }, orderError.message.includes("7 minutes") ? 429 : 400);
+          const { data: order } = await supabaseAdmin.from("transactions").select("metadata").eq("reference", reference).single();
+          const metadata = order?.metadata as Record<string, unknown> | null;
+          if (!metadata) return json({ error: "Order could not be created" }, 500);
+          const gross = Number(metadata.gross);
+          const charge = await paystackCharge({
+            email: input.customer_email, amount: Math.round(gross * 100), currency: "GHS", reference,
+            mobile_money: input.momo,
+            metadata: { kind: "guest_order", package_id: input.package_id, recipient_phone: input.recipient_phone },
+          });
+          if (!charge.ok || !charge.body?.status) {
+            await supabaseAdmin.from("transactions").update({ status: "failed" }).eq("reference", reference).eq("status", "pending_payment");
+            return json({ error: charge.body?.message ?? "Payment could not be started", reference }, 502);
+          }
+          // Immediate charge success must still pass server-side verification.
+          return json({ reference, status: charge.body.data?.status === "success" ? "pending" : charge.body.data?.status,
+            display_text: charge.body.data?.display_text ?? null, gross, fee: Number(metadata.paystack_fee) });
+        }
 
         // ============= WALLET TOPUP =============
         if (input.kind === "wallet_topup") {

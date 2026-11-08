@@ -536,7 +536,7 @@ export type Database = {
           status: Database["public"]["Enums"]["transaction_status"]
           type: Database["public"]["Enums"]["transaction_type"]
           updated_at: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
           amount: number
@@ -552,7 +552,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["transaction_status"]
           type: Database["public"]["Enums"]["transaction_type"]
           updated_at?: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
           amount?: number
@@ -568,7 +568,7 @@ export type Database = {
           status?: Database["public"]["Enums"]["transaction_status"]
           type?: Database["public"]["Enums"]["transaction_type"]
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -682,6 +682,16 @@ export type Database = {
           transaction_id: string
         }[]
       }
+      claim_guest_dispatch: { Args: { _id: string }; Returns: boolean }
+      complete_guest_order: {
+        Args: {
+          _amount_pesewas: number
+          _currency: string
+          _gateway_event_id: string
+          _reference: string
+        }
+        Returns: string
+      }
       complete_wallet_topup: {
         Args: {
           _channel: string
@@ -753,6 +763,15 @@ export type Database = {
         Returns: number
       }
       sponsor_profit_total: { Args: { _user_id: string }; Returns: number }
+      start_guest_order: {
+        Args: {
+          _email: string
+          _package_id: string
+          _phone: string
+          _reference: string
+        }
+        Returns: string
+      }
       store_profit_available: { Args: { _user_id: string }; Returns: number }
       store_profit_total: { Args: { _user_id: string }; Returns: number }
       store_tx_cost: { Args: { _tx_id: string }; Returns: number }
