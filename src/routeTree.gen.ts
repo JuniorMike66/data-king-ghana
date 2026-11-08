@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as ActivateSubagentRouteImport } from './routes/activate-subagent'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as BuyDataRouteImport } from './routes/buy-data'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as SignupRouteImport } from './routes/signup'
@@ -75,6 +76,11 @@ const ActivateSubagentRoute = ActivateSubagentRouteImport.update({
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuyDataRoute = BuyDataRouteImport.update({
+  id: '/buy-data',
+  path: '/buy-data',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
@@ -324,6 +330,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/activate-subagent': typeof ActivateSubagentRoute
   '/admin': typeof AdminRouteWithChildren
+  '/buy-data': typeof BuyDataRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
@@ -372,6 +379,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/activate-subagent': typeof ActivateSubagentRoute
+  '/buy-data': typeof BuyDataRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
@@ -421,6 +429,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/activate-subagent': typeof ActivateSubagentRoute
   '/admin': typeof AdminRouteWithChildren
+  '/buy-data': typeof BuyDataRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
@@ -472,6 +481,7 @@ export interface FileRouteTypes {
     | '/'
     | '/activate-subagent'
     | '/admin'
+    | '/buy-data'
     | '/forgot-password'
     | '/login'
     | '/signup'
@@ -520,6 +530,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/activate-subagent'
+    | '/buy-data'
     | '/forgot-password'
     | '/login'
     | '/signup'
@@ -568,6 +579,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/activate-subagent'
     | '/admin'
+    | '/buy-data'
     | '/forgot-password'
     | '/login'
     | '/signup'
@@ -619,6 +631,7 @@ export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   ActivateSubagentRoute: typeof ActivateSubagentRoute
   AdminRoute: typeof AdminRouteWithChildren
+  BuyDataRoute: typeof BuyDataRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
   SignupRoute: typeof SignupRoute
@@ -666,6 +679,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/buy-data': {
+      id: '/buy-data'
+      path: '/buy-data'
+      fullPath: '/buy-data'
+      preLoaderRoute: typeof BuyDataRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/forgot-password': {
@@ -1085,6 +1105,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   ActivateSubagentRoute: ActivateSubagentRoute,
   AdminRoute: AdminRouteWithChildren,
+  BuyDataRoute: BuyDataRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
