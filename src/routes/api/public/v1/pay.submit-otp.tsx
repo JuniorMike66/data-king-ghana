@@ -32,7 +32,7 @@ export const Route = createFileRoute("/api/public/v1/pay/submit-otp")({
 
         return json({
           reference: parsed.data.reference,
-          status: j.data?.status,
+          status: parsed.data.reference.startsWith("GO-") && j.data?.status === "success" ? "pending" : j.data?.status,
           display_text: j.data?.display_text ?? null,
         });
       },
