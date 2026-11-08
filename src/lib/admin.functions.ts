@@ -138,7 +138,9 @@ export const adminListOrders = createServerFn({ method: "GET" })
       const buyer = profileMap.get(t.user_id);
       let source: { kind: string; label: string; detail?: string };
 
-      if (m.source === "store_order" && m.store_id) {
+      if (m.source === "guest_order") {
+        source = { kind: "guest", label: "Guest — DataKing Ghana", detail: m.customer_email ?? t.recipient_phone ?? undefined };
+      } else if (m.source === "store_order" && m.store_id) {
         const store = storeMap.get(m.store_id);
         const owner = store ? profileMap.get(store.user_id) : null;
         if (store?.sponsor_id) {
@@ -240,7 +242,8 @@ export const adminRetryOrder = createServerFn({ method: "POST" })
     // those, the customer already paid for the order.
     const meta: any = tx.metadata ?? {};
     const noRefundIssued = !!meta.no_refund_issued;
-    if (tx.status === "failed" && !noRefundIssued) {
+    if (meta.source === "guest_order" && !meta.paid_at) throw new Error("Guest payment has not been verified");
+    if (tx.status === "failed" && !noRefundIssued && meta.source !== "guest_order") {
       const { data: wal } = await supabaseAdmin.from("wallets").select("balance").eq("user_id", tx.user_id).maybeSingle();
       const bal = Number(wal?.balance ?? 0);
       if (bal < Number(tx.amount)) throw new Error("Customer wallet has insufficient balance for re-debit");
@@ -250,6 +253,7 @@ export const adminRetryOrder = createServerFn({ method: "POST" })
     // Reset transaction state & clear provider lock so dispatch will run
     const cleaned = { ...meta };
     delete cleaned.dispatched_at;
+    delete cleaned.provider_dispatched_at;
     delete cleaned.provider_error;
     delete cleaned.provider_response;
     delete cleaned.http;
@@ -412,7 +416,7 @@ export const adminListAllTransactions = createServerFn({ method: "GET" })
       .order("created_at", { ascending: false })
       .limit(1000);
     const list = txs ?? [];
-    const ids = Array.from(new Set(list.map((t) => t.user_id)));
+    const ids = Array.from(new Set(list.map((t) => t.user_id).filter((id): id is string => !!id)));
     const { data: profiles } = ids.length
       ? await supabaseAdmin.from("profiles").select("id,email,full_name,sponsor_id").in("id", ids)
       : { data: [] as any[] };
@@ -421,8 +425,8 @@ export const adminListAllTransactions = createServerFn({ method: "GET" })
       const p: any = pmap.get(t.user_id);
       return {
         ...t,
-        user_email: p?.email ?? null,
-        user_name: p?.full_name ?? null,
+        user_email: p?.email ?? (t.metadata as Record<string, unknown> | null)?.customer_email ?? null,
+        user_name: p?.full_name ?? ((t.metadata as Record<string, unknown> | null)?.source === "guest_order" ? "Guest" : null),
         is_subagent: !!p?.sponsor_id,
       };
     });
