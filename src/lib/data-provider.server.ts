@@ -91,7 +91,7 @@ export async function dispatchDataPurchase(input: DispatchInput) {
     .select("status,metadata,package_id,network,recipient_phone,amount,user_id")
     .eq("id", input.transactionId)
     .maybeSingle();
-  if (!current) return;
+  if (!current || current.status === "pending_payment") return;
   if (
     current.status === "completed" ||
     current.status === "failed" ||
@@ -123,7 +123,7 @@ export async function dispatchDataPurchase(input: DispatchInput) {
       status: "failed",
       metadata: { ...meta, provider: "swiftdata", provider_error: `Unsupported network/size: ${network} / ${sizeMb}MB` },
     }).eq("id", input.transactionId);
-    await refund(userId, amount);
+    if (meta.source !== "guest_order") await refund(userId, amount);
     return;
   }
 
@@ -222,7 +222,7 @@ export async function dispatchDataPurchase(input: DispatchInput) {
         },
       })
       .eq("id", input.transactionId);
-    await refund(userId, amount);
+    if (meta.source !== "guest_order") await refund(userId, amount);
   } catch (e: any) {
     await supabaseAdmin
       .from("transactions")

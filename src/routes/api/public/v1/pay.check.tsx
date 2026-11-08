@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { dispatchDataPurchase } from "@/lib/data-provider.server";
+import { finalizeGuestPayment } from "@/lib/guest-payment.server";
 
 const Schema = z.object({ reference: z.string().min(4).max(80) });
 
@@ -55,6 +56,14 @@ export const Route = createFileRoute("/api/public/v1/pay/check")({
         }
 
         // === SUCCESS — branch by kind ===
+        if (meta.kind === "guest_order") {
+          try {
+            await finalizeGuestPayment({ ...tx, reference });
+            return json({ status: "success", kind: "guest_order" });
+          } catch (error) {
+            return json({ error: error instanceof Error ? error.message : "Could not confirm guest order" }, 500);
+          }
+        }
         if (meta.kind === "activation") {
           const { error } = await supabaseAdmin.rpc("mark_activation_completed", { _reference: reference });
           if (error) return json({ error: error.message }, 500);
