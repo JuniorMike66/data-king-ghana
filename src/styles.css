@@ -157,9 +157,7 @@ tbody tr:hover { background: color-mix(in oklch, var(--muted) 50%, transparent);
 
 /* Adinkra doodle backdrop */
 .adinkra-bg {
-  background-image:
-    radial-gradient(ellipse 70% 50% at 80% 20%, oklch(0.82 0.17 85 / 8%), transparent 60%),
-    radial-gradient(ellipse 60% 40% at 20% 80%, oklch(0.60 0.22 25 / 6%), transparent 60%);
+  background-image: none;
   position: relative;
 }
 .adinkra-bg::before {
@@ -168,15 +166,12 @@ tbody tr:hover { background: color-mix(in oklch, var(--muted) 50%, transparent);
   inset: 0;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160' fill='none'><g stroke='%23d4a017' stroke-width='1.2' opacity='0.10'><circle cx='80' cy='80' r='28'/><circle cx='80' cy='80' r='14'/><path d='M80 30 L88 60 L80 50 L72 60 Z'/><path d='M80 130 L88 100 L80 110 L72 100 Z'/><path d='M30 80 L60 72 L50 80 L60 88 Z'/><path d='M130 80 L100 72 L110 80 L100 88 Z'/></g></svg>");
   background-repeat: repeat;
-  opacity: 0.6;
+  opacity: 0.16;
   pointer-events: none;
 }
 
 .auth-bg {
-  background:
-    radial-gradient(ellipse at top left, oklch(0.35 0.18 25 / 40%), transparent 55%),
-    radial-gradient(ellipse at bottom right, oklch(0.30 0.15 155 / 35%), transparent 55%),
-    oklch(0.10 0.02 90);
+  background: var(--background);
   background-attachment: fixed;
 }
 .auth-grid {

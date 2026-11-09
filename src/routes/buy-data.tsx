@@ -76,7 +76,7 @@ function GuestDataPage() {
       </section>}
       <h2 className="text-xl font-semibold mb-4">{config.label} bundles</h2>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-        {packages.filter((item) => item.network === network).map((item) => <Button key={item.id} variant="ghost" className={`${config.color} h-auto min-h-32 rounded-lg p-5 flex flex-col items-start gap-2 hover:opacity-90`} onClick={() => { setSelected(item); setPhone(""); setEmail(""); }}>
+        {packages.filter((item) => item.network === network).map((item) => <Button key={item.id} variant="ghost" className={`bundle-tile ${config.color} h-auto min-h-32 rounded-lg p-5 flex flex-col items-start gap-2 hover:opacity-90`} onClick={() => { setSelected(item); setPhone(""); setEmail(""); }}>
           <span className="text-2xl font-bold">{item.size_label}</span><span className="text-xl font-semibold">GH₵{Number(item.price).toFixed(2)}</span>
         </Button>)}
       </div>

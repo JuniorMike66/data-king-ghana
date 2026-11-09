@@ -133,7 +133,7 @@ export function PublicStore() {
       <header className="border-b border-border bg-card/60 backdrop-blur sticky top-0 z-30">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-amber-600 flex items-center justify-center">
+            <div className="platform-brand w-9 h-9 flex items-center justify-center">
               <Crown className="w-5 h-5 text-primary-foreground" />
             </div>
             <div>
@@ -154,9 +154,9 @@ export function PublicStore() {
       </header>
 
       {/* Hero */}
-      <section className="bg-gradient-to-br from-primary/20 to-amber-700/10 border-b border-border">
+      <section className="border-b border-border">
         <div className="max-w-6xl mx-auto px-4 py-10 text-center">
-          <h1 className="text-3xl sm:text-4xl font-extrabold">Buy Data, Instantly</h1>
+          <h1 className="text-3xl sm:text-4xl font-extrabold">{store.name}</h1>
           <p className="text-muted-foreground mt-2">Affordable MTN, AirtelTigo & Telecel bundles with no expiry. Pay securely via mobile money or card.</p>
         </div>
       </section>
@@ -274,7 +274,7 @@ function NetworkSwitcher({ packages, setSelected, setPhone, setEmail }: { packag
       <div className="sticky top-14 z-20 -mx-4 sm:mx-0 px-4 sm:px-0 py-2 bg-background/95 backdrop-blur border-b border-border sm:border-0 sm:bg-transparent sm:backdrop-blur-0">
         <div className="flex gap-2 overflow-x-auto no-scrollbar">
           {available.map((k) => (
-            <button
+            <Button variant="outline"
               key={k}
               onClick={() => setActive(k)}
               className={`px-4 py-2 rounded-full text-sm font-semibold whitespace-nowrap border transition ${
@@ -282,7 +282,7 @@ function NetworkSwitcher({ packages, setSelected, setPhone, setEmail }: { packag
               }`}
             >
               {networks[k].label}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -291,15 +291,15 @@ function NetworkSwitcher({ packages, setSelected, setPhone, setEmail }: { packag
           <h2 className="text-xl font-bold mb-3">{cfg.label} Bundles</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {items.map((p: any) => (
-              <button
+              <Button variant="ghost"
                 key={p.id}
                 onClick={() => { setSelected(p); setPhone(""); setEmail(""); }}
-                className={`${cfg.color} rounded-xl p-4 text-left shadow hover:scale-[1.02] transition`}
+                className={`bundle-tile ${cfg.color} rounded-lg p-5 text-left h-auto flex flex-col items-start`}
               >
                 <div className="text-2xl font-extrabold">{p.size_label}</div>
                 <div className="text-xl font-bold mt-2">₵{Number(p.price).toFixed(2)}</div>
                 <div className="text-[10px] opacity-80 mt-1">NO EXPIRY · Tap to buy</div>
-              </button>
+              </Button>
             ))}
           </div>
         </section>
