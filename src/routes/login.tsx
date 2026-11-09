@@ -59,9 +59,9 @@ function LoginPage() {
   return (
     <div className="auth-bg min-h-screen flex items-center justify-center p-4 relative">
       <div className="auth-grid absolute inset-0 opacity-30" />
-      <div className="relative w-full max-w-md rounded-2xl border border-border/60 bg-card/80 backdrop-blur p-8 shadow-2xl">
+      <div className="auth-panel relative w-full max-w-md p-6 sm:p-8">
         <div className="flex flex-col items-center mb-6">
-          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary to-amber-600 flex items-center justify-center mb-3 shadow-lg">
+          <div className="platform-brand w-14 h-14 flex items-center justify-center mb-3">
             <Crown className="w-7 h-7 text-primary-foreground" />
           </div>
           <h1 className="text-2xl font-bold tracking-wide">DATAKING GHANA</h1>
@@ -94,7 +94,7 @@ function LoginPage() {
             <Link to="/forgot-password" className="text-destructive hover:underline">Forgot password?</Link>
           </div>
 
-          <Button type="submit" disabled={loading} className="w-full h-12 text-base font-semibold bg-gradient-to-r from-[oklch(0.75_0.20_30)] to-[oklch(0.65_0.22_15)] text-white hover:opacity-90 border-0">
+          <Button type="submit" disabled={loading} className="w-full h-12 text-base font-semibold">
             {loading ? "Signing in..." : "SIGN IN"}
           </Button>
         </form>

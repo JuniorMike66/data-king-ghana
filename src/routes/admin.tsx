@@ -28,14 +28,14 @@ function AdminSidebar({ onNav }: { onNav?: () => void }) {
   const isActive = (to: string, exact?: boolean) => (exact ? path === to : path === to || path.startsWith(to + "/"));
   const linkCls = (active: boolean) =>
     cn(
-      "flex items-center gap-3 px-3 py-3 rounded-lg text-base leading-relaxed transition-colors",
-      active ? "bg-primary/15 text-primary border-l-2 border-primary" : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-foreground"
+      "platform-nav flex items-center gap-3 px-3 py-3 rounded-md text-base leading-relaxed transition-colors",
+      active ? "bg-sidebar-accent text-primary border border-sidebar-border" : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-foreground"
     );
 
   return (
     <div className="h-full flex flex-col bg-sidebar text-sidebar-foreground w-72">
       <div className="p-4 border-b border-sidebar-border flex items-center gap-3">
-        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-amber-700 flex items-center justify-center">
+        <div className="platform-brand w-10 h-10 flex items-center justify-center">
           <Shield className="w-5 h-5 text-primary-foreground" />
         </div>
         <div>
@@ -44,7 +44,7 @@ function AdminSidebar({ onNav }: { onNav?: () => void }) {
         </div>
       </div>
 
-      <div className="p-3 m-3 rounded-xl bg-sidebar-accent border border-sidebar-border">
+      <div className="p-4 mx-3 my-5 border-b border-sidebar-border">
         <div className="text-xs text-muted-foreground">Admin</div>
         <div className="text-sm font-semibold truncate">{user?.email}</div>
       </div>
@@ -61,9 +61,9 @@ function AdminSidebar({ onNav }: { onNav?: () => void }) {
       </nav>
 
       <div className="p-3 border-t border-sidebar-border">
-        <button onClick={() => signOut()} className="w-full flex items-center justify-center gap-2 text-destructive font-semibold py-2.5 hover:bg-destructive/10 rounded-lg">
+        <Button variant="ghost" onClick={() => signOut()} className="w-full text-destructive">
           <LogOut className="w-4 h-4" /> Sign Out
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -96,7 +96,7 @@ function AdminLayout() {
           <AdminRealtimeNotifier />
         </header>
 
-        <div className="p-4 md:p-6">
+        <div className="relative platform-content">
           <Outlet />
         </div>
       </main>

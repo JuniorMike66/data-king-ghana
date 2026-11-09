@@ -22,7 +22,7 @@ function Page() {
   };
   return (
     <div className="auth-bg min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-md rounded-2xl border border-border/60 bg-card/80 backdrop-blur p-8">
+      <div className="auth-panel w-full max-w-md p-6 sm:p-8">
         <h1 className="text-xl font-bold mb-2">Reset your password</h1>
         <p className="text-sm text-muted-foreground mb-6">We'll email you a link.</p>
         <form onSubmit={onSubmit} className="space-y-4">
