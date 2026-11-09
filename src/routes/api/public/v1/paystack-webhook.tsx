@@ -33,7 +33,7 @@ export const Route = createFileRoute("/api/public/v1/paystack-webhook")({
         const meta = tx.metadata ?? {};
         const gatewayEventId = String(tx.id ?? `evt-${reference}`);
 
-        if (meta.kind === "guest_order") {
+        if (meta.kind === "guest_order" || meta.kind === "dashboard_order") {
           try {
             await finalizeGuestPayment(tx);
             return json({ ok: true, kind: "guest_order" });

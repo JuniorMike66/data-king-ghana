@@ -123,7 +123,7 @@ export async function dispatchDataPurchase(input: DispatchInput) {
       status: "failed",
       metadata: { ...meta, provider: "swiftdata", provider_error: `Unsupported network/size: ${network} / ${sizeMb}MB` },
     }).eq("id", input.transactionId);
-    if (meta.source !== "guest_order") await refund(userId, amount);
+    if (!["guest_order", "dashboard_paystack"].includes(meta.source)) await refund(userId, amount);
     return;
   }
 
@@ -222,7 +222,7 @@ export async function dispatchDataPurchase(input: DispatchInput) {
         },
       })
       .eq("id", input.transactionId);
-    if (meta.source !== "guest_order") await refund(userId, amount);
+    if (!["guest_order", "dashboard_paystack"].includes(meta.source)) await refund(userId, amount);
   } catch (e: any) {
     await supabaseAdmin
       .from("transactions")
