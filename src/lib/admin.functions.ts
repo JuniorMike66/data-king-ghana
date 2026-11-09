@@ -217,7 +217,8 @@ export const adminUpdateOrderStatus = createServerFn({ method: "POST" })
     const { data: tx } = await supabaseAdmin.from("transactions").select("*").eq("id", data.id).maybeSingle();
     if (!tx) throw new Error("Transaction not found");
     if ((data.status === "failed" || data.status === "refunded") && tx.status !== "failed" && tx.status !== "refunded"
-        && tx.user_id && (tx.type === "data_purchase" || tx.type === "checker_purchase" || tx.type === "withdrawal")) {
+        && tx.user_id && !["guest_order", "dashboard_paystack"].includes(String((tx.metadata as Record<string, unknown> | null)?.source))
+        && (tx.type === "data_purchase" || tx.type === "checker_purchase" || tx.type === "withdrawal")) {
       const { data: w } = await supabaseAdmin.from("wallets").select("balance").eq("user_id", tx.user_id).maybeSingle();
       if (w) await supabaseAdmin.from("wallets").update({ balance: Number(w.balance) + Number(tx.amount) }).eq("user_id", tx.user_id);
     }
@@ -242,8 +243,9 @@ export const adminRetryOrder = createServerFn({ method: "POST" })
     // those, the customer already paid for the order.
     const meta: any = tx.metadata ?? {};
     const noRefundIssued = !!meta.no_refund_issued;
-    if (meta.source === "guest_order" && !meta.paid_at) throw new Error("Guest payment has not been verified");
-    if (tx.status === "failed" && !noRefundIssued && meta.source !== "guest_order" && tx.user_id) {
+    const directPayment = ["guest_order", "dashboard_paystack"].includes(meta.source);
+    if (directPayment && !meta.paid_at) throw new Error("Payment has not been verified");
+    if (tx.status === "failed" && !noRefundIssued && !directPayment && tx.user_id) {
       const { data: wal } = await supabaseAdmin.from("wallets").select("balance").eq("user_id", tx.user_id).maybeSingle();
       const bal = Number(wal?.balance ?? 0);
       if (bal < Number(tx.amount)) throw new Error("Customer wallet has insufficient balance for re-debit");

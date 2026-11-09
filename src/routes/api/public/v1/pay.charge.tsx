@@ -40,8 +40,9 @@ const GuestOrderSchema = z.object({
   customer_email: z.string().email().max(120),
   momo: MomoSchema,
 });
+const DashboardOrderSchema = GuestOrderSchema.extend({ kind: z.literal("dashboard_order") });
 
-const Schema = z.discriminatedUnion("kind", [WalletTopupSchema, StoreOrderSchema, ActivationSchema, GuestOrderSchema]);
+const Schema = z.discriminatedUnion("kind", [WalletTopupSchema, StoreOrderSchema, ActivationSchema, GuestOrderSchema, DashboardOrderSchema]);
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json" } });
@@ -74,9 +75,20 @@ export const Route = createFileRoute("/api/public/v1/pay/charge")({
         if (!parsed.success) return json({ error: "Invalid input", details: parsed.error.issues }, 400);
         const input = parsed.data;
 
-        if (input.kind === "guest_order") {
+        if (input.kind === "guest_order" || input.kind === "dashboard_order") {
           const reference = `GO-${crypto.randomUUID()}`;
-          const { error: orderError } = await supabaseAdmin.rpc("start_guest_order", {
+          let userId: string | null = null;
+          if (input.kind === "dashboard_order") {
+            const token = request.headers.get("authorization")?.replace(/^Bearer\s+/i, "");
+            if (!token) return json({ error: "Sign in to pay from your dashboard" }, 401);
+            const { data: identity, error: authError } = await supabaseAdmin.auth.getUser(token);
+            if (authError || !identity.user) return json({ error: "Please sign in again" }, 401);
+            userId = identity.user.id;
+          }
+          const { error: orderError } = userId ? await supabaseAdmin.rpc("start_dashboard_payment", {
+            _user_id: userId, _package_id: input.package_id, _phone: input.recipient_phone,
+            _email: input.customer_email, _reference: reference,
+          }) : await supabaseAdmin.rpc("start_guest_order", {
             _package_id: input.package_id, _phone: input.recipient_phone,
             _email: input.customer_email, _reference: reference,
           });
@@ -88,7 +100,7 @@ export const Route = createFileRoute("/api/public/v1/pay/charge")({
           const charge = await paystackCharge({
             email: input.customer_email, amount: Math.round(gross * 100), currency: "GHS", reference,
             mobile_money: input.momo,
-            metadata: { kind: "guest_order", package_id: input.package_id, recipient_phone: input.recipient_phone },
+            metadata: { kind: input.kind, package_id: input.package_id, recipient_phone: input.recipient_phone },
           });
           if (!charge.ok || !charge.body?.status) {
             await supabaseAdmin.from("transactions").update({ status: "failed" }).eq("reference", reference).eq("status", "pending_payment");

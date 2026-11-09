@@ -56,10 +56,10 @@ export const Route = createFileRoute("/api/public/v1/pay/check")({
         }
 
         // === SUCCESS — branch by kind ===
-        if (meta.kind === "guest_order") {
+        if (meta.kind === "guest_order" || meta.kind === "dashboard_order") {
           try {
             await finalizeGuestPayment({ ...tx, reference });
-            return json({ status: "success", kind: "guest_order" });
+            return json({ status: "success", kind: meta.kind });
           } catch (error) {
             return json({ error: error instanceof Error ? error.message : "Could not confirm guest order" }, 500);
           }

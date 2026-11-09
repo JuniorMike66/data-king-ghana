@@ -8,9 +8,10 @@ import { toast } from "sonner";
 import { CheckCircle2, Smartphone, ShieldCheck } from "lucide-react";
 import { DataKingLoader } from "@/components/dataking-loader";
 import { detectMomoProvider, providerLabel, MOMO_PROVIDERS, type MomoProvider } from "@/lib/paystack-networks";
+import { supabase } from "@/integrations/supabase/client";
 
 type ChargePayload =
-  | { kind: "guest_order"; package_id: string; recipient_phone: string; customer_email: string }
+  | { kind: "guest_order" | "dashboard_order"; package_id: string; recipient_phone: string; customer_email: string }
   | { kind: "wallet_topup"; amount: number; user_id: string; email: string }
   | {
       kind: "store_order";
@@ -116,8 +117,13 @@ export function PaystackMomoDialog({
 
     setSubmitting(true); setStep("charging");
     try {
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (payload.kind === "dashboard_order") {
+        const { data } = await supabase.auth.getSession();
+        if (data.session) headers.Authorization = `Bearer ${data.session.access_token}`;
+      }
       const r = await fetch("/api/public/v1/pay/charge", {
-        method: "POST", headers: { "Content-Type": "application/json" },
+        method: "POST", headers,
         body: JSON.stringify({ ...payload, momo: { phone, provider }, email: (payload as any).email ?? email, customer_email: (payload as any).customer_email ?? email }),
       });
       const j = await r.json();

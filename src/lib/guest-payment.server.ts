@@ -7,7 +7,7 @@ export async function finalizeGuestPayment(payment: { reference: string; id?: st
     .select("id,metadata").eq("reference", payment.reference).maybeSingle();
   if (error || !order) throw new Error("Guest order not found");
   const metadata = order.metadata as Record<string, unknown> | null;
-  if (metadata?.source !== "guest_order" || !matchesGuestPayment(Number(metadata.gross), payment)) {
+  if (!metadata || !["guest_order", "dashboard_paystack"].includes(String(metadata.source)) || !matchesGuestPayment(Number(metadata.gross), payment)) {
     throw new Error("Payment does not match this guest order");
   }
   const { error: paidError } = await supabaseAdmin.rpc("complete_guest_order", {

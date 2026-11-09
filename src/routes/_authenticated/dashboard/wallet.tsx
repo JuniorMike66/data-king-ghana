@@ -94,7 +94,7 @@ function WalletPage() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-2xl p-6 bg-gradient-to-br from-primary/30 to-amber-700/20 border border-primary/20">
+      <div className="account-band">
         <div className="flex items-center gap-3 text-sm opacity-80"><WalletIcon className="w-4 h-4" /> WALLET BALANCE</div>
         <div className="text-5xl font-extrabold mt-2">GH₵{(wallet ?? 0).toFixed(2)}</div>
         <div className="flex flex-wrap gap-3 mt-6">

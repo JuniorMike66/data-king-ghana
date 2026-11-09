@@ -51,30 +51,30 @@
 }
 
 :root {
-  --radius: 0.75rem;
+  --radius: 0.5rem;
 
   /* Deep almost-black with green/brown tint, like SwiftData */
-  --background: oklch(0.16 0.02 90);
-  --foreground: oklch(0.96 0.01 90);
+  --background: oklch(0.16 0.006 160);
+  --foreground: oklch(0.96 0.004 160);
 
-  --card: oklch(0.20 0.02 90);
-  --card-foreground: oklch(0.96 0.01 90);
+  --card: oklch(0.21 0.008 160);
+  --card-foreground: var(--foreground);
 
-  --popover: oklch(0.20 0.02 90);
-  --popover-foreground: oklch(0.96 0.01 90);
+  --popover: oklch(0.24 0.008 160);
+  --popover-foreground: var(--foreground);
 
   /* Gold / amber primary */
-  --primary: oklch(0.82 0.17 85);
-  --primary-foreground: oklch(0.18 0.02 90);
+  --primary: oklch(0.85 0.15 92);
+  --primary-foreground: oklch(0.16 0.012 160);
 
-  --secondary: oklch(0.26 0.02 90);
-  --secondary-foreground: oklch(0.96 0.01 90);
+  --secondary: oklch(0.29 0.01 160);
+  --secondary-foreground: var(--foreground);
 
-  --muted: oklch(0.24 0.02 90);
-  --muted-foreground: oklch(0.70 0.02 90);
+  --muted: oklch(0.25 0.008 160);
+  --muted-foreground: oklch(0.72 0.008 160);
 
-  --accent: oklch(0.30 0.04 85);
-  --accent-foreground: oklch(0.96 0.01 90);
+  --accent: oklch(0.31 0.016 160);
+  --accent-foreground: var(--foreground);
 
   /* Coral for danger / sign-out accent */
   --destructive: oklch(0.70 0.20 25);
@@ -83,9 +83,9 @@
   --success: oklch(0.72 0.18 155);
   --success-foreground: oklch(0.14 0.02 155);
 
-  --border: oklch(0.30 0.02 90 / 60%);
-  --input: oklch(0.28 0.02 90);
-  --ring: oklch(0.82 0.17 85);
+  --border: oklch(0.38 0.008 160 / 60%);
+  --input: oklch(0.27 0.008 160);
+  --ring: var(--primary);
 
   /* Network brand colors */
   --mtn: oklch(0.82 0.17 85);            /* yellow */
@@ -95,13 +95,13 @@
   --telecel: oklch(0.60 0.22 25);        /* red */
   --telecel-foreground: oklch(0.98 0.01 25);
 
-  --sidebar: oklch(0.14 0.02 90);
-  --sidebar-foreground: oklch(0.92 0.01 90);
+  --sidebar: oklch(0.19 0.01 160);
+  --sidebar-foreground: oklch(0.92 0.005 160);
   --sidebar-primary: oklch(0.82 0.17 85);
   --sidebar-primary-foreground: oklch(0.18 0.02 90);
-  --sidebar-accent: oklch(0.22 0.02 90);
-  --sidebar-accent-foreground: oklch(0.96 0.01 90);
-  --sidebar-border: oklch(0.28 0.02 90 / 60%);
+  --sidebar-accent: oklch(0.27 0.016 160);
+  --sidebar-accent-foreground: var(--foreground);
+  --sidebar-border: var(--border);
   --sidebar-ring: oklch(0.82 0.17 85);
 
   /* Brand gradients */
@@ -121,17 +121,43 @@
     border-color: var(--color-border);
   }
   body {
+    font-family: "Manrope", sans-serif;
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
+/* Shared platform appearance: quiet surfaces, precise type and restrained motion. */
+:root { --shadow-panel: 0 18px 60px oklch(0.08 0 0 / 24%); }
+body { letter-spacing: 0; }
+h1, h2, h3 { font-family: "Sora", sans-serif; letter-spacing: 0; }
+input, textarea, button, a { -webkit-tap-highlight-color: transparent; }
+.platform-content { max-width: 1440px; margin-inline: auto; padding: 32px; animation: content-reveal 350ms ease-out both; }
+.platform-nav { min-height: 48px; font-weight: 500; border: 1px solid transparent; }
+.platform-nav[data-active="true"] { background: var(--sidebar-accent); color: var(--primary); border-color: var(--sidebar-border); }
+.platform-brand { background: var(--primary); color: var(--primary-foreground); border-radius: 8px; }
+.auth-panel { border-radius: 8px; background: var(--card); border: 1px solid var(--border); box-shadow: var(--shadow-panel); animation: content-reveal 450ms ease-out both; }
+.dk-button:active { transform: translateY(1px); }
+.bundle-tile { box-shadow: none; border: 1px solid color-mix(in oklch, currentColor 15%, transparent); transition: transform 200ms, box-shadow 200ms; }
+.bundle-tile:hover { transform: translateY(-3px); box-shadow: var(--shadow-panel); }
+.account-band { background: var(--card); border-block: 1px solid var(--border); padding: 28px 0; }
+table { font-size: 14px; }
+thead { background: var(--muted); color: var(--muted-foreground); }
+th { font-size: 12px; font-weight: 600; }
+tbody tr { transition: background 180ms; }
+tbody tr:hover { background: color-mix(in oklch, var(--muted) 50%, transparent); }
+.adinkra-bg { background-image: none; }
+.adinkra-bg::before { opacity: 0.16; }
+.auth-bg { background: var(--background); }
+.auth-grid { opacity: 0.15; }
+@keyframes content-reveal { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@media (max-width: 767px) { .platform-content { padding: 20px 16px 100px; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+
 /* Adinkra doodle backdrop */
 .adinkra-bg {
-  background-image:
-    radial-gradient(ellipse 70% 50% at 80% 20%, oklch(0.82 0.17 85 / 8%), transparent 60%),
-    radial-gradient(ellipse 60% 40% at 20% 80%, oklch(0.60 0.22 25 / 6%), transparent 60%);
+  background-image: none;
   position: relative;
 }
 .adinkra-bg::before {
@@ -140,15 +166,12 @@
   inset: 0;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160' fill='none'><g stroke='%23d4a017' stroke-width='1.2' opacity='0.10'><circle cx='80' cy='80' r='28'/><circle cx='80' cy='80' r='14'/><path d='M80 30 L88 60 L80 50 L72 60 Z'/><path d='M80 130 L88 100 L80 110 L72 100 Z'/><path d='M30 80 L60 72 L50 80 L60 88 Z'/><path d='M130 80 L100 72 L110 80 L100 88 Z'/></g></svg>");
   background-repeat: repeat;
-  opacity: 0.6;
+  opacity: 0.16;
   pointer-events: none;
 }
 
 .auth-bg {
-  background:
-    radial-gradient(ellipse at top left, oklch(0.35 0.18 25 / 40%), transparent 55%),
-    radial-gradient(ellipse at bottom right, oklch(0.30 0.15 155 / 35%), transparent 55%),
-    oklch(0.10 0.02 90);
+  background: var(--background);
   background-attachment: fixed;
 }
 .auth-grid {

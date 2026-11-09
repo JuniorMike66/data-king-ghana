@@ -1,8 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Wallet, ShoppingBag, Receipt, TrendingUp } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/dashboard/")({ component: Overview });
 
@@ -35,32 +36,23 @@ function Overview() {
         <p className="text-muted-foreground">Welcome back to your DataKing dashboard.</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:row-span-2 rounded-2xl p-6 bg-gradient-to-br from-[oklch(0.55_0.18_275)] to-[oklch(0.45_0.20_290)] text-white flex flex-col items-center justify-center text-center">
-          <div className="w-24 h-24 rounded-full bg-white/20 flex items-center justify-center mb-4">
-            <Wallet className="w-12 h-12" />
-          </div>
-          <h2 className="text-2xl font-bold">Welcome Back!</h2>
-          <p className="text-white/80">{useAuth().user?.email}</p>
-          <div className="mt-6 px-4 py-1.5 rounded-full bg-white/20 text-sm">Client</div>
-          <div className="mt-6">
-            <div className="text-sm opacity-80">Current Balance</div>
-            <div className="text-4xl font-bold mt-1">GH₵{balance.toFixed(2)}</div>
-          </div>
-        </div>
-
-        <StatCard icon={ShoppingBag} label="TOTAL SALES" value={`GH₵${(data?.totalSales ?? 0).toFixed(2)}`} tint="from-purple-500/20 to-purple-600/10" />
-        <StatCard icon={Receipt} label="TOTAL ORDERS" value={String(data?.totalOrders ?? 0)} tint="from-emerald-500/20 to-emerald-600/10" />
-        <StatCard icon={TrendingUp} label="DAILY SALES" value={`GH₵${(data?.daily ?? 0).toFixed(2)}`} tint="from-sky-500/20 to-sky-600/10" />
-        <StatCard icon={TrendingUp} label="WEEKLY SALES" value={`GH₵${(data?.weekly ?? 0).toFixed(2)}`} tint="from-rose-500/20 to-rose-600/10" />
+      <section className="account-band flex flex-wrap items-center justify-between gap-6">
+        <div><div className="flex items-center gap-2 text-muted-foreground text-sm"><Wallet className="w-4 h-4" /> Wallet balance</div><div className="text-4xl font-bold mt-3">GH₵{balance.toFixed(2)}</div></div>
+        <div className="flex flex-wrap gap-3"><Button asChild><Link to="/dashboard/buy-data/$network" params={{ network: "mtn" }}><ShoppingBag /> Buy data</Link></Button><Button variant="outline" asChild><Link to="/dashboard/wallet" search={{ reference: undefined, trxref: undefined }}><Wallet /> Top up</Link></Button></div>
+      </section>
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        <StatCard icon={ShoppingBag} label="TOTAL SALES" value={`GH₵${(data?.totalSales ?? 0).toFixed(2)}`} />
+        <StatCard icon={Receipt} label="TOTAL ORDERS" value={String(data?.totalOrders ?? 0)} />
+        <StatCard icon={TrendingUp} label="DAILY SALES" value={`GH₵${(data?.daily ?? 0).toFixed(2)}`} />
+        <StatCard icon={TrendingUp} label="WEEKLY SALES" value={`GH₵${(data?.weekly ?? 0).toFixed(2)}`} />
       </div>
     </div>
   );
 }
 
-function StatCard({ icon: Icon, label, value, tint }: { icon: any; label: string; value: string; tint: string }) {
+function StatCard({ icon: Icon, label, value }: { icon: any; label: string; value: string }) {
   return (
-    <div className={`rounded-2xl p-6 bg-gradient-to-br ${tint} border border-border/40`}>
+    <div className="rounded-lg p-5 bg-card border border-border">
       <div className="w-12 h-12 rounded-xl bg-primary/20 flex items-center justify-center mb-4">
         <Icon className="w-6 h-6 text-primary" />
       </div>
