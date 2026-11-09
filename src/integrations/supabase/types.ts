@@ -763,6 +763,16 @@ export type Database = {
         Returns: number
       }
       sponsor_profit_total: { Args: { _user_id: string }; Returns: number }
+      start_dashboard_payment: {
+        Args: {
+          _email: string
+          _package_id: string
+          _phone: string
+          _reference: string
+          _user_id: string
+        }
+        Returns: string
+      }
       start_guest_order: {
         Args: {
           _email: string
