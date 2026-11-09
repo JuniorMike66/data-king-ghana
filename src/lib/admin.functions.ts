@@ -217,7 +217,8 @@ export const adminUpdateOrderStatus = createServerFn({ method: "POST" })
     const { data: tx } = await supabaseAdmin.from("transactions").select("*").eq("id", data.id).maybeSingle();
     if (!tx) throw new Error("Transaction not found");
     if ((data.status === "failed" || data.status === "refunded") && tx.status !== "failed" && tx.status !== "refunded"
-        && tx.user_id && (tx.type === "data_purchase" || tx.type === "checker_purchase" || tx.type === "withdrawal")) {
+        && tx.user_id && !["guest_order", "dashboard_paystack"].includes(String((tx.metadata as Record<string, unknown> | null)?.source))
+        && (tx.type === "data_purchase" || tx.type === "checker_purchase" || tx.type === "withdrawal")) {
       const { data: w } = await supabaseAdmin.from("wallets").select("balance").eq("user_id", tx.user_id).maybeSingle();
       if (w) await supabaseAdmin.from("wallets").update({ balance: Number(w.balance) + Number(tx.amount) }).eq("user_id", tx.user_id);
     }

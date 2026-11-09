@@ -6,6 +6,7 @@
 //
 // Docs: https://swiftdatagh.shop/api-docs
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { isProviderBalanceLow } from "@/lib/provider-errors";
 
 type DispatchInput = {
   transactionId: string;
@@ -180,7 +181,7 @@ export async function dispatchDataPurchase(input: DispatchInput) {
 
     // === FAILURE PATH ===
     // Provider out of balance: keep order pending, do NOT refund, flag for admin retry.
-    if (isInsufficientBalanceError(body, res.status)) {
+    if (isProviderBalanceLow(body, res.status) || isInsufficientBalanceError(body, res.status)) {
       await supabaseAdmin
         .from("transactions")
         .update({
