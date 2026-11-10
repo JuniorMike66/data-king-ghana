@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Eye, EyeOff, UserPlus, Crown, Mail } from "lucide-react";
+import { Eye, EyeOff, UserPlus, Crown, Mail, Zap, ArrowRight } from "lucide-react";
 import { z } from "zod";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -68,6 +68,17 @@ function LoginPage() {
           <p className="text-sm text-muted-foreground mt-1">Powering Ghana's Digital Economy</p>
         </div>
 
+        <Link to="/buy-data" className="guest-cta group mb-6 flex items-center gap-4 rounded-xl p-4">
+          <div className="guest-cta-icon flex h-12 w-12 shrink-0 items-center justify-center rounded-lg">
+            <Zap className="h-6 w-6" />
+          </div>
+          <div className="flex-1 text-left">
+            <div className="font-bold text-base">Buy data instantly — no account</div>
+            <div className="text-xs opacity-80">MTN, AirtelTigo & Telecel. Pay with MoMo.</div>
+          </div>
+          <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+        </Link>
+
         <div className="text-center mb-6">
           <h2 className="text-2xl font-bold">Welcome Back</h2>
           <p className="text-sm text-muted-foreground mt-1">Enter your credentials to access your account</p>
@@ -110,7 +121,7 @@ function LoginPage() {
         </Link>
 
         <div className="mt-6 pt-4 border-t border-border/30 flex flex-wrap justify-center gap-2">
-          <Button asChild variant="secondary"><Link to="/buy-data">Buy data as guest</Link></Button>
+          <Button asChild><Link to="/buy-data"><Zap /> Buy data as guest</Link></Button>
           <FloatingOrderTracker inline />
         </div>
 
