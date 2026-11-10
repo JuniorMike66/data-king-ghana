@@ -4,7 +4,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* DataKing Ghana — dark + gold theme inspired by SwiftData console
+/* IQ DataHub — dark + gold theme inspired by SwiftData console
    All tokens in oklch. */
 
 @theme inline {

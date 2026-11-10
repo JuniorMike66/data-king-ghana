@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth-context";
 import { Button } from "@/components/ui/button";
 import { Crown, ShieldCheck, LogOut } from "lucide-react";
-import { DataKingFullPageLoader } from "@/components/dataking-loader";
+import { IQDataHubFullPageLoader } from "@/components/iq-datahub-loader";
 import { toast } from "sonner";
 
 type Search = { act_ref?: string };
@@ -103,7 +103,7 @@ function ActivatePage() {
   };
 
   if (isLoading || loadingData || !data || data.notSubagent || data.already || !data.enabled) {
-    return <DataKingFullPageLoader />;
+    return <IQDataHubFullPageLoader />;
   }
 
   return (

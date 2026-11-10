@@ -155,7 +155,7 @@ function Dev() {
         <ol className="space-y-3 text-sm">
           <li className="flex gap-3">
             <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">1</span>
-            <div><strong>Top up your wallet.</strong> Every API order is paid from your DataKing wallet — make sure you have funds before sending requests.</div>
+            <div><strong>Top up your wallet.</strong> Every API order is paid from your IQ DataHub wallet — make sure you have funds before sending requests.</div>
           </li>
           <li className="flex gap-3">
             <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">2</span>

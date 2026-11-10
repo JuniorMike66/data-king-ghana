@@ -32,7 +32,7 @@ export function MaintenanceGate({ children }: { children: React.ReactNode }) {
         </div>
         <h1 className="text-2xl font-bold">We'll be right back</h1>
         <p className="mt-2 text-muted-foreground">
-          DataKing Ghana is currently undergoing maintenance. Please check back shortly.
+          IQ DataHub is currently undergoing maintenance. Please check back shortly.
         </p>
         {isAuthenticated && (
           <Button variant="outline" className="mt-6" onClick={() => signOut()}>Sign out</Button>

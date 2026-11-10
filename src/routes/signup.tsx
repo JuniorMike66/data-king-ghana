@@ -39,7 +39,7 @@ function SignupPage() {
     });
     setLoading(false);
     if (error) { toast.error(error.message); return; }
-    toast.success("Account created! Welcome to DataKing.");
+    toast.success("Account created! Welcome to IQ DataHub.");
     navigate({ to: "/dashboard" });
   };
 
@@ -51,7 +51,7 @@ function SignupPage() {
           <div className="platform-brand w-14 h-14 flex items-center justify-center mb-3">
             <Crown className="w-7 h-7 text-primary-foreground" />
           </div>
-          <h1 className="text-2xl font-bold tracking-wide">DATAKING GHANA</h1>
+          <h1 className="text-2xl font-bold tracking-wide">IQ DATAHUB</h1>
           <p className="text-sm text-muted-foreground mt-1">Create your account</p>
         </div>
         <form onSubmit={onSubmit} className="space-y-4">

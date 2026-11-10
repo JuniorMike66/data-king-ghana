@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Crown, Check, ArrowLeft } from "lucide-react";
-import { DataKingFullPageLoader } from "@/components/dataking-loader";
+import { IQDataHubFullPageLoader } from "@/components/iq-datahub-loader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -102,7 +102,7 @@ function BecomeAgent() {
     navigate({ to: "/dashboard" });
   };
 
-  if (isLoading) return <DataKingFullPageLoader />;
+  if (isLoading) return <IQDataHubFullPageLoader />;
   if (!store) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Store not found</div>;
 
   return (

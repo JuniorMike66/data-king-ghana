@@ -22,7 +22,7 @@ export const initPaystackTopup = createServerFn({ method: "POST" })
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        email: claims.email ?? `user-${userId}@dataking.gh`,
+        email: claims.email ?? `user-${userId}@iqdatahub.gh`,
         amount: Math.round(gross * 100),
         currency: "GHS",
         reference,

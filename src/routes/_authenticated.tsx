@@ -66,7 +66,7 @@ function Sidebar({ onNav }: { onNav?: () => void }) {
       <div className="p-4 border-b border-sidebar-border flex items-center gap-3">
         <div className="platform-brand w-10 h-10 flex items-center justify-center font-bold">DK</div>
         <div>
-          <div className="font-bold">DataKing GH</div>
+          <div className="font-bold">IQ DataHub</div>
           <div className="text-[10px] tracking-widest text-muted-foreground">USER CONSOLE</div>
         </div>
       </div>
@@ -183,7 +183,7 @@ function Layout() {
             <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setOpen(true)}>
               <Menu className="w-5 h-5" />
             </Button>
-            <h1 className="font-bold text-lg">DataKing Ghana</h1>
+            <h1 className="font-bold text-lg">IQ DataHub</h1>
           </div>
           <Link to="/dashboard/wallet" search={{ reference: undefined, trxref: undefined }} className="hidden sm:flex items-center gap-2 rounded-full border border-primary/40 px-3 py-1.5 text-sm hover:bg-primary/10">
             <Wallet className="w-4 h-4 text-primary" /> <span className="font-semibold">GH₵ {(balance ?? 0).toFixed(2)}</span>

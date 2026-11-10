@@ -15,7 +15,7 @@ import appCss from "../styles.css?url";
 /**
  * Detect the storefront home from the current path. Visitors browsing a
  * subagent/agent store (/s/<slug>/...) should bounce back to that store's
- * home — not the main DataKing site — when they hit a 404 or error.
+ * home — not the main IQ DataHub site — when they hit a 404 or error.
  */
 function getHomeTarget(): { href: string; label: string } {
   if (typeof window !== "undefined") {
@@ -65,12 +65,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "DataKing Ghana — Buy data bundles & checkers" },
-      { name: "description", content: "Buy MTN, AirtelTigo and Telecel data bundles and result checkers fast on DataKing Ghana." },
-      { property: "og:title", content: "DataKing Ghana — Buy data bundles & checkers" },
-      { name: "twitter:title", content: "DataKing Ghana — Buy data bundles & checkers" },
-      { property: "og:description", content: "Buy MTN, AirtelTigo and Telecel data bundles and result checkers fast on DataKing Ghana." },
-      { name: "twitter:description", content: "Buy MTN, AirtelTigo and Telecel data bundles and result checkers fast on DataKing Ghana." },
+      { title: "IQ DataHub — Buy data bundles & checkers" },
+      { name: "description", content: "Buy MTN, AirtelTigo and Telecel data bundles and result checkers fast on IQ DataHub." },
+      { property: "og:title", content: "IQ DataHub — Buy data bundles & checkers" },
+      { name: "twitter:title", content: "IQ DataHub — Buy data bundles & checkers" },
+      { property: "og:description", content: "Buy MTN, AirtelTigo and Telecel data bundles and result checkers fast on IQ DataHub." },
+      { name: "twitter:description", content: "Buy MTN, AirtelTigo and Telecel data bundles and result checkers fast on IQ DataHub." },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/60e2f08a-df0e-4994-9ce9-43ccefe0a46c/id-preview-14222206--bc2a2106-f876-40b0-bbf4-599e535a760b.lovable.app-1779993671126.png" },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/60e2f08a-df0e-4994-9ce9-43ccefe0a46c/id-preview-14222206--bc2a2106-f876-40b0-bbf4-599e535a760b.lovable.app-1779993671126.png" },
       { name: "twitter:card", content: "summary_large_image" },

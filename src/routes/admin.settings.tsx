@@ -64,7 +64,7 @@ function SettingsPage() {
     <div className="space-y-6 max-w-2xl">
       <div>
         <h1 className="text-2xl font-bold">Site Settings</h1>
-        <p className="text-muted-foreground text-sm">Global configuration for DataKing Ghana.</p>
+        <p className="text-muted-foreground text-sm">Global configuration for IQ DataHub.</p>
       </div>
 
       <div className="rounded-xl border border-border bg-card p-6 space-y-4">

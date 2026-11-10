@@ -139,7 +139,7 @@ export const adminListOrders = createServerFn({ method: "GET" })
       let source: { kind: string; label: string; detail?: string };
 
       if (m.source === "guest_order") {
-        source = { kind: "guest", label: "Guest — DataKing Ghana", detail: m.customer_email ?? t.recipient_phone ?? undefined };
+        source = { kind: "guest", label: "Guest — IQ DataHub", detail: m.customer_email ?? t.recipient_phone ?? undefined };
       } else if (m.source === "store_order" && m.store_id) {
         const store = storeMap.get(m.store_id);
         const owner = store ? profileMap.get(store.user_id) : null;
