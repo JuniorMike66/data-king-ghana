@@ -1,6 +1,6 @@
 import { Crown } from "lucide-react";
 
-export function DataKingLoader({ label, size = 48, className = "" }: { label?: string; size?: number; className?: string }) {
+export function IQDataHubLoader({ label, size = 48, className = "" }: { label?: string; size?: number; className?: string }) {
   return (
     <div className={`flex flex-col items-center justify-center gap-3 ${className}`}>
       <div className="relative" style={{ width: size, height: size }}>
@@ -13,16 +13,16 @@ export function DataKingLoader({ label, size = 48, className = "" }: { label?: s
         </div>
       </div>
       <div className="text-xs font-semibold tracking-widest text-muted-foreground uppercase">
-        {label ?? "DataKing"}
+        {label ?? "IQ DataHub"}
       </div>
     </div>
   );
 }
 
-export function DataKingFullPageLoader({ label }: { label?: string }) {
+export function IQDataHubFullPageLoader({ label }: { label?: string }) {
   return (
     <div className="min-h-screen w-full flex items-center justify-center bg-background adinkra-bg">
-      <DataKingLoader label={label} size={64} />
+      <IQDataHubLoader label={label} size={64} />
     </div>
   );
 }

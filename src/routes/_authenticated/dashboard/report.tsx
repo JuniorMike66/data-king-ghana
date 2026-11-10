@@ -16,7 +16,7 @@ function Report() {
         </div>
       </div>
       <div className="rounded-xl border border-border bg-card p-6 space-y-4">
-        <h2 className="font-bold">DataKing Ghana Support</h2>
+        <h2 className="font-bold">IQ DataHub Support</h2>
         <p className="text-sm text-muted-foreground">
           Calls only — please do not send SMS or WhatsApp messages to this number.
           Lines are open during business hours.

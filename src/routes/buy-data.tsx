@@ -31,9 +31,9 @@ const networks = [
 
 export const Route = createFileRoute("/buy-data")({
   head: () => ({ meta: [
-    { title: "Guest Data Bundles — DataKing Ghana" },
+    { title: "Guest Data Bundles — IQ DataHub" },
     { name: "description", content: "Buy MTN, AirtelTigo and Telecel data without an account. Pay with mobile money and track your order." },
-    { property: "og:title", content: "Guest Data Bundles — DataKing Ghana" },
+    { property: "og:title", content: "Guest Data Bundles — IQ DataHub" },
     { property: "og:description", content: "Buy data as a guest and track your order by recipient phone." },
     { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
   ] }),
@@ -60,7 +60,7 @@ function GuestDataPage() {
   return <div className="min-h-screen bg-background adinkra-bg">
     <header className="sticky top-0 z-20 border-b border-border bg-background/95 backdrop-blur">
       <div className="mx-auto max-w-6xl px-4 py-4 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2 font-bold"><Crown className="text-primary w-6 h-6" /> DataKing Ghana</div>
+        <div className="flex items-center gap-2 font-bold"><Crown className="text-primary w-6 h-6" /> IQ DataHub</div>
         <div className="flex items-center gap-2"><FloatingOrderTracker inline /><Button asChild variant="ghost"><Link to="/login">Sign in</Link></Button></div>
       </div>
     </header>

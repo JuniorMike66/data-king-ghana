@@ -45,7 +45,7 @@ function StoreLayout() {
         <StoreIcon className="w-8 h-8 text-primary" />
         <div>
           <h1 className="text-3xl font-bold">My Store</h1>
-          <p className="text-muted-foreground">Run your own data reselling storefront under DataKing.</p>
+          <p className="text-muted-foreground">Run your own data reselling storefront under IQ DataHub.</p>
         </div>
       </div>
 

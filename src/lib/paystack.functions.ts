@@ -13,7 +13,7 @@ export const initPaystackTopup = createServerFn({ method: "POST" })
   .inputValidator((input) => z.object({ amount: z.number().min(1).max(10000) }).parse(input))
   .handler(async ({ data, context }) => {
     const { userId, claims } = context;
-    const reference = `DK-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+    const reference = `IQ-${Date.now()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
     const { gross, fee } = addPaystackFee(data.amount);
     const res = await fetch("https://api.paystack.co/transaction/initialize", {
       method: "POST",
@@ -22,7 +22,7 @@ export const initPaystackTopup = createServerFn({ method: "POST" })
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        email: claims.email ?? `user-${userId}@dataking.gh`,
+        email: claims.email ?? `user-${userId}@iqdatahub.gh`,
         amount: Math.round(gross * 100),
         currency: "GHS",
         reference,

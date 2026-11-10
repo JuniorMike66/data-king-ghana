@@ -39,7 +39,7 @@ function AdminSidebar({ onNav }: { onNav?: () => void }) {
           <Shield className="w-5 h-5 text-primary-foreground" />
         </div>
         <div>
-          <div className="font-bold">DataKing GH</div>
+          <div className="font-bold">IQ DataHub</div>
           <div className="text-[10px] tracking-widest text-muted-foreground">ADMIN PANEL</div>
         </div>
       </div>
@@ -92,7 +92,7 @@ function AdminLayout() {
             <Menu className="w-5 h-5" />
           </Button>
           <Shield className="w-5 h-5 text-primary" />
-          <h1 className="font-bold flex-1">DataKing Admin Panel</h1>
+          <h1 className="font-bold flex-1">IQ DataHub Admin Panel</h1>
           <AdminRealtimeNotifier />
         </header>
 

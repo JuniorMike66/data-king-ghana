@@ -17,9 +17,9 @@ const schema = z.object({
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [
-    { title: "Sign In or Buy as Guest — DataKing Ghana" },
-    { name: "description", content: "Sign in to DataKing Ghana or buy and track data bundles without an account." },
-    { property: "og:title", content: "Sign In or Buy as Guest — DataKing Ghana" },
+    { title: "Sign In or Buy as Guest — IQ DataHub" },
+    { name: "description", content: "Sign in to IQ DataHub or buy and track data bundles without an account." },
+    { property: "og:title", content: "Sign In or Buy as Guest — IQ DataHub" },
     { property: "og:description", content: "Access your account, buy data as a guest, or track an order." },
     { property: "og:type", content: "website" }, { name: "twitter:card", content: "summary" },
   ] }),
@@ -64,7 +64,7 @@ function LoginPage() {
           <div className="platform-brand w-14 h-14 flex items-center justify-center mb-3">
             <Crown className="w-7 h-7 text-primary-foreground" />
           </div>
-          <h1 className="text-2xl font-bold tracking-wide">DATAKING GHANA</h1>
+          <h1 className="text-2xl font-bold tracking-wide">IQ DATAHUB</h1>
           <p className="text-sm text-muted-foreground mt-1">Powering Ghana's Digital Economy</p>
         </div>
 
@@ -128,7 +128,7 @@ function LoginPage() {
         <div className="mt-8 pt-4 border-t border-border/30 text-center">
           <p className="text-[10px] tracking-widest text-muted-foreground/70 mb-1">DEVELOPED BY</p>
           <p className="text-xs font-semibold tracking-wider flex items-center justify-center gap-1.5">
-            <Mail className="w-3 h-3" /> DATAKING GHANA TEAM
+            <Mail className="w-3 h-3" /> IQ DATAHUB TEAM
           </p>
         </div>
       </div>

@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { toast } from "sonner";
 import { CheckCircle2, Smartphone, ShieldCheck } from "lucide-react";
-import { DataKingLoader } from "@/components/dataking-loader";
+import { IQDataHubLoader } from "@/components/iq-datahub-loader";
 import { detectMomoProvider, providerLabel, MOMO_PROVIDERS, type MomoProvider } from "@/lib/paystack-networks";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -244,7 +244,7 @@ export function PaystackMomoDialog({
         )}
 
         {step === "charging" && (
-          <div className="py-8"><DataKingLoader label="Starting your payment…" /></div>
+          <div className="py-8"><IQDataHubLoader label="Starting your payment…" /></div>
         )}
 
         {step === "otp" && (
@@ -276,7 +276,7 @@ export function PaystackMomoDialog({
                 {displayText ?? "A MoMo prompt has been sent. Enter your PIN to approve."}
               </div>
             </div>
-            <DataKingLoader label="Waiting for payment…" size={36} />
+            <IQDataHubLoader label="Waiting for payment…" size={36} />
             <Button variant="outline" className="w-full" onClick={iCompleted} disabled={submitting}>
               {submitting ? "Checking…" : "I've completed payment"}
             </Button>

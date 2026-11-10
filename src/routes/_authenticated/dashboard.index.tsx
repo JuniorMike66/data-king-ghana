@@ -33,7 +33,7 @@ function Overview() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">Overview</h1>
-        <p className="text-muted-foreground">Welcome back to your DataKing dashboard.</p>
+        <p className="text-muted-foreground">Welcome back to your IQ DataHub dashboard.</p>
       </div>
 
       <section className="account-band flex flex-wrap items-center justify-between gap-6">
