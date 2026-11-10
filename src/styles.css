@@ -259,3 +259,32 @@ h1 { background: linear-gradient(90deg, var(--foreground), color-mix(in oklch, v
     linear-gradient(to bottom, oklch(0.30 0.02 90 / 20%) 1px, transparent 1px);
   background-size: 48px 48px;
 }
+
+/* ===== Site-wide soft glow (matches guest banner) ===== */
+[data-slot="card"], .account-band, .auth-panel, [role="dialog"] {
+  background-image:
+    radial-gradient(120% 80% at 0% 0%, color-mix(in oklch, var(--primary) 14%, transparent), transparent 55%),
+    radial-gradient(90% 70% at 100% 100%, color-mix(in oklch, var(--success) 10%, transparent), transparent 60%),
+    var(--surface-sheen);
+  border-color: color-mix(in oklch, var(--primary) 22%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in oklch, var(--primary) 12%, transparent), 0 18px 50px -24px color-mix(in oklch, var(--primary) 55%, transparent);
+}
+[role="dialog"] { border-radius: 18px; }
+[data-slot="card"]:hover { box-shadow: var(--glow-gold); transform: translateY(-2px); }
+.account-band { position: relative; overflow: hidden; }
+.account-band::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(110deg, transparent 35%, color-mix(in oklch, var(--primary) 14%, transparent) 50%, transparent 65%);
+  animation: sheen 5s ease-in-out infinite;
+}
+.dk-button[data-variant="default"], button.bg-primary, a.bg-primary { background-image: var(--gradient-gold); box-shadow: var(--glow-gold); }
+.dk-button:hover { transform: translateY(-1px); }
+.platform-nav[data-active="true"] { box-shadow: inset 3px 0 0 var(--primary), 0 8px 24px -14px color-mix(in oklch, var(--primary) 70%, transparent); }
+input, textarea, [data-slot="select-trigger"] { transition: box-shadow 200ms, border-color 200ms; }
+input:focus-visible, textarea:focus-visible { box-shadow: var(--glow-gold); border-color: var(--primary); }
+.otp-box {
+  border-radius: 12px !important; border: 1.5px solid color-mix(in oklch, var(--primary) 35%, transparent) !important;
+  background: color-mix(in oklch, var(--card) 85%, transparent); font-size: 1.25rem; font-weight: 700;
+}
+.otp-box[data-active="true"] { box-shadow: var(--glow-gold); border-color: var(--primary) !important; }
+@media (prefers-reduced-motion: reduce) { .account-band::after { animation: none; } }
