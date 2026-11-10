@@ -113,7 +113,7 @@ export const Route = createFileRoute("/api/public/v1/pay/charge")({
 
         // ============= WALLET TOPUP =============
         if (input.kind === "wallet_topup") {
-          const reference = ref("DK");
+          const reference = ref("IQ");
           const { gross, fee } = addPaystackFee(input.amount);
 
           // Pre-insert pending_payment row so admin sees the attempt immediately.

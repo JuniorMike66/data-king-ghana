@@ -135,7 +135,7 @@ function WalletPage() {
               <div className="space-y-3">
                 <p className="text-sm text-muted-foreground">Paid but wallet didn't update? Paste your Paystack reference and we'll verify.</p>
                 <Label>Paystack reference</Label>
-                <Input placeholder="e.g. DK-1716901234-AB12CD" value={recoverRef} onChange={(e) => setRecoverRef(e.target.value)} />
+                <Input placeholder="e.g. IQ-1716901234-AB12CD" value={recoverRef} onChange={(e) => setRecoverRef(e.target.value)} />
                 <Button className="w-full" disabled={recoverMut.isPending || recoverRef.trim().length < 4} onClick={() => recoverMut.mutate()}>
                   {recoverMut.isPending ? "Checking…" : "Verify & credit wallet"}
                 </Button>

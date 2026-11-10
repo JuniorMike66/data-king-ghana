@@ -64,7 +64,7 @@ function Sidebar({ onNav }: { onNav?: () => void }) {
   return (
     <div className="h-full flex flex-col bg-sidebar text-sidebar-foreground w-72">
       <div className="p-4 border-b border-sidebar-border flex items-center gap-3">
-        <div className="platform-brand w-10 h-10 flex items-center justify-center font-bold">DK</div>
+        <div className="platform-brand w-10 h-10 flex items-center justify-center font-bold">IQ</div>
         <div>
           <div className="font-bold">IQ DataHub</div>
           <div className="text-[10px] tracking-widest text-muted-foreground">USER CONSOLE</div>
