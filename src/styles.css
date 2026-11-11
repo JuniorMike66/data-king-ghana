@@ -288,3 +288,38 @@ input:focus-visible, textarea:focus-visible { box-shadow: var(--glow-gold); bord
 }
 .otp-box[data-active="true"] { box-shadow: var(--glow-gold); border-color: var(--primary) !important; }
 @media (prefers-reduced-motion: reduce) { .account-band::after { animation: none; } }
+
+/* ===== SwiftData-inspired look: true black, bold gold, Poppins, pill surfaces ===== */
+:root {
+  --background: oklch(0.11 0.004 260);
+  --card: oklch(0.15 0.006 260);
+  --popover: oklch(0.16 0.006 260);
+  --secondary: oklch(0.21 0.008 260);
+  --muted: oklch(0.19 0.006 260);
+  --muted-foreground: oklch(0.70 0.01 260);
+  --accent: oklch(0.23 0.01 260);
+  --input: oklch(0.19 0.006 260);
+  --border: oklch(0.32 0.01 260 / 55%);
+  --primary: oklch(0.80 0.16 80);
+  --sidebar: oklch(0.13 0.006 260);
+  --sidebar-accent: oklch(0.20 0.01 260);
+  --gradient-gold: linear-gradient(135deg, oklch(0.85 0.16 85), oklch(0.74 0.17 65));
+}
+body, h1, h2, h3 { font-family: "Poppins", sans-serif; }
+h1 { font-weight: 800; letter-spacing: -0.02em; background: none; color: var(--foreground); }
+h1 .text-primary, h1 span { color: var(--primary); }
+body {
+  background:
+    radial-gradient(900px 520px at 50% -10%, color-mix(in oklch, var(--primary) 14%, transparent), transparent 60%),
+    var(--background);
+  background-attachment: fixed;
+}
+header.sticky {
+  margin: 12px 12px 0; border-radius: 999px; border: 1px solid color-mix(in oklch, var(--primary) 18%, transparent);
+  background: linear-gradient(90deg, color-mix(in oklch, var(--primary) 8%, transparent), color-mix(in oklch, oklch(0.5 0.15 290) 10%, transparent)), color-mix(in oklch, var(--background) 75%, transparent);
+  box-shadow: 0 10px 40px -20px color-mix(in oklch, var(--primary) 60%, transparent);
+}
+.dk-button, [data-slot="button"] { border-radius: 999px; font-weight: 600; }
+[data-slot="card"], .account-band, .auth-panel, [role="dialog"] { border-radius: 20px; }
+.platform-nav { border-radius: 999px; }
+input, [data-slot="select-trigger"] { border-radius: 12px; }
